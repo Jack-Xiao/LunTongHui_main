@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/registr_home_background">
+
+
+
+    <TextView
+        android:layout_marginTop="5dp"
+        android:id="@+id/not_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@color/white"
+        android:text="@string/mine_not_register" />
+
+    <ImageView
+        android:id="@+id/register_home"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_above="@id/not_register"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/mini_default_head" />
+
+
+    <LinearLayout
+        android:layout_marginTop="40dp"
+        android:layout_below="@id/register_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="30dp"
+        android:layout_marginBottom="15dp"
+        android:orientation="vertical">
+
+        <Button
+            style="@style/not_register_button"
+            android:background="@drawable/login_background"
+            android:onClick="loginOnClick"
+            android:text="@string/login"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/home_register"
+            style="@style/not_register_button"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/register_background"
+            android:onClick="registerOnClick"
+            android:text="@string/register"
+            android:textColor="@color/white" />
+
+
+
+    </LinearLayout>
+
+</RelativeLayout>

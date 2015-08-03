@@ -1,0 +1,605 @@
+package com.louie.luntonghui.ui.category;
+
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.query.Select;
+import com.android.volley.Response;
+import com.louie.luntonghui.App;
+import com.louie.luntonghui.R;
+import com.louie.luntonghui.adapter.GoodsDetailListAdapter;
+import com.louie.luntonghui.data.GsonRequest;
+import com.louie.luntonghui.event.ShowCarListEvent;
+import com.louie.luntonghui.model.db.Goods;
+import com.louie.luntonghui.model.db.GoodsDetail;
+import com.louie.luntonghui.model.result.CurrentBrandGoodsList;
+import com.louie.luntonghui.rest.ServiceManager;
+import com.louie.luntonghui.ui.BaseNormalActivity;
+import com.louie.luntonghui.ui.MainActivity;
+import com.louie.luntonghui.ui.register.RegisterLogin;
+import com.louie.luntonghui.ui.search.SearchActivity;
+import com.louie.luntonghui.util.ConstantURL;
+import com.louie.luntonghui.util.DefaultShared;
+import com.louie.luntonghui.util.IntentUtil;
+import com.louie.luntonghui.util.TaskUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
+import static com.louie.luntonghui.ui.register.RegisterLogin.USER_DEFAULT;
+import static com.louie.luntonghui.ui.register.RegisterLogin.USER_TYPE;
+import static com.louie.luntonghui.ui.register.RegisterLogin.USER_WHOLESALER;
+
+
+/**
+ * Created by Administrator on 2015/6/19.
+ */
+public class GoodsDetailActivity extends BaseNormalActivity {
+    public static final String GOODSDETAILURL = "url";
+    public static final String GOODSDETAILID = "goods_id";
+    public static final String SALES = "sales";
+    public static final String COLLIIGATE = "colligate";
+    public static final String PRICE = "price";
+
+    public String url;
+    public String id;
+    @InjectView(R.id.listview)
+    ListView listView;
+
+    @InjectView(R.id.progress)
+    ProgressBar progress;
+    @InjectView(R.id.colligate)
+    TextView colligate;
+    @InjectView(R.id.sales_volume)
+    TextView salesVolume;
+    @InjectView(R.id.price)
+    TextView price;
+    @InjectView(R.id.navigation_search)
+    TextView navigationSearch;
+/*    @InjectView(R.id.navigation_search_edit)
+    EditText navigationSearchEdit;*/
+    @InjectView(R.id.icon)
+    ImageView icon;
+
+    private RecyclerView mRecyclerView;
+    private ServiceManager.LunTongHuiApi api;
+    private GoodsDetailListAdapter mAdapter;
+    private List<Goods> data;
+    private String intro = COLLIIGATE; //排序  销量/综合/价格  sales:销量  colligate：综合, price:价格
+
+    private String sorting = "2"; // 默认是降序  1:升序 2:降序
+    private String show; // B/C端   01是B, 02是C, 不传是B
+    private String display; //1辽宁，0广东
+
+    private String regionArg = "city";
+    private String BCClient = "show";
+
+    public static final String INTRO = "intro";
+    public static final String SORTING = "sorting";
+
+    private boolean isSales = false;
+    private boolean isColligate = false;
+    private boolean isPrice = false;
+    Drawable sorting_up, sorting_down;
+    private String goodsParentId;
+    public List<String> carIdList;
+    private boolean isSearch = false;
+    private String searchContent;
+    public String userId;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_goods_detail_list);
+        ButterKnife.inject(this);
+
+        icon.setImageResource(R.drawable.actionbar_back);
+        Bundle bundle = getIntent().getExtras();
+        userId = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
+        if (bundle != null && !bundle.getString(SearchActivity.SEARCH_CONTENT,
+                SearchActivity.SEARCH_DEFAULT_CONTENT).equals(SearchActivity.SEARCH_DEFAULT_CONTENT)) {
+            searchContent = bundle.getString(SearchActivity.SEARCH_CONTENT,
+                    SearchActivity.SEARCH_DEFAULT_CONTENT);
+            isSearch = true;
+
+        }
+
+        sorting_up = getResources().getDrawable(R.drawable.category_product_up);
+        sorting_down = getResources().getDrawable(R.drawable.category_product_down);
+        sorting_up.setBounds(0, 0, sorting_up.getMinimumWidth(), sorting_up.getMinimumHeight());
+        sorting_down.setBounds(0, 0, sorting_down.getMinimumWidth(), sorting_down.getMinimumHeight());
+
+        carIdList = ((App) getApplication()).goodsInCaridsList;
+        show = DefaultShared.getString(RegisterLogin.USER_TYPE, USER_DEFAULT);
+        show = "";
+
+        if (DefaultShared.getString(USER_TYPE, USER_DEFAULT).equals(USER_WHOLESALER)) {
+            show = "01";
+        } else {
+            show = "02";
+        }
+
+
+        data = new ArrayList<>();
+
+        mAdapter = new GoodsDetailListAdapter(GoodsDetailActivity.this);
+        listView.setAdapter(mAdapter);
+
+        initSorting();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Goods goods = mAdapter.getData().get(position);
+                String goodsId = goods.goodsId;
+                Bundle bundle = new Bundle();
+                bundle.putString(GOODSDETAILID, goodsId);
+                IntentUtil.startActivity(GoodsDetailActivity.this, GoodsDetailBuyActivity.class, bundle);
+            }
+        });
+    }
+
+    private void initSorting() {
+        String cType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
+
+        if (!isSearch) {
+            display = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
+
+            String cityId = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
+
+            goodsParentId = getIntent().getExtras().getString(GOODSDETAILID, "-1");
+            url = getIntent().getExtras().getString(GOODSDETAILURL).toString();
+            url = url + "&" + ConstantURL.MODE + "&" + regionArg + "=" + display;
+            url = url + "&ctype=" + cType;
+            //  + "&" + BCClient + "=" + show;
+
+            //id = getIntent().getBundleExtra(GOODSDETAILID);
+
+
+            String initUrl = url + "&" + INTRO + "=" + intro +
+                    "&" + SORTING + "=" + sorting;
+
+        } else {
+
+            display = DefaultShared.getString(App.PROVINCEID,App.DEFAULT_PROVINCEID);
+
+            switch (display){
+                case "6":
+                    display = "0";
+                    break;
+                case "388":
+                    display = "1";
+                    break;
+            }
+            //navigationSearch.setVisibility(View.GONE);
+
+            try {
+                searchContent = URLEncoder.encode(searchContent, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            String searchUrl = String.format(ConstantURL.GOODS_SEARCH_LIST, userId, searchContent,
+                    cType,display);
+            url = searchUrl;
+            //executeRequest(new GsonRequest());
+        }
+        onColligateset();
+    }
+
+    private void executeUrl(String url) {
+        executeRequest(new GsonRequest(url, CurrentBrandGoodsList.class, getGoodsList(), errorListener()));
+    }
+
+    private Response.Listener<CurrentBrandGoodsList> getGoodsList() {
+        //new Response.Listener<Login>()
+        return new Response.Listener<CurrentBrandGoodsList>() {
+            @Override
+            public void onResponse(final CurrentBrandGoodsList currentBrandGoodsList) {
+                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<Goods>>() {
+                                               @Override
+                                               protected void onPreExecute() {
+                                                   progress.setVisibility(View.VISIBLE);
+                                               }
+
+                                               @Override
+                                               protected void onPostExecute(List<Goods> goodses) {
+                                                   progress.setVisibility(View.GONE);
+                                                   if (goodses == null) return;
+                                                   mAdapter.setData(goodses);
+                                               }
+
+                                               @Override
+                                               protected List<Goods> doInBackground(Object... params) {
+
+                                                   if (currentBrandGoodsList.listallcat.size() == 0)
+                                                       return null;
+
+                                                   List<Goods> data = new ArrayList<Goods>();
+
+                                                   if (isSearch) {
+                                                       List<Goods> lists1 = new ArrayList<Goods>();
+                                                       lists1 = new Select()
+                                                               .from(Goods.class)
+                                                               .where("isChecked = ?", Goods.GOODS_IS_BUY)
+                                                               .execute();
+
+                                                       List<String> goodsIds = new ArrayList<String>();
+                                                       for (int i = 0; i < lists1.size(); i++) {
+                                                           goodsIds.add(lists1.get(i).goodsId);
+                                                       }
+
+                                                       for (int i = 0; i < currentBrandGoodsList.listallcat.size(); i++) {
+                                                           CurrentBrandGoodsList.ListallcatEntity entity = currentBrandGoodsList.listallcat.get(i);
+                                                           Goods goods1 = new Goods();
+                                                           goods1.goodsId = entity.goods_id;
+                                                           goods1.goodsName = entity.goods_name;
+                                                           goods1.goodsImg = entity.goods_img;
+                                                           goods1.goodsSN = entity.goods_sn;
+                                                           goods1.goodsNumber = entity.goods_number;
+                                                           goods1.marketPrice = entity.market_price;
+                                                           goods1.shopPrice = entity.shop_price;
+                                                           goods1.gysMoney = entity.gys_money;
+                                                           goods1.promotePrice = entity.promote_price;
+                                                           goods1.goodsBrief = entity.goods_brief;
+                                                           goods1.goodsDesc = entity.goods_desc;
+                                                           goods1.sortOrder = entity.sort_order;
+                                                           goods1.isBest = entity.is_best;
+                                                           goods1.isNew = entity.is_new;
+                                                           goods1.isHot = entity.is_hot;
+                                                           goods1.display = entity.display;
+                                                           goods1.giveIntegral = entity.give_integral;
+                                                           goods1.integral = entity.integral;
+                                                           goods1.isPromote = entity.is_promote;
+                                                           goods1.discounta = entity.discounta;
+                                                           goods1.discount = entity.discount;
+                                                           goods1.discountTime = entity.discount_time;
+                                                           goods1.discountName = entity.discount_name;
+                                                           goods1.goodsParentId = goodsParentId;
+                                                           goods1.guige = entity.guige;
+                                                           goods1.unit = entity.danwei;
+                                                           //goods1.save();
+                                                           data.add(goods1);
+                                                       }
+                                                       for (int i = 0; i < data.size(); i++) {
+                                                           if (goodsIds.contains(data.get(i).goodsId)) {
+                                                               data.get(i).isChecked = Goods.GOODS_IS_BUY;
+                                                           } else {
+                                                               data.get(i).isChecked = Goods.GOODS_IS_NOT_BUY;
+                                                           }
+                                                       }
+                                                       return data;
+
+                                                   } else {
+                                                       List<CurrentBrandGoodsList.ListallcatEntity> list = new ArrayList<CurrentBrandGoodsList.ListallcatEntity>();
+                                                       List<String> curGoodsId = new ArrayList<String>();
+                                                       List<Goods> lists = new Select()
+                                                               .from(Goods.class)
+                                                               .where("goods_parent_id=?", goodsParentId)
+                                                               .execute();
+                                                       Log.d("TAG ...list.size", lists.size() + "");
+                                                       for (int i = 0; i < lists.size(); i++) {
+                                                           curGoodsId.add(lists.get(i).goodsId);
+                                                       }
+
+                                                       List<Goods> lists1 = new ArrayList<Goods>();
+                                                       lists1 = new Select()
+                                                               .from(Goods.class)
+                                                               .where("goods_parent_id = ? and isChecked = ?", goodsParentId, Goods.GOODS_IS_BUY)
+                                                               .execute();
+
+                                                       List<String> goodsIds = new ArrayList<String>();
+                                                       for (int i = 0; i < lists1.size(); i++) {
+                                                           goodsIds.add(lists1.get(i).goodsId);
+                                                       }
+
+                                                       if (lists.size() > 0) {
+                                                           try {
+                                                               ActiveAndroid.beginTransaction();
+                                                               for (int i = 0; i < currentBrandGoodsList.listallcat.size(); i++) {
+                                                                   CurrentBrandGoodsList.ListallcatEntity entity = currentBrandGoodsList.listallcat.get(i);
+                                                                   Goods goods1 = new Goods();
+                                                                   goods1.goodsId = entity.goods_id;
+                                                                   goods1.goodsName = entity.goods_name;
+                                                                   goods1.goodsImg = entity.goods_img;
+                                                                   goods1.goodsSN = entity.goods_sn;
+                                                                   goods1.goodsNumber = entity.goods_number;
+                                                                   goods1.marketPrice = entity.market_price;
+                                                                   goods1.shopPrice = entity.shop_price;
+                                                                   goods1.gysMoney = entity.gys_money;
+                                                                   goods1.promotePrice = entity.promote_price;
+                                                                   goods1.goodsBrief = entity.goods_brief;
+                                                                   goods1.goodsDesc = entity.goods_desc;
+                                                                   goods1.sortOrder = entity.sort_order;
+                                                                   goods1.isBest = entity.is_best;
+                                                                   goods1.isNew = entity.is_new;
+                                                                   goods1.isHot = entity.is_hot;
+                                                                   goods1.display = entity.display;
+                                                                   goods1.giveIntegral = entity.give_integral;
+                                                                   goods1.integral = entity.integral;
+                                                                   goods1.isPromote = entity.is_promote;
+                                                                   goods1.discounta = entity.discounta;
+                                                                   goods1.discount = entity.discount;
+                                                                   goods1.discountTime = entity.discount_time;
+                                                                   goods1.discountName = entity.discount_name;
+                                                                   goods1.goodsParentId = goodsParentId;
+                                                                   goods1.guige = entity.guige;
+                                                                   goods1.unit = entity.danwei;
+                                                                   //goods1.save();
+                                                                   data.add(goods1);
+
+                                                                   if (!curGoodsId.contains(entity.goods_id)) {
+                                                                       Goods goods = new Goods();
+                                                                       goods.goodsId = entity.goods_id;
+                                                                       goods.goodsName = entity.goods_name;
+                                                                       goods.goodsImg = entity.goods_img;
+                                                                       goods.goodsSN = entity.goods_sn;
+                                                                       goods.goodsNumber = entity.goods_number;
+                                                                       goods.marketPrice = entity.market_price;
+                                                                       goods.shopPrice = entity.shop_price;
+                                                                       goods.gysMoney = entity.gys_money;
+                                                                       goods.promotePrice = entity.promote_price;
+                                                                       goods.goodsBrief = entity.goods_brief;
+                                                                       goods.goodsDesc = entity.goods_desc;
+                                                                       goods.sortOrder = entity.sort_order;
+                                                                       goods.isBest = entity.is_best;
+                                                                       goods.isNew = entity.is_new;
+                                                                       goods.isHot = entity.is_hot;
+                                                                       goods.display = entity.display;
+                                                                       goods.giveIntegral = entity.give_integral;
+                                                                       goods.integral = entity.integral;
+                                                                       goods.isPromote = entity.is_promote;
+                                                                       goods.discounta = entity.discounta;
+                                                                       goods.discount = entity.discount;
+                                                                       goods.discountTime = entity.discount_time;
+                                                                       goods.discountName = entity.discount_name;
+                                                                       goods.goodsParentId = goodsParentId;
+                                                                       goods.guige = entity.guige;
+                                                                       goods.unit = entity.danwei;
+                                                                       goods.save();
+                                                                   }
+                                                               }
+                                                           } finally {
+                                                               ActiveAndroid.setTransactionSuccessful();
+                                                               ActiveAndroid.endTransaction();
+                                                           }
+                                /*else{
+                                    new Update(Goods.class)
+                                            .set("goods_sn = ?," +
+                                                            "goods_number = ?," +
+                                                            "market_price = ?," +
+                                                            "shop_price = ?," +
+                                                            "gys_money=?," +
+                                                            "promote_price=?," +
+                                                            "goods_brief=?," +
+                                                            "goods_desc=?," +
+                                                            "sort_order = ?," +
+                                                            "is_best=?," +
+                                                            "is_new=?," +
+                                                            "is_hot=?," +
+                                                            "display=?," +
+                                                            "give_integral=?," +
+                                                            "integral=?," +
+                                                            "is_promote=?," +
+                                                            "discounta=?," +
+                                                            "discount=?," +
+                                                            "discount_time=?," +
+                                                            "discount_name=?," +
+                                                            "goods_parent_id=?"
+                                                    ,
+                                                    entity.goods_sn,
+                                                    entity.goods_number,
+                                                    entity.market_price,
+                                                    entity.shop_price,
+                                                    entity.gys_money,
+                                                    entity.promote_price,
+                                                    entity.goods_brief,
+                                                    entity.goods_desc,
+                                                    entity.sort_order,
+                                                    entity.is_best,
+                                                    entity.is_new,
+                                                    entity.is_hot,
+                                                    entity.display,
+                                                    entity.give_integral,
+                                                    entity.integral,
+                                                    entity.is_promote,
+                                                    entity.discounta,
+                                                    entity.discount,
+                                                    entity.discount_time,
+                                                    entity.discount_name,
+                                                    goodsParentId)
+                                            .where("goods_id = ?", entity.goods_id)
+                                            .execute();
+                                }*/
+                                                       } else {
+                                                           ActiveAndroid.beginTransaction();
+                                                           for (int i = 0; i < currentBrandGoodsList.listallcat.size(); i++) {
+                                                               CurrentBrandGoodsList.ListallcatEntity entity = currentBrandGoodsList.listallcat.get(i);
+                                                               Goods goods = new Goods();
+                                                               goods.goodsId = entity.goods_id;
+                                                               goods.goodsName = entity.goods_name;
+                                                               goods.goodsImg = entity.goods_img;
+                                                               goods.goodsSN = entity.goods_sn;
+                                                               goods.goodsNumber = entity.goods_number;
+                                                               goods.marketPrice = entity.market_price;
+                                                               goods.shopPrice = entity.shop_price;
+                                                               goods.gysMoney = entity.gys_money;
+                                                               goods.promotePrice = entity.promote_price;
+                                                               goods.goodsBrief = entity.goods_brief;
+                                                               goods.goodsDesc = entity.goods_desc;
+                                                               goods.sortOrder = entity.sort_order;
+                                                               goods.isBest = entity.is_best;
+                                                               goods.isNew = entity.is_new;
+                                                               goods.isHot = entity.is_hot;
+                                                               goods.display = entity.display;
+                                                               goods.giveIntegral = entity.give_integral;
+                                                               goods.integral = entity.integral;
+                                                               goods.isPromote = entity.is_promote;
+                                                               goods.discounta = entity.discounta;
+                                                               goods.discount = entity.discount;
+                                                               goods.discountTime = entity.discount_time;
+                                                               goods.discountName = entity.discount_name;
+                                                               goods.goodsParentId = goodsParentId;
+                                                               goods.isChecked = Goods.GOODS_IS_NOT_BUY;
+                                                               goods.guige = entity.guige;
+                                                               goods.unit = entity.danwei;
+                                                               goods.save();
+                                                               data.add(goods);
+                                                           }
+                                                           ActiveAndroid.setTransactionSuccessful();
+                                                           ActiveAndroid.endTransaction();
+                                                       }
+                                                       for(int i = 0; i < data.size(); i++) {
+                                                           if (goodsIds.contains(data.get(i).goodsId)) {
+                                                               data.get(i).isChecked = Goods.GOODS_IS_BUY;
+                                                           } else {
+                                                               data.get(i).isChecked = Goods.GOODS_IS_NOT_BUY;
+                                                           }
+                                                       }
+                                                       return data;
+                                                   }
+                                               }
+                                           }
+                );
+            }
+        }
+                ;
+    }
+
+
+    @OnClick(R.id.sales_volume)
+    public void onSalesVolume() {
+        isSales = !isSales;
+        intro = SALES;
+        sorting = getSorting(isSales);
+        String curUrl = url + "&" + INTRO + "=" + intro +
+                "&" + SORTING + "=" + sorting;
+        executeUrl(curUrl);
+    }
+
+
+    @OnClick(R.id.price)
+    public void onPrice() {
+        intro = PRICE;
+        isPrice = !isPrice;
+        sorting = getSorting(isPrice);
+        String curUrl = url + "&" + INTRO + "=" + intro +
+                "&" + SORTING + "=" + sorting;
+        executeUrl(curUrl);
+    }
+
+    @OnClick(R.id.colligate)
+    public void onColligateset() {
+        intro = COLLIIGATE;
+        isColligate = !isColligate;
+        sorting = getSorting(isColligate);
+        String curUrl = url + "&" + INTRO + "=" + intro +
+                "&" + SORTING + "=" + sorting;
+        executeUrl(curUrl);
+    }
+
+    private String getSorting(boolean isSelect) {
+        switch (intro) {
+            case COLLIIGATE:
+                if (isSelect) {
+                    colligate.setCompoundDrawables(null, null, sorting_up, null);
+                } else {
+                    colligate.setCompoundDrawables(null, null, sorting_down, null);
+                }
+                price.setCompoundDrawables(null, null, null, null);
+                salesVolume.setCompoundDrawables(null, null, null, null);
+                break;
+            case PRICE:
+                if (isSelect) {
+                    price.setCompoundDrawables(null, null, sorting_up, null);
+                } else {
+                    price.setCompoundDrawables(null, null, sorting_down, null);
+                }
+                colligate.setCompoundDrawables(null, null, null, null);
+                salesVolume.setCompoundDrawables(null, null, null, null);
+                break;
+            case SALES:
+                if (isSelect) {
+                    salesVolume.setCompoundDrawables(null, null, sorting_up, null);
+                } else {
+                    salesVolume.setCompoundDrawables(null, null, sorting_down, null);
+                }
+                colligate.setCompoundDrawables(null, null, null, null);
+                price.setCompoundDrawables(null, null, null, null);
+                break;
+        }
+
+        if (isSelect) {
+            return "1";
+        } else {
+            return "2";
+        }
+    }
+
+    @OnClick(R.id.navigation_search)
+    public void searchGoods() {
+        IntentUtil.startActivity(GoodsDetailActivity.this, SearchActivity.class);
+    }
+
+  /*  @OnClick(R.id.search)
+    public void search() {
+        String cType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
+        searchContent = navigationSearchEdit.getText().toString();
+        try {
+            searchContent = URLEncoder.encode(searchContent, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String searchUrl = String.format(ConstantURL.GOODS_SEARCH_LIST, userId, searchContent,
+                cType);
+        url = searchUrl;
+        onColligateset();
+    }*/
+
+    @OnClick(R.id.icon)
+    public void OnBack() {
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        App.getBusInstance().unregister(this);
+        super.onDestroy();
+    }
+    @OnClick(R.id.navigation_search)
+    public void navigationSearch(){
+        Intent intent = new Intent(GoodsDetailActivity.this,SearchActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.car)
+    public void checkCar(){
+        App.getBusInstance().post(new ShowCarListEvent());
+        IntentUtil.startActivity(GoodsDetailActivity.this, MainActivity.class);
+        finish();
+    }
+    @OnClick(R.id.main_fab)
+    public void onOnClickCart(){
+        App.getBusInstance().post(new ShowCarListEvent());
+        IntentUtil.startActivity(GoodsDetailActivity.this,MainActivity.class);
+        finish();
+    }
+}

@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:slideswitch="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_main_grey"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_base" />
+
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+            android:layout_gravity="center"
+        android:id="@+id/progress"
+        android:visibility="visible" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:orientation="vertical"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="15dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/username"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:textSize="16sp"
+                            tools:text="Jack" />
+
+                        <TextView
+                            android:id="@+id/phone_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:textSize="14sp"
+                            tools:text="15989054686" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/region_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:singleLine="true"
+                        tools:text="广东省 广州市 天河区天河大道区192号" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/shopping_cart_address_more" />
+            </RelativeLayout>
+
+            <TextView
+                style="@style/car_buy_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/play"
+                android:drawablePadding="10dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="支付方式"
+                tools:text="支付方式" />
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp">
+
+                <RadioButton
+                    android:id="@+id/radio_cash_deliver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="80dp"
+                    android:button="@drawable/radion_button"
+                    android:checked="true"
+                    android:padding="5dp"
+                    android:drawablePadding="8dp"
+                    android:text="@string/cash_deliver" />
+
+                <RadioButton
+                    android:padding="5dp"
+                    android:id="@+id/radio_bank_deliver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:button="@drawable/radion_button"
+                    android:enabled="false"
+                    android:text="@string/bank_deliver" />
+            </RadioGroup>
+
+
+            <com.louie.luntonghui.view.MyListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:divider="@color/background_main_grey"
+                android:dividerHeight="3dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp">
+
+                <LinearLayout
+                    android:id="@+id/luntong_exchange_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/radio"
+                        android:textSize="12sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <!--<LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:textSize="12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/produce_luntongbi_can_use_font" />
+
+                        <TextView
+                            android:textSize="12sp"
+                            android:id="@+id/can_use_count"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            tools:text="20" />
+
+                        <TextView
+                            android:textSize="12sp"
+                            android:textColor="@color/useful_grey"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/produce_luntongbi_can_use_behind" />
+
+                        <TextView
+                            android:textSize="12sp"
+                            android:id="@+id/can_use_value"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            tools:text="0.20元" />
+                    </LinearLayout>-->
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/use"
+                            android:textSize="14sp" />
+
+                        <EditText
+                            android:id="@+id/use_luntong_money_count"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="3dp"
+                            android:layout_marginRight="3dp"
+                            android:background="@drawable/base_frame"
+                            android:inputType="number"
+                            android:textColor="@color/useful_grey"
+                            android:textSize="14sp"
+                            tools:text="123456" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="轮通币,抵"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:maxLines="1"
+                            android:id="@+id/exchange_luntongbi_value"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            tools:text="0.20元" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.louie.luntonghui.view.SlideSwitch
+                    android:id="@+id/toggle"
+                    slideswitch:isOpen="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:layout_width="54dp"
+                    android:layout_height="25dp"
+                    slideswitch:shape="circle"
+                    slideswitch:themeColor="@color/useful_toggle_on"/>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/talk_to_business"
+                    android:textColor="@color/useful_grey" />
+
+                <EditText
+                    tools:text="测试111"
+                    android:textSize="14sp"
+                    android:id="@+id/user_feedback"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:maxLength="2"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/base_frame"
+                    android:textColor="@color/useful_grey" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/goods_value" />
+
+                    <TextView
+                        android:id="@+id/goods_value_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/useful_red" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/freight" />
+
+                    <TextView
+                        android:layout_alignParentRight="true"
+                        android:id="@+id/freight_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/useful_red" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lun_tong_money" />
+
+                    <TextView
+                        android:layout_alignParentRight="true"
+                        android:id="@+id/luntong_money_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/useful_red" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/total_price"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_gravity="bottom"
+        android:background="@color/useful_grey"
+        android:paddingLeft="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="合计:"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_marginLeft="2dp"
+                android:textColor="@color/white"
+                android:layout_gravity="center_vertical"
+                android:textSize="18sp"
+                android:id="@+id/goods_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="16000.21"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="@color/useful_red"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <TextView
+                android:id="@+id/submit_order"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/submit_order"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</LinearLayout>

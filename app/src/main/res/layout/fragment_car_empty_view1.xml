@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:background="@color/background_main_grey"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/img_empty_car"
+        android:layout_marginTop="70dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shopping_cart_empty_icon_car"/>
+
+    <TextView
+        android:id="@+id/tv_empty_Car"
+        android:layout_below="@id/img_empty_car"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/car_is_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tv_empty_Car"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@id/go_around"
+            android:textColor="@color/useful_red"
+            android:text="@string/go_browser"
+            android:background="@drawable/shopping_cart_empty_browse"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" />
+
+        <Button
+            android:id="@id/mine_attention"
+            android:text="@string/mine_store"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/shopping_cart_empty_browse"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

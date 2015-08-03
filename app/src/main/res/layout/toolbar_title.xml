@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="@dimen/toolbar_height"
+    style="@style/toolbar_style"
+    android:background="@drawable/navigation_bar">
+
+    <TextView
+        android:id="@id/toolbar_cancel"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:text="取消"
+        android:layout_marginLeft="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"/>
+
+    <TextView
+        android:id="@id/toolbar_title"
+        android:layout_centerInParent="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/toolbar_main_title_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="轮通惠登录"/>
+</RelativeLayout>

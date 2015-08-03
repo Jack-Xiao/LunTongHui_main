@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_base" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/whole"
+            style="@style/order_home_font_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableRight="@drawable/order_break_line"
+            android:text="@string/whole" />
+
+        <TextView
+            android:id="@+id/wait_confirm"
+            style="@style/order_home_font_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableRight="@drawable/order_break_line"
+            android:text="@string/wait_confirm" />
+
+        <TextView
+            android:id="@+id/wait_goods"
+            style="@style/order_home_font_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableRight="@drawable/order_break_line"
+            android:text="@string/wait_goods" />
+
+        <TextView
+            android:id="@+id/wait_play"
+            style="@style/order_home_font_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableRight="@drawable/order_break_line"
+            android:text="@string/wait_play" />
+
+        <TextView
+            android:id="@+id/has_cancel"
+            style="@style/order_home_font_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/has_cancel" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="70dp"
+            android:src="@drawable/order_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="@string/not_own_order"
+            android:textColor="@color/order_empty_font_color"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:text="@string/order_go_around"
+            android:textColor="@color/order_empty_font_color" />
+
+        <Button
+            android:id="@+id/look_over"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/order_btn_background"
+            android:text="@string/at_will_around" />
+
+    </LinearLayout>
+
+    <!--    <ListView
+            android:id="@+id/order_list"
+            android:layout_marginTop="10dp"
+            android:background="@color/white"
+            android:dividerHeight="10dp"
+            android:divider="@color/background_main_grey"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>-->
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</LinearLayout>

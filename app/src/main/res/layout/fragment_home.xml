@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_main"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <cn.lightsky.infiniteindicator.InfiniteIndicatorLayout
+                android:id="@+id/home_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/adveter_height"
+                app:indicator_type="indicator_anim_circle" />
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/home_recommend"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="10dp"
+                            android:layout_height="15dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="@drawable/shape" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/today_bargain_price" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            <LinearLayout
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/white">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/ai_tangze"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:layout_gravity="center_horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/tangze" />
+
+                        <TextView
+                            android:text="@string/tangze"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#666666"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                    <!--<com.louie.luntonghui.view.ActivityIcon
+                        android:layout_gravity="center_vertical"
+                        android:id="@+id/ai_tangze"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:activity_icon="@drawable/tangze"
+                        app:activity_text="@string/tangze" />-->
+
+                    <!--<com.louie.luntonghui.view.ActivityIcon
+                        android:layout_gravity="center"
+                        android:id="@+id/ai_jiluer"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:activity_icon="@drawable/jiluer"
+                        app:activity_text="@string/juluer"/>-->
+                    <LinearLayout
+                        android:id="@+id/ai_jiluer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/jiluer" />
+
+                        <TextView
+                            style="@style/activity_area_style_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/jiluer"
+                            android:textColor="#666666"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                  <!--  <com.louie.luntonghui.view.ActivityIcon
+                        android:id="@+id/ai_jiluer1"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:activity_icon="@drawable/jiluer"
+                        app:activity_text="@string/juluer"/>-->
+
+                   <!-- <com.louie.luntonghui.view.ActivityIcon
+                        android:id="@+id/ai_jiluer2"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:activity_icon="@drawable/jiluer"
+                        app:activity_text="@string/juluer"/>-->
+
+                    <LinearLayout
+                        android:id="@+id/ai_jiluer1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/saiyang" />
+
+                        <TextView
+                            style="@style/activity_area_style_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/saiyang"
+                            android:textColor="#666666"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ai_jiluer2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/jierpu" />
+
+                        <TextView
+                            style="@style/activity_area_style_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/jierpu"
+                            android:textColor="#666666"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                   <!-- <com.louie.luntonghui.view.ActivityIcon
+                        android:id="@+id/ai_chongdianqi"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:activity_icon="@drawable/chongdianqi"
+                        app:activity_text="@string/chongdianqi"/>-->
+                    <LinearLayout
+                        android:id="@+id/ai_chongdianqi"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/chongdianqi" />
+
+                        <TextView
+                            style="@style/activity_area_style_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/yingfa_chongdianqi"
+                            android:textColor="#666666"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                   <!-- <com.louie.luntonghui.view.ActivityIcon
+                        android:id="@+id/ai_luntai"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:activity_icon="@drawable/luntai"
+                        app:activity_text="@string/luntai"/>-->
+                    <LinearLayout
+                        android:id="@+id/ai_luntai"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/luntai" />
+
+                        <TextView
+                            style="@style/activity_area_style_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/luntai"
+                            android:textColor="#666666"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!--<com.louie.luntonghui.view.ActivityIcon
+                        android:id="@+id/mine_attention"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:activity_icon="@drawable/attention"
+                        app:activity_text="@string/activity_area_mine_attention"/>-->
+
+
+                    <LinearLayout
+                        android:id="@+id/mine_attention"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/attention" />
+
+                        <TextView
+                            style="@style/activity_area_style_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/activity_area_mine_attention"
+                            android:textColor="#666666"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/qiandao"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/qiandao_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/luntongbi" />
+
+                        <TextView
+                            style="@style/activity_area_style_text"
+                            android:id="@+id/qiandao_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/song_lungtongbi"
+                            android:textColor="#666666"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                    <!--<com.louie.luntonghui.view.ActivityIcon
+                        android:id="@+id/qiandao"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:activity_icon="@drawable/luntongbi"
+                        app:activity_text="@string/song_lungtongbi"/>-->
+                </LinearLayout>
+
+            </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/activity_area"
+                        style="@style/activity_area_style"
+                        android:layout_centerInParent="true"
+                        android:text="@string/activity_area"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <View
+                        android:layout_toLeftOf="@id/activity_area"
+                        android:layout_centerVertical="true"
+                        android:layout_width="120dp"
+                        android:layout_height="1dp"
+                        android:background="@color/useful_break_line_color"/>
+
+                    <View
+                        android:layout_toRightOf="@id/activity_area"
+                        android:layout_centerVertical="true"
+                        android:layout_width="120dp"
+                        android:layout_height="1dp"
+                        android:background="@color/useful_break_line_color"/>
+                </RelativeLayout>
+
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/second_kill"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/second_kill"/>
+
+                <ImageView
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/new_goods"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/new_goods"/>
+
+            </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/home_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

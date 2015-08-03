@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:orientation="horizontal"
+    android:background="@color/background_main_grey">
+    <TextView
+        android:id="@+id/account_value"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/order_break_line"
+        tools:text="jack"/>
+    <TextView
+        android:id="@+id/mobile_value"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/order_break_line"
+        tools:text="jack"/>
+    <TextView
+        android:id="@+id/account_name_value"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/order_break_line"
+        tools:text="jack"/>
+    <TextView
+        android:id="@+id/reg_time"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/order_break_line"
+        tools:text="jack"/>
+
+</LinearLayout>

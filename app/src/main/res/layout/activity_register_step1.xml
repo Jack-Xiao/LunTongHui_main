@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar_base"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/register_step_first_top"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/base_frame">
+
+            <TextView
+                android:textSize="14sp"
+                style="@style/register_step_style"
+                android:gravity="center"
+                android:text="@string/phone"
+                android:layout_width="wrap_content"
+                android:layout_height="51dp"
+                tools:text="手机"
+                android:layout_weight="0.06" />
+
+            <View
+                style="@style/register_step_break_line_view"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/base_frame_stroke"/>
+            <EditText
+                android:id="@+id/phone_number"
+                android:maxLength="11"
+                android:inputType="phone"
+                android:textSize="14sp"
+                style="@style/register_step_style"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:hint="@string/input_phone"
+                tools:hint="请输入您的手机号码"
+                android:background="@null"/>
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_marginTop="5dp"
+            android:text="同意注册协议"
+            android:hint="同意注册协议"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"/>
+
+        <Button
+            android:textColor="@color/white"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:id="@+id/next_step"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/next_step"
+            android:hint="下一步"
+            android:background="@drawable/next_step"/>
+
+    </LinearLayout>
+</LinearLayout>

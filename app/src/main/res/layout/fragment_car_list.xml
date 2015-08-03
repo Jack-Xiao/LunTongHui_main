@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar_car"/>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/goods_list_name"
+        android:text="@string/goods_list"
+        android:paddingTop="10dp"
+        android:textSize="16sp"
+        android:layout_marginBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+        <include android:id="@+id/empty_view" layout="@layout/fragment_car_empty_view1"/>
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/settle"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:background="@color/settle_background"
+        android:layout_height="40dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true">
+
+            <CheckBox
+                android:layout_gravity="center_vertical"
+                style="@style/goods_car_size"
+                android:id="@+id/checked"
+                android:text="@string/full_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+            <TextView
+                android:textColor="@color/white"
+                android:layout_marginLeft="15dp"
+                style="@style/goods_car_size"
+                android:layout_gravity="center_vertical"
+                android:text="合计:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="合计:"/>
+            <TextView
+                android:id="@+id/goods_total"
+                style="@style/goods_car_size"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                tools:text="￥123456.0" />
+        </LinearLayout>
+
+        <TextView
+            android:gravity="center"
+            android:id="@+id/playing"
+            android:textColor="@color/white"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textSize="16sp"
+            android:layout_width="110dp"
+            android:layout_height="match_parent"
+            android:background="@color/useful_red"
+            android:layout_alignParentRight="true"
+            tools:text="去结算(1111)"/>
+
+    </RelativeLayout>
+</LinearLayout>

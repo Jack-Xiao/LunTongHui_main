@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/toolbar_height"
+    style="@style/toolbar_style"
+    android:background="@drawable/navigation_bar"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/actionbar_back" />
+
+    <!--android:id="@+id/auto_navigation_search_content"-->
+    <EditText
+        android:id="@id/navigation_search_content"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/useful_grey"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:hint="@string/search_luntong_goods"
+        android:padding="5dp"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:drawableLeft="@drawable/search_icon"
+        android:layout_height="match_parent"
+        android:background="@drawable/navigation_search" />
+
+    <TextView
+        android:id="@+id/search_btn"
+        android:textColor="@color/white"
+        android:text = "搜索"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>

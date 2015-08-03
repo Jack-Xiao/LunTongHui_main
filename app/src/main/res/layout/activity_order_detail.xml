@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_base"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:paddingLeft="20dp"
+                    style="@style/order_top_font_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/goods_list" />
+
+                <com.louie.luntonghui.view.MyListView
+                    android:background="@color/white"
+                    android:id="@+id/lv_goodslist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/order_top_font_style"
+                    android:paddingLeft="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/base_info" />
+
+                <LinearLayout
+                    android:background="@color/white"
+                    android:paddingLeft="20dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <include android:id="@+id/order_state" layout="@layout/activity_order_detail_item"/>
+                    <include android:id="@+id/order_sn" layout="@layout/activity_order_detail_item"/>
+                    <include android:id="@+id/order_money" layout="@layout/activity_order_detail_item"/>
+                    <include android:id="@+id/down_order_time" layout="@layout/activity_order_detail_item"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/order_top_font_style"
+                    android:paddingLeft="20dp"
+                    android:text="@string/pay_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:background="@color/white"
+                    android:paddingLeft="20dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <include android:id="@+id/pay_method" layout="@layout/activity_order_detail_item"/>
+                    <include android:id="@+id/goods_value" layout="@layout/activity_order_detail_item"/>
+                    <include android:id="@+id/freight_value" layout="@layout/activity_order_detail_item"/>
+                    <include android:id="@+id/sales_volume" layout="@layout/activity_order_detail_item"/>
+                    <include android:id="@+id/need_pay_value" layout="@layout/activity_order_detail_item"/>
+                    <include android:id="@+id/has_pay_value" layout="@layout/activity_order_detail_item"/>
+                    <include android:id="@+id/pay_state" layout="@layout/activity_order_detail_item"/>
+                    </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/order_top_font_style"
+                    android:paddingLeft="20dp"
+                    android:text="@string/distribution_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:background="@color/white"
+                    android:paddingLeft="20dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <include android:id="@+id/consignee" layout="@layout/activity_order_detail_item"/>
+                <include android:id="@+id/delivery_address" layout="@layout/activity_order_detail_item"/>
+                <include android:id="@+id/phone_number" layout="@layout/activity_order_detail_item"/>
+                    </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/order_top_font_style"
+                    android:paddingLeft="20dp"
+                    android:text="@string/merchant_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:paddingLeft="20dp"
+                    android:id="@+id/business_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/base_frame"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/order_top_font_style"
+                    android:paddingLeft="20dp"
+                    android:text="@string/order_tracking"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:paddingLeft="20dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:gravity="center"
+                            android:text="@string/time"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="30dp"
+                            android:drawableRight="@drawable/order_break_line"/>
+
+                        <TextView
+                            android:gravity="center"
+                            android:text="@string/state"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="30dp" />
+                    </LinearLayout>
+                    <com.louie.luntonghui.view.MyListView
+                        android:id="@+id/list_view_order_state"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <Button
+                android:textColor="@color/white"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/next_step"
+                android:id="@+id/cancel_order"
+                android:text="@string/cancel_order"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</LinearLayout>

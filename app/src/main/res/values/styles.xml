@@ -1,0 +1,185 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="not_register_button">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginBottom">15dp</item>
+    </style>
+    
+    <style name="base_style">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+
+    <style name ="ToolbarStyle" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColor">@color/white</item>
+        <item name="colorControlNormal">@color/orange</item>
+        <item name="colorControlHighlight">@color/magenta</item>
+       <!-- <item name="android:actionMenuTextColor">@color/material_blue_700</item>-->
+    </style>
+
+    <style name="register_style" parent="base_style">
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:layout_marginTop">15dp</item>
+    </style>
+
+    <style name="login_style" parent="base_style">
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_marginLeft">15dp</item>
+        <item name="android:layout_marginRight">15dp</item>
+    </style>
+
+    <style name="goods_list_text_style" parent="base_style">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="goods_list_style" parent="base_style">
+        <item name="android:paddingTop">5dp</item>
+    </style>
+
+    <style name="goods_detail_item" parent="base_style">
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="goods_detail_item_value" parent="base_style">
+        <item name = "android:textSize">16sp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+    </style>
+
+    <style name="goods_car_size">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name ="android:gravity">center</item>
+    </style>
+
+    <style name="toolbar_text_style">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="car_buy_style">
+        <item name="android:paddingLeft">@dimen/car_buy_padding_left</item>
+         <item name="android:paddingRight">@dimen/car_buy_padding_right</item>
+     </style>
+
+
+    <style name="toolbar_style">
+        <item name="android:layout_height">@dimen/toolbar_height</item>
+        <item name="android:background">@color/toolbar_color</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="register_step_style" parent="base_style">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="register_step_break_line_view">
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+     </style>
+
+    <style name="mine_order_list_second_font">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/mine_font_second_color</item>
+    </style>
+
+    <style name="mine_order_list_first_font">
+        <item name="android:gravity">center</item>
+        <item name="android:drawablePadding">5dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/mine_font_main_color</item>
+    </style>
+
+    <style name="mine_order_list_item">
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name ="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="search_home_font">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="activity_area_style">
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:textColor">@color/useful_grey</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="activity_area_style_text">
+        <item name="android:layout_marginTop">2dp</item>
+    </style>
+
+    <style name="order_home_font_style">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/useful_grey</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+    </style>
+
+    <style name="order_top_font_style">
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="second_kill_font">
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:layout_marginLeft">2dp</item>
+        <item name="android:layout_marginRight">2dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/count_down_background</item>
+    </style>
+
+    <style name="mine_customer_order_home_style">
+        <item name="android:gravity">center</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingTop">5dp</item>
+
+    </style>
+
+    <style name="mine_service_order_font_style">
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:paddingLeft">10dp</item>
+    </style>
+
+    <style name="customer_people_list_home">
+        <item name="android:padding">5dp</item>
+        <item name="android:gravity">center</item>
+
+    </style>
+
+
+ </resources>

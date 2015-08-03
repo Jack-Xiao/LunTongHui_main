@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="mine_list_b">
+        <item>我的订单</item>
+        <item>我的收藏</item>
+        <item>我的客户列表</item>
+        <item>收货地址管理</item>
+        <item>客服中心</item>
+        <item>修改手机号</item>
+        <item>修改密码</item>
+    </string-array>
+
+    <string-array name="mine_list_c">
+        <item>我的订单</item>
+        <item>我的收藏</item>
+        <item>收货地址管理</item>
+        <item>客服中心</item>
+        <item>修改手机号</item>
+        <item>修改密码</item>
+    </string-array>
+
+    <string-array name="custom_type">
+        <item>终端门店</item>
+        <item>消费者</item>
+        <item>批发商</item>
+        <item>服务商</item>
+    </string-array>
+
+    <string-array name="activity_area_list">
+        <item>唐泽</item>
+        <item>吉路尔</item>
+        <item>赛阳</item>
+        <item>吉尔普</item>
+        <item>英发充电器</item>
+        <item>轮胎</item>
+    </string-array>
+
+    <string-array name="order_state_list">
+        <item>未确定</item>
+        <item>已确定</item>
+        <item>未发货</item>
+        <item>配货中</item>
+        <item>已发货</item>
+        <item>收货确认</item>
+        <item>已收货</item>
+        <item>未付款</item>
+        <item>已取消</item>
+    </string-array>
+
+</resources>

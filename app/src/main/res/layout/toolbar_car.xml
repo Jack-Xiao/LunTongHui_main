@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/toolbar_height"
+    android:background="@color/toolbar_color"
+    style="@style/toolbar_style">
+
+   <TextView
+       android:textSize="@dimen/toolbar_main_title_size"
+       android:textColor="@color/white"
+       android:layout_centerInParent="true"
+       android:text="@string/car"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/buy_again"
+        android:textSize="17sp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/white"
+        android:layout_marginRight="20dp"
+        android:text="@string/continue_shopping"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

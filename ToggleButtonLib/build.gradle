@@ -1,0 +1,35 @@
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.library'
+
+
+
+dependencies {
+    compile 'com.facebook.rebound:rebound:0.3.+'
+}
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion '21.1.1'
+
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 21
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}

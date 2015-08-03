@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="38dp"
+    android:orientation="horizontal"
+    android:background="@drawable/edittext_normal1"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <Button
+        android:id="@+id/minus"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:text="一"
+        android:background="@drawable/edittext_normal"/>
+    <EditText
+        android:id="@+id/content"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/edittext_normal"
+        tools:text="23"
+        android:gravity="center"
+        android:singleLine="true"
+        android:inputType="number"/>
+    <Button
+        android:id="@+id/plus"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/edittext_normal"
+        android:text="十"/>
+
+</LinearLayout>

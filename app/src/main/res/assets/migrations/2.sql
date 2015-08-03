@@ -1,0 +1,2 @@
+ALter TABLE Goods ADD COLUMN guige TEXT;
+ALter TABLE Goods ADD COLUMN unit TEXT;

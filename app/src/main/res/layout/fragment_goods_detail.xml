@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/goods_home_name"
+            style="@style/goods_list_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp"
+            tools:text="home" />
+
+        <View
+            android:layout_width="50dp"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@id/goods_home_name"
+            android:background="@color/grey_other" />
+
+        <View
+            android:layout_width="50dp"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/goods_home_name"
+            android:background="@color/grey_other" />
+    </RelativeLayout>
+
+    <!--    <com.louie.luntonghui.view.MyRecyclerView
+            android:id="@+id/goods_detail_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>-->
+
+    <!--<com.louie.luntonghui.view.MyListView
+        android:id="@+id/goods_detail_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>-->
+
+    <com.louie.luntonghui.view.MyGridView
+        android:id="@+id/goods_detail_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:horizontalSpacing="2dp"
+        android:numColumns="3"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="5dp" />
+
+</LinearLayout>

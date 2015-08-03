@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/toolbar_height"
+    style="@style/toolbar_style"
+
+    android:background="@drawable/navigation_bar">
+
+    <ImageView
+        android:layout_marginLeft="20dp"
+        android:id="@+id/toolbar_set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/set_icon"
+        tools:src="@drawable/login_set"/>
+
+    <TextView
+        android:textColor="@color/white"
+        android:textSize="@dimen/toolbar_main_title_size"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="我的轮通惠"/>
+
+    <ImageView
+        android:layout_marginRight="20dp"
+        android:id="@+id/toolbar_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/mine_service"/>
+
+</RelativeLayout>

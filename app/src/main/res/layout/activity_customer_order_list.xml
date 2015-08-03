@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar_base"/>
+
+    <LinearLayout
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/customer_today_order"
+            style="@style/mine_customer_order_home_style"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/order_break_line"
+            android:text="@string/today_order_list"/>
+
+        <TextView
+            android:id="@+id/customer_yesterday_order"
+            android:text="@string/yesterday_order_list"
+            style="@style/mine_customer_order_home_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/order_break_line"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/customer_total_order"
+            android:text="@string/total_order_list"
+            style="@style/mine_customer_order_home_style"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/background_main_grey"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ProgressBar
+            android:visibility="gone"
+            android:id="@+id/progress"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            />
+
+    <ListView
+        android:background="@color/white"
+        android:id="@+id/listView"
+        android:dividerHeight="10dp"
+        android:divider="@color/background_main_grey"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    </RelativeLayout>
+</LinearLayout>

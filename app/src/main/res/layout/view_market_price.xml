@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/goods_market_price_view_height"
+        android:background="@color/line_break_color"
+        android:layout_centerInParent="true"/>
+    <TextView
+        android:layout_centerInParent="true"
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/line_break_color"
+        tools:text="@string/test"/>
+
+</RelativeLayout>

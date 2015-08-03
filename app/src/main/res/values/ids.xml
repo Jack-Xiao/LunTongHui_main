@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="error_view" type="id" />
+    <item name="recycler" type="id"/>
+    <item name="refresher" type="id"/>
+    <item name="empty_view" type="id" />
+    <item name="loading_view" type="id" />
+    <item name="content_loader" type = "id"/>
+
+
+    <item name="toolbar_title" type="id"/>
+    <item name="toolbar_navigation" type="id"/>
+
+    <item name = "toolbar_cancel" type = "id"/>
+
+    <item name="go_around" type="id"/>
+    <item name="mine_attention" type="id"/>
+
+    <item name = "navigation_search_content" type="id"/>
+    <item name="auto_search_textview" type="id"/>
+</resources>

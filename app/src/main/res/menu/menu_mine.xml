@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/login_out"
+        android:title="@string/exit"
+        android:orderInCategory="100"
+        android:icon="@drawable/address"
+        android:showAsAction="always"/>
+</menu>

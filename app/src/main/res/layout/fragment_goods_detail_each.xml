@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_gravity="center"
+        android:id="@+id/goods_detail_item_each_image"
+        android:layout_width="70dp"
+        android:scaleType="centerCrop"
+        android:layout_height="70dp"
+        tools:src="@drawable/category_default_image"
+        android:background="@drawable/tinge_base_frame"/>
+
+<!--    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"-->
+
+<!--    <com.facebook.drawee.view.SimpleDraweeView
+        android:layout_gravity="center"
+        android:id="@+id/goods_detail_item_each_image"
+        android:scaleType="centerCrop"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        fresco:placeholderImage="@drawable/category_default_image"
+        fresco:failureImage="@drawable/category_default_image"
+        tools:src="@drawable/produce_demo"
+        android:background="@drawable/base_frame" />-->
+
+    <TextView
+        android:textSize="12sp"
+        android:layout_gravity="center"
+        android:maxLines="1"
+        android:id="@+id/goods_detail_item_each_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="3dp"
+        tools:text="赛阳牌外胎"/>
+</LinearLayout>
