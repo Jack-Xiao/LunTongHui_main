@@ -1,12 +1,5 @@
 package com.louie.luntonghui.ui;
 
-import java.util.ArrayList;
-
-import android.R.integer;
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -22,6 +15,9 @@ import com.louie.luntonghui.R;
 import com.louie.luntonghui.ui.category.GoodsDetailBuyActivity;
 import com.louie.luntonghui.view.SmoothImageView;
 import com.squareup.picasso.Picasso;
+import com.umeng.analytics.MobclickAgent;
+
+import java.util.ArrayList;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -185,6 +181,7 @@ public class SpaceImageDetailActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        MobclickAgent.onPause(this);
         if (isFinishing()) {
             overridePendingTransition(0, 0);
         }

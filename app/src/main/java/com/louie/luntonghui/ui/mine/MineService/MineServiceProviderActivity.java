@@ -1,18 +1,15 @@
 package com.louie.luntonghui.ui.mine.MineService;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.model.db.User;
-import com.louie.luntonghui.ui.BaseActivity;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.util.IntentUtil;
-import com.louie.luntonghui.util.ToastUtil;
+import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -54,7 +51,7 @@ public class MineServiceProviderActivity extends BaseNormalActivity {
 
     @OnClick(R.id.mine_customer_people_list)
     public void onClickPeopleList(){
-        IntentUtil.startActivity(MineServiceProviderActivity.this,MineCustomerPeopleListActivity.class);
+        IntentUtil.startActivity(MineServiceProviderActivity.this, MineCustomerPeopleListActivity.class);
     }
     @OnClick(R.id.mine_customer_order_list)
     public void onClickOrderList(){
@@ -62,6 +59,16 @@ public class MineServiceProviderActivity extends BaseNormalActivity {
     }
     @OnClick(R.id.mine_service_cost_query)
     public void onClickCostQuery(){
-        ToastUtil.showShortToast(mContext,"暂未开放");
+        IntentUtil.startActivity(MineServiceProviderActivity.this, MineServiceCostQueryActivity.class);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

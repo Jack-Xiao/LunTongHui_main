@@ -11,7 +11,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -36,7 +35,6 @@ import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.ui.ImageActivity;
 import com.louie.luntonghui.ui.MainActivity;
-import com.louie.luntonghui.ui.SpaceImageDetailActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
@@ -45,6 +43,7 @@ import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.BadgeView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -376,14 +375,15 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
     protected void onPause() {
         super.onPause();
         productViewpager.stopAutoScroll();
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         productViewpager.startAutoScroll();
+        MobclickAgent.onResume(this);
     }
-
 
 /*
     private void showGoodsPicture() {

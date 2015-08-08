@@ -118,6 +118,7 @@
     <string name="mine_whole_attention">查看全部收藏</string>
     <string name="mine_deliver_manager">收货地址管理</string>
     <string name="mine_service_phone">客服电话</string>
+    <string name="mine_work">我的工作</string>
 
     <string name="car_empty_front">您还未登录,请立即 </string>
     <string name="car_empty_behind"> 享受购物过程</string>
@@ -304,4 +305,20 @@
     <string name="customer_mobile">手机</string>
     <string name="customer_account_name">账号名称</string>
     <string name="customer_register_date">注册日期</string>
+
+    <string name="mine_cur_month_service_cost">本月服务费</string>
+    <string name="mine_whole_service_cost">全部服务费用</string>
+    <string name="date">日期</string>
+    <string name="cost">费用</string>
+    <string name="mine_service_cost">我的服务费</string>
+    <string name="waiting_while">加载中...</string>
+    <string name="current_month_cost_total">本月服务费用总和:</string>
+    <string name="whole_cost_total">所有服务费用总和:</string>
+    <string name="warning_register_info">如遇到任何注册问题,请拔打电话:400-006-8040</string>
+    <string name="enter_exit">再按一次退出</string>
+    <string name="proxy_register_account">代注册账号</string>
+    <string name="proxy_register_finish">代注册完成</string>
+    <string name="proxy_register_success">代注册成功</string>
+    <string name="please_input_six_count">密码请输入6位以上字符</string>
+    <string name="mine_proxy_register">我的代注册</string>
    </resources>

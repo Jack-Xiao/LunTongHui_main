@@ -1,28 +1,17 @@
 package com.louie.luntonghui.ui.register;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
-import com.android.volley.Response;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
-import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.LoginEvent;
-import com.louie.luntonghui.model.result.HomeAdver;
 import com.louie.luntonghui.ui.BaseNormalActivity;
-import com.louie.luntonghui.ui.SecondLevelBaseActivity;
-import com.louie.luntonghui.util.ConstantURL;
-import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
-import com.louie.luntonghui.util.TaskUtils;
 import com.squareup.otto.Subscribe;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by Administrator on 2015/6/2.
@@ -73,5 +62,15 @@ public class RegisterHome extends BaseNormalActivity {
     protected void onDestroy() {
          App.getBusInstance().unregister(this);
         super.onDestroy();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

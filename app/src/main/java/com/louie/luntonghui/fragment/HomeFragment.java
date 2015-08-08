@@ -29,7 +29,7 @@ import com.louie.luntonghui.model.result.DailySignIn;
 import com.louie.luntonghui.model.result.HomeAdver;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.category.GoodsDetailActivity;
-import com.louie.luntonghui.ui.kill.SecondKillActivity;
+import com.louie.luntonghui.ui.Home.SecondKillActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.ui.search.SearchActivity;
 import com.louie.luntonghui.util.Config;
@@ -376,7 +376,10 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
 
     @OnClick(R.id.new_goods)
     public void newGoods() {
-        ToastUtil.showShortToast(mContext, R.string.waiting_for);
+        //ToastUtil.showShortToast(mContext, R.string.waiting_for);
+        Bundle bundle = new Bundle();
+        bundle.putInt(GoodsDetailActivity.NEW_GOODS,GoodsDetailActivity.IS_NEW_GOODS);
+        IntentUtil.startActivity(getActivity(),GoodsDetailActivity.class,bundle);
     }
 
     @OnClick(R.id.second_kill)
@@ -385,6 +388,7 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
         //ToastUtil.showShortToast(mContext, R.string.waiting_for);
         //ToastUtil.showShortToast(mContext, R.string.waiting_for);
         //mFastQueryListener.query("产品秒杀");
+
         IntentUtil.startActivity(getActivity(), SecondKillActivity.class);
     }
 }

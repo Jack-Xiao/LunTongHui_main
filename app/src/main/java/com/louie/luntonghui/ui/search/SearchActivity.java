@@ -4,21 +4,17 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import com.activeandroid.query.Select;
 import com.android.volley.Response;
@@ -28,7 +24,6 @@ import com.louie.luntonghui.adapter.HistorySearchAdapter;
 import com.louie.luntonghui.adapter.ThinkSearchAdapter1;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.fragment.GoodsDetailFragment;
-import com.louie.luntonghui.model.db.GoodsDetail;
 import com.louie.luntonghui.model.db.HistorySearchTable;
 import com.louie.luntonghui.model.db.HotSearchTable;
 import com.louie.luntonghui.model.result.GoodsThinkSearchList;
@@ -41,6 +36,7 @@ import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.MyListView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -50,8 +46,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import butterknife.OnItemClick;
-import butterknife.OnTextChanged;
 import butterknife.Optional;
 
 import static com.louie.luntonghui.ui.register.RegisterLogin.USER_DEFAULT;
@@ -232,8 +226,8 @@ public class SearchActivity extends BaseNormalActivity {
 
                                            List<String> searchList = new ArrayList<String>();
                                            for (HistorySearchTable his : list) {
-                                               if(!searchList.contains(his.searchName))
-                                               searchList.add(his.searchName);
+                                               if (!searchList.contains(his.searchName))
+                                                   searchList.add(his.searchName);
                                            }
                                            return searchList;
                                        }
@@ -365,32 +359,28 @@ public class SearchActivity extends BaseNormalActivity {
         //searchHistoryContent.setVisibility(View.GONE);
         //icon.setImageResource(R.drawable.actionbar_back);
 
-        TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, String>() {
+        TaskUtils.executeAsyncTask(new AsyncTask<Object, Object,  List<HistorySearchTable>>() {
             @Override
-            protected String doInBackground(Object... params) {
+            protected  List<HistorySearchTable> doInBackground(Object... params) {
                 List<HistorySearchTable> list = new Select()
                         .from(HistorySearchTable.class)
                         .execute();
-                for(HistorySearchTable entity : list){
-                    if(entity.searchName.equals(navigationSearchContent.getText().toString())){
-                        return "";
-                    }
-                }
-                HistorySearchTable search = new HistorySearchTable();
-                search.searchName = navigationSearchContent.getText().toString();
-                search.save();
-
-                return navigationSearchContent.getText().toString();
+                return list;
             }
 
             @Override
-            protected void onPostExecute(String searchContent) {
+            protected void onPostExecute( List<HistorySearchTable> list) {
+                String searchContent = navigationSearchContent.getText().toString().trim();
+
+                if(!list.contains(searchContent)){
+                    HistorySearchTable search = new HistorySearchTable();
+                    search.searchName = searchContent;
+                    search.save();
+                    mSearchAdapter.insertData(searchContent);
+                }
+
                 clearHistorySearch.setVisibility(View.VISIBLE);
                 historySearchContent.setVisibility(View.VISIBLE);
-                if(!searchContent.equals("")){
-                    mSearchAdapter.insertData(navigationSearchContent.getText().toString());
-                }
-                searchContent = navigationSearchContent.getText().toString();
                 searchGoods(searchContent);
             }
         });
@@ -425,6 +415,17 @@ public class SearchActivity extends BaseNormalActivity {
             }
         }
     };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 
 /*    @Optional
     @OnItemClick(R.id.navigation_search1_content)

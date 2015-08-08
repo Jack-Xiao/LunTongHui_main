@@ -1,7 +1,5 @@
 package com.louie.luntonghui.adapter;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +17,6 @@ import com.louie.luntonghui.util.IntentUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit.http.POST;
 
 /**
  * Created by Jack on 15/7/30.
@@ -85,8 +81,8 @@ public class MineCustomerOrderListAdapter extends BaseAdapter {
         }
         viewHolder.tvSerialNumber.setText(data.get(position).orderSn);
         viewHolder.tvAccount.setText(data.get(position).userName +" ( " + data.get(position).mobilePhone + " )");
-        viewHolder.tvMoney.setText(data.get(position).orderAmount);
-        viewHolder.tvServiceCost.setText(data.get(position).money);
+        viewHolder.tvMoney.setText("￥" + data.get(position).orderAmount);
+        viewHolder.tvServiceCost.setText("￥" + data.get(position).serviceFee);
         viewHolder.btnChat.setTag(position);
         viewHolder.btnChat.setOnClickListener(mListener);
         int index = Integer.parseInt(data.get(position).handler)  -1;

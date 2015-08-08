@@ -20,12 +20,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
-import com.activeandroid.query.Update;
 import com.android.volley.Response;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
-import com.louie.luntonghui.event.LoginEvent;
 import com.louie.luntonghui.event.SaveAndModifyAddressEvent;
 import com.louie.luntonghui.model.db.Address;
 import com.louie.luntonghui.model.result.Result;
@@ -40,6 +38,7 @@ import com.louie.luntonghui.view.widget.OnWheelChangedListener;
 import com.louie.luntonghui.view.widget.WheelView;
 import com.louie.luntonghui.view.widget.adapters.ArrayWheelAdapter;
 import com.squareup.otto.Produce;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.List;
 import java.util.Map;
@@ -395,12 +394,14 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
     @Override
     protected void onPause() {
         super.onPause();
+        MobclickAgent.onPause(this);
         App.getBusInstance().unregister(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
         App.getBusInstance().register(this);
     }
 

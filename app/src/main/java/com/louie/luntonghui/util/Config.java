@@ -1,7 +1,9 @@
 package com.louie.luntonghui.util;
 
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.text.TextUtils;
 
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.ui.register.RegisterStep1Activity;
@@ -75,6 +77,7 @@ public class Config {
     public static final String TODAY_RUSH_GOODS_TIME = " 10:00:00";
     public static final String normalFormatter = "yyyy-MM-dd HH:mm:ss";
     public static final String onlyDateFormatter = "yyyy-MM-dd";
+    public static final String oneDateFormatter = "yyyy/MM/dd";
 
 
     public static int getCurrentVersion() {
@@ -240,8 +243,55 @@ public class Config {
         cal.add(Calendar.DAY_OF_MONTH, -1);
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
-        SimpleDateFormat format = new SimpleDateFormat(onlyDateFormatter);
-        String result = format.format(cal.getTime()) + " 00:00:00";
+        SimpleDateFormat format = new SimpleDateFormat(oneDateFormatter);
+        String result = format.format(cal.getTime());
+        return result;
+    }
+
+    public static String getDeviceInfo(Context context) {
+        try{
+            org.json.JSONObject json = new org.json.JSONObject();
+            android.telephony.TelephonyManager tm = (android.telephony.TelephonyManager) context
+                    .getSystemService(Context.TELEPHONY_SERVICE);
+
+            String device_id = tm.getDeviceId();
+
+            android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+
+            String mac = wifi.getConnectionInfo().getMacAddress();
+            json.put("mac", mac);
+
+            if( TextUtils.isEmpty(device_id) ){
+                device_id = mac;
+            }
+
+            if( TextUtils.isEmpty(device_id) ){
+                device_id = android.provider.Settings.Secure.getString(context.getContentResolver(),android.provider.Settings.Secure.ANDROID_ID);
+            }
+
+            json.put("device_id", device_id);
+
+            return json.toString();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getMacAddress(Context context){
+        android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+
+        String mac = wifi.getConnectionInfo().getMacAddress();
+        //json.put("mac", mac);
+
+        return mac;
+    }
+    public static String getFirstdayofThisMonth() {
+        SimpleDateFormat format = new SimpleDateFormat(oneDateFormatter);
+        String result;
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        result = format.format(cal.getTime());
         return result;
     }
 }

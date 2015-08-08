@@ -178,7 +178,12 @@
     <style name="customer_people_list_home">
         <item name="android:padding">5dp</item>
         <item name="android:gravity">center</item>
+    </style>
 
+    <style name="mine_service_cost_font">
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingBottom">7dp</item>
     </style>
 
 

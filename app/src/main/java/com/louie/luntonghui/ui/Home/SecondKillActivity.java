@@ -1,4 +1,4 @@
-package com.louie.luntonghui.ui.kill;
+package com.louie.luntonghui.ui.Home;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -6,14 +6,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.activeandroid.query.Delete;
@@ -30,18 +30,21 @@ import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.SecondKillAdvertResult;
 import com.louie.luntonghui.model.result.SecondKillGoodsResult;
-import com.louie.luntonghui.net.ImageCacheManager;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.ui.MainActivity;
+import com.louie.luntonghui.ui.category.GoodsDetailActivity;
+import com.louie.luntonghui.ui.category.GoodsDetailBuyActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
+import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.MyListView;
 import com.squareup.picasso.Picasso;
+import com.umeng.analytics.MobclickAgent;
 
 import org.apache.http.HttpStatus;
 
@@ -63,12 +66,17 @@ public class SecondKillActivity extends BaseNormalActivity {
     TextView emptyRushGoods;
     /*@InjectView(R.id.swipe_container)
     SwipeRefreshLayout swipeContainer;*/
-    @InjectView(R.id.main_fab)
-    FloatingActionButton mainFab;
+    /*@InjectView(R.id.main_fab)
+    FloatingActionButton mainFab;*/
+
     @InjectView(R.id.rush_goods_time)
     TextView rushGoodsTime;
     @InjectView(R.id.line_rush_goods)
     RelativeLayout lineRushGoods;
+    @InjectView(R.id.whole_content)
+    ScrollView wholeContent;
+    @InjectView(R.id.main_fab)
+    FloatingActionButton mainFab;
     private Timer timer = new Timer();
     @InjectView(R.id.toolbar_navigation)
     ImageView toolbarNavigation;
@@ -109,6 +117,7 @@ public class SecondKillActivity extends BaseNormalActivity {
     private static final int NOTBEGIN = 1;
     private static final int BEGINRUSH = 2;
     private static final int FINISHRUSH = 3;
+    private boolean firstInitTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,10 +164,25 @@ public class SecondKillActivity extends BaseNormalActivity {
         initSecondKillView();
         referenceSencodeKillGoods();
 
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Goods goods = mAdapter.getItem(position);
+                String goodsId = goods.goodsId;
+                Bundle bundle = new Bundle();
+                bundle.putString(GoodsDetailActivity.GOODSDETAILID, goodsId);
+                IntentUtil.startActivity(SecondKillActivity.this, GoodsDetailBuyActivity.class, bundle);
+            }
+        });
+
     }
 
     public void referenceSencodeKillGoods() {
-       // lineRushGoods.setVisibility(View.VISIBLE);
+        // lineRushGoods.setVisibility(View.VISIBLE);
+
+        progress.setVisibility(View.VISIBLE);
+        wholeContent.setVisibility(View.GONE);
+
         RequestManager.addRequest(new GsonRequest(killAdverUrl, SecondKillAdvertResult.class,
                 getSecondKillAdvert(), errorGoodsAdverListener()), mContext);
 
@@ -170,8 +194,11 @@ public class SecondKillActivity extends BaseNormalActivity {
         Picasso.with(mContext)
                 .load(R.drawable.no_second_kill)
                 .into(imgAdvertise);
-       // lineRushGoods.setVisibility(View.GONE);
+        // lineRushGoods.setVisibility(View.GONE);
         emptyRushGoods.setVisibility(View.VISIBLE);
+        lineRushGoods.setVisibility(View.GONE);
+        progress.setVisibility(View.GONE);
+
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -199,10 +226,10 @@ public class SecondKillActivity extends BaseNormalActivity {
                     return;
                 }
                 String url = secondKillAdvertResult.listallcat.get(0).ad_code;
-                ImageCacheManager.loadImage(url, ImageCacheManager.getImageListener(imgAdvertise));
-                /*Picasso.with(mContext).
+               // ImageCacheManager.loadImage(url, ImageCacheManager.getImageListener(imgAdvertise));
+                Picasso.with(mContext).
                         load(url)
-                        .into(imgAdvertise);*/
+                        .into(imgAdvertise);
             }
         };
     }
@@ -233,8 +260,8 @@ public class SecondKillActivity extends BaseNormalActivity {
                         List<ShoppingCar> list = new Select()
                                 .from(ShoppingCar.class)
                                 .execute();
-                        List<String>goodsIds = new ArrayList<String>();
-                        for(int i = 0;i<list.size();i++){
+                        List<String> goodsIds = new ArrayList<String>();
+                        for (int i = 0; i < list.size(); i++) {
                             goodsIds.add(list.get(i).goodsId);
                         }
 
@@ -292,9 +319,9 @@ public class SecondKillActivity extends BaseNormalActivity {
 
                                     goods1.setAlarmClock = Goods.NOT_SET_ALARM_CLOCK;
                                 }
-                                if(goodsIds.contains(entity.goods_id)){
+                                if (goodsIds.contains(entity.goods_id)) {
                                     goods1.isChecked = Goods.GOODS_IS_BUY;
-                                }else{
+                                } else {
                                     goods1.isChecked = Goods.GOODS_IS_NOT_BUY;
                                 }
 
@@ -317,14 +344,17 @@ public class SecondKillActivity extends BaseNormalActivity {
 
                     @Override
                     protected void onPostExecute(List<Goods> list) {
-                        progress.setVisibility(View.GONE);
-                       // swipeContainer.setRefreshing(false);
+                        //progress.setVisibility(View.GONE);
+                        // swipeContainer.setRefreshing(false);
                         //if (swipeContainer != null) swipeContainer.setRefreshing(false);
+                        //wholeContent.setVisibility(View.VISIBLE);
                         if (list != null && list.size() > 0) {
+                            lineRushGoods.setVisibility(View.VISIBLE);
                             emptyRushGoods.setVisibility(View.GONE);
                             listview.setVisibility(View.VISIBLE);
                             mAdapter.setData(list, ALARM_CLOCK_TIME);
                         } else {
+                            lineRushGoods.setVisibility(View.GONE);
                             emptyRushGoods.setVisibility(View.VISIBLE);
                             listview.setVisibility(View.GONE);
                         }
@@ -411,6 +441,11 @@ public class SecondKillActivity extends BaseNormalActivity {
                     }
                     break;
             }
+            if(firstInitTimer){
+                progress.setVisibility(View.GONE);
+                wholeContent.setVisibility(View.VISIBLE);
+                firstInitTimer = false;
+            }
         }
     };
 
@@ -420,6 +455,10 @@ public class SecondKillActivity extends BaseNormalActivity {
         //handler.postDelayed(mRunnable, DELAYTIME);
         //new Thread(new MyThread()).start();
         //if(timer == null){
+
+        firstInitTimer = true;
+        MobclickAgent.onResume(this);
+
         timer = new Timer();
         //}
         if (task != null) {
@@ -433,14 +472,15 @@ public class SecondKillActivity extends BaseNormalActivity {
                 handler.sendMessage(message);
             }
         };
-        timer.schedule(task, DELAYTIME, 10);
+        timer.schedule(task, DELAYTIME, 5);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //new Thread(new MyThread()
-        //handler.removeCallbacks(mRunnable);
+        firstInitTimer = false;
+
+        MobclickAgent.onPause(this);
         task.cancel();
         timer.cancel();
     }
@@ -453,13 +493,4 @@ public class SecondKillActivity extends BaseNormalActivity {
         App.getBusInstance().post(new ShowCarListEvent());
         finish();
     }
-
-   /* @Override
-    public void onRefresh() {
-        referenceSencodeKillGoods();
-        *//*if (swipeContainer != null && !swipeContainer.isRefreshing()) {
-            swipeContainer.setRefreshing(true);
-
-        }*//*
-    }*/
 }

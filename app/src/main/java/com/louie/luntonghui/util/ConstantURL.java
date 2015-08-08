@@ -1,7 +1,5 @@
 package com.louie.luntonghui.util;
 
-import javax.net.ssl.HostnameVerifier;
-
 /**
  * Created by Administrator on 2015/6/2.
  */
@@ -9,9 +7,9 @@ public class ConstantURL {
 
     public static final String SUCCESSCODE = "000";
 
-    public static final String HOST = "http://120.25.224.250/api/"; //测试 Ip
+    //public static final String HOST = "http://120.25.224.250/api/"; //测试 Ip
     //public static final String HOST = "http://192.168.0.254/ecs/api/"; //测试 Ip
-    //public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
+    public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
 
     public static final String MODE = "mode=test";
 
@@ -26,9 +24,7 @@ public class ConstantURL {
     private static final String ARGSCONTENT8 = "%8$s";
     private static final String ARGSCONTENT9 = "%9$s";
 
-
     public static final String INITPASSWORD = "000000";
-
 
 
     public String getCheckCode="http://120.24.209.210/api/mobile.php?act=bindingcode&user_tel=13417185094&mode=test";
@@ -47,25 +43,53 @@ public class ConstantURL {
     public static final String REGISTER = HOST + "mobile.php?act=users&username=" +
             ARGSCONTENT1+"&password="+INITPASSWORD+"&tel=" +ARGSCONTENT2+"&mode=test";
 
-    // new 注册
+   /* // new 注册
     public static final String NEWREGISTER = HOST +
             "mobile.php?act=new_users&" +
             "username=" + ARGSCONTENT1+"&" +
+            "password="+INITPASSWORD+"&"+
             "password="+INITPASSWORD+"&"+
             "tel=" +ARGSCONTENT2+"&"+
             "mode=test";
 
     public static final String NEWREGISTERCOMMEND = HOST +
     "mobile.php?act=new_user&username=" +
-    ARGSCONTENT1+"&password="+INITPASSWORD+"&tel=" +ARGSCONTENT2+"&mode=test" + "yqm=" + ARGSCONTENT3;
+    ARGSCONTENT1+"&password="+INITPASSWORD
+    +"&tel=" +ARGSCONTENT2
+    +"&mode=test"
+    + "yqm=" + ARGSCONTENT3;*/
+
+    public static final String NEWREGISTER = HOST +
+            "mobile.php?act=new_users" + "&"
+            +"username=" + ARGSCONTENT1 + "&"
+            +"password=" + ARGSCONTENT2 + "&"
+            +"tel=" + ARGSCONTENT3 + "&"
+            +"mac=" + ARGSCONTENT4 + "&"
+            +"s_ctype=" + ARGSCONTENT5 + "&"
+            +"mode=test";
+
+    public static final String NEWREGISTERCOMMEND = HOST +
+            "mobile.php?act=new_users" +"&"
+            +"username=" + ARGSCONTENT1 +"&"
+            +"password=" + ARGSCONTENT2 + "&"
+            +"tel=" + ARGSCONTENT3 + "&"
+            +"yqm="+ARGSCONTENT4 +"&"
+            +"mac="+ARGSCONTENT5 + "&"
+            +"s_ctype=" +  ARGSCONTENT6 +"&"
+            +"mode=test";
+
 
     //有邀请码的注册
     public static final String REGISTERRECOMMEND = HOST + "mobile.php?act=users&username=" +
             ARGSCONTENT1+"&password="+INITPASSWORD+"&tel=" +ARGSCONTENT2+"&mode=test" + "yqm=" + ARGSCONTENT3;
 
     //登录 example:  http://120.24.209.210/api/mobile.php?act=loginusr&mode=test&user=shishi&password=123456
-    public static final String LOGIN = HOST + "mobile.php?act=loginusr&mode=test&user="+ARGSCONTENT1 +
-                                "&password=" +ARGSCONTENT2;
+    /*public static final String LOGIN = HOST + "mobile.php?act=loginusr&mode=test&user="+ARGSCONTENT1 +
+                                "&password=" +ARGSCONTENT2;*/
+    public static final String LOGIN = HOST
+            + "mobile.php?act=loginusr&mode=test&user="+ARGSCONTENT1 +
+            "&password=" +ARGSCONTENT2 + "&"
+            +"mac=" + ARGSCONTENT3;
 
     //##############################################################################################
     /*
@@ -280,6 +304,35 @@ public class ConstantURL {
             "mobile.php?act=suppliersubordinate&mode=test" +"&"
             +"user_id=" + ARGSCONTENT1;
 
+    //服务商下级会员利润
+    public static final String MINE_SERVICE_COST = HOST +
+            "mobile.php?act=orderprofit" + "&"
+            +"user_id=" + ARGSCONTENT1 +"&"
+            +"date_field=" + ARGSCONTENT2 + "&"
+            +"mode=test";
+    public static final String NEWGOODS = HOST
+            +"mobile.php?act=listnewgoods" + "&"
+            +"mode=test" + "&"
+            +"display=" + ARGSCONTENT1 + "&"
+            +"ctype=" + ARGSCONTENT2 + "&"
+            +"page=" + ARGSCONTENT3 + "&"
+            +"page_size=" + ARGSCONTENT4;
 
+    //http://120.25.224.250/api/mobile.php?act=get_users&user_id=146&mode=test
+    public static final String GETUSER = HOST
+            +"mobile.php?act=get_users" + "&"
+            +"user_id=" + ARGSCONTENT1 + "&"
+            +"mode=test";
 
+    //代注册
+    public static final String PROXYREGISTER =
+            HOST +
+                    "mobile.php?act=new_users" + "&"
+                    +"username=" + ARGSCONTENT1 + "&"
+                    +"password=" + ARGSCONTENT2 + "&"
+                    +"tel=" + ARGSCONTENT3 + "&"
+                    +"mac=" + ARGSCONTENT4 + "&"
+                    +"s_ctype=" + ARGSCONTENT5 + "&"
+                    +"salesman=" + ARGSCONTENT6 + "&"
+                    +"mode=test";
 }

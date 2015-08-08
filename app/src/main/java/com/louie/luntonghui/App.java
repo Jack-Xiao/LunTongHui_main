@@ -15,8 +15,6 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.GeofenceClient;
 import com.baidu.location.LocationClient;
-/*import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.stetho.Stetho;*/
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.model.db.HotSearchTable;
 import com.louie.luntonghui.model.db.Order;
@@ -51,14 +49,18 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import static com.louie.luntonghui.ui.register.RegisterLogin.USER_DEFAULT;
-import static com.louie.luntonghui.ui.register.RegisterLogin.USER_TYPE;
-import static com.louie.luntonghui.ui.register.RegisterLogin.USER_WHOLESALER;
+/*import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.stetho.Stetho;*/
 
 /**
  * Created by Louie on 2015/5/28.
  */
 public class App extends Application {
+
+    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
+    private static final String TWITTER_KEY = "casoxiao@gmail.com";
+    private static final String TWITTER_SECRET = "zz3321";
+
     public static final String CITY = "city";
     public static final String PROVINCE = "province";
     public static final String CITYID = "city_id";
@@ -97,6 +99,10 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        //Fabric.with(this, new Crashlytics(), new Twitter(authConfig));
+        //Fabric.with(this,new Crashlytics());
+
         ActiveAndroid.initialize(this);
         application = this;
         parserXml();

@@ -26,6 +26,7 @@ import com.louie.luntonghui.model.result.DailySignIn;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.mine.MineReceiverAddressActivity;
 import com.louie.luntonghui.ui.mine.MineService.MineServiceProviderActivity;
+import com.louie.luntonghui.ui.mine.MineService.MineWorkActivity;
 import com.louie.luntonghui.ui.mine.SettingActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.Config;
@@ -38,7 +39,6 @@ import com.louie.luntonghui.util.ToastUtil;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Administrator on 2015/7/7.
@@ -49,8 +49,8 @@ public class MineFragment1 extends BaseFragment {
     ImageView toolbarSet;
     @InjectView(R.id.toolbar_list)
     ImageView toolbarList;
-/*    @InjectView(R.id.user_image)
-    CircleImageView userImage;*/
+    /*    @InjectView(R.id.user_image)
+        CircleImageView userImage;*/
     @InjectView(R.id.username)
     TextView username;
     @InjectView(R.id.phone_number)
@@ -90,12 +90,15 @@ public class MineFragment1 extends BaseFragment {
     FrameLayout linSignIn;
     @InjectView(R.id.service_phone_number)
     TextView servicePhoneNumber;
+    @InjectView(R.id.mine_work)
+    RelativeLayout mineWork;
     private Context mContext;
 
     private String mUid;
     private String mCustomType;
     private ProgressDialog mProgressDialog;
     public String userType;
+    private String employeeType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,12 +107,13 @@ public class MineFragment1 extends BaseFragment {
         mUid = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
         userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.DEFAULT_USER_ID);
         if (!userType.equals(RegisterLogin.DEFAULT_USER_ID)) {
-            if(userType.equals("")) {
+            if (userType.equals("")) {
                 userType = RegisterLogin.USER_DEFAULT;
             }
             int iType = Integer.parseInt(userType);
             mCustomType = customType[iType];
         }
+        employeeType = DefaultShared.getString(User.IS_EMPLOYEE, User.NOTEMPLOYEE);
 
     }
 
@@ -124,10 +128,15 @@ public class MineFragment1 extends BaseFragment {
         initIntegral();
 
         queryData();
-        if(userType.equals(RegisterLogin.USER_SERVICE)){
+        if (userType.equals(RegisterLogin.USER_SERVICE)) {
             toolbarList.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             toolbarList.setVisibility(View.GONE);
+        }
+        if(employeeType.equals(User.ISEMPLOYEE)){
+            mineWork.setVisibility(View.VISIBLE);
+        }else{
+            mineWork.setVisibility(View.GONE);
         }
 
         return contentView;
@@ -148,7 +157,6 @@ public class MineFragment1 extends BaseFragment {
 
 
     private void queryData() {
-
         TaskUtils.executeAsyncTask(new AsyncTask<Void, Void, User>() {
             @Override
             protected User doInBackground(Void... params) {
@@ -287,8 +295,9 @@ public class MineFragment1 extends BaseFragment {
             //ToastUtil.showShortToast(mContext,);
         }
     }
+
     @OnClick(R.id.toolbar_list)
-    public void onClickMineCustomerList(){
+    public void onClickMineCustomerList() {
         IntentUtil.startActivity(getActivity(), MineServiceProviderActivity.class);
     }
 
@@ -329,5 +338,10 @@ public class MineFragment1 extends BaseFragment {
                 }
             }
         };
+    }
+
+    @OnClick(R.id.mine_work)
+    public void onClickMineClient() {
+        IntentUtil.startActivity(getActivity(), MineWorkActivity.class);
     }
 }

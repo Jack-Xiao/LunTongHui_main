@@ -8,17 +8,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
 
 import com.louie.luntonghui.R;
-import com.louie.luntonghui.ui.kill.SecondKillActivity;
-import com.louie.luntonghui.util.BaseAlertDialogUtil;
+import com.louie.luntonghui.ui.Home.SecondKillActivity;
 
 import java.util.List;
-
-import me.drakeet.materialdialog.MaterialDialog;
 
 /**
  * Created by Jack on 15/7/29.
@@ -26,13 +23,14 @@ import me.drakeet.materialdialog.MaterialDialog;
 public class AlarmReceiver extends BroadcastReceiver {
     private Context mContext;
     public static final String ACTIVITY_NAME = "com.louie.luntonghui.ui.kill.SecondKillActivity";
+    private MediaPlayer mMediaPlayer;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         mContext = context;
         String activityName = getCurrentActivityName(context);
 
-        Log.d("activity name",getCurrentActivityName(context));
+        playSound();
         if(activityName != null && ACTIVITY_NAME.equals(activityName)){
 
             Log.d("activity name",getCurrentActivityName(context));
@@ -53,6 +51,16 @@ public class AlarmReceiver extends BroadcastReceiver {
         return componentInfo.getClassName();
     }
 
+    public void playSound() {
+        try {
+            mMediaPlayer = MediaPlayer.create(mContext, R.raw.wink);
+            mMediaPlayer.stop();
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     private void showBox(final Context context) {
 

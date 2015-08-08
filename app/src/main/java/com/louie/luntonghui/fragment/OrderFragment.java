@@ -31,7 +31,6 @@ import com.louie.luntonghui.model.result.OrderList;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.ConstantURL;
-import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.view.RecyclerViewLinearLayoutViewItemDecoration;
 
@@ -89,8 +88,13 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
         App.getBusInstance().register(this);
         tvList = new ArrayList<>();
         mProgressDialog = new ProgressDialog(getActivity());
+
+//        test(); //测试友盟
     }
 
+    private void test() {
+        int a = 1/0;
+    }
 
     public interface ComeBackListener {
         public void back();
@@ -144,9 +148,7 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new RecyclerViewLinearLayoutViewItemDecoration(getActivity(), HORIZONTAL_LIST));
 
-
-        //onRefresh();
-        return contentView;
+         return contentView;
     }
 
     @Override

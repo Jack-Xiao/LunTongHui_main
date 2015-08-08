@@ -37,8 +37,9 @@
         android:theme="@style/LunTongHui"
         android:windowSoftInputMode="stateHidden">
 
-        <meta-data android:name="AA_DB_NAME" android:value="luntonghui.db"/>
-        <meta-data android:name="AA_DB_VERSION" android:value="14"/>  <!-- options  default to 1-->
+
+    <meta-data android:name="AA_DB_NAME" android:value="luntonghui.db"/>
+        <meta-data android:name="AA_DB_VERSION" android:value="15"/>  <!-- options  default to 1-->
 
 
         <activity
@@ -90,7 +91,7 @@
             android:launchMode="singleTask"/>
         <activity android:name=".ui.mine.SettingActivity" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".ui.order.DetailOrderActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.kill.SecondKillActivity" android:configChanges="orientation|keyboardHidden|navigation|keyboard"
+        <activity android:name=".ui.Home.SecondKillActivity" android:configChanges="orientation|keyboardHidden|navigation|keyboard"
                     android:launchMode="singleInstance"
                     android:excludeFromRecents="true"
                     android:taskAffinity="" />
@@ -105,5 +106,16 @@
         <activity android:name=".ui.mine.MineService.MineServiceCostQueryActivity" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".ui.ImageActivity" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".ui.SpaceImageDetailActivity" android:configChanges="orientation|keyboardHidden"/>
-     </application>
+        <activity android:name=".ui.mine.MineService.MineWorkActivity" android:configChanges="orientation|keyboardHidden"/>
+        <activity android:name=".ui.register.ProxyRegisterActivity" android:configChanges="orientation|keyboardHidden"/>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="989bec3cbe78c82d1d5a3c9efd94f9fbeb209df9" />
+
+        //友盟统计分析
+        <meta-data android:value="55c1ea20e0f55ace150019c7" android:name="UMENG_APPKEY"></meta-data>
+        <meta-data android:value="native" android:name="UMENG_CHANNEL"/>
+
+    </application>
 </manifest>

@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,10 +26,9 @@ import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.AddGoodsResult;
 import com.louie.luntonghui.model.result.Result;
-import com.louie.luntonghui.net.ImageCacheManager;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.receiver.AlarmReceiver;
-import com.louie.luntonghui.ui.kill.SecondKillActivity;
+import com.louie.luntonghui.ui.Home.SecondKillActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.AlertDialogUtil;
 import com.louie.luntonghui.util.Config;
@@ -134,7 +132,6 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
             viewHolder.btnFastBuy.setEnabled(true);
             currentClockType = Config.CAN_SET_ALARM_CLOCK;
             //viewHolder.btnFastBuy.setTag(Config.CAN_SET_ALARM_CLOCK);
-
             if(mList.get(position).setAlarmClock.equals(Goods.HAS_SET_ALARM_CLOCK)){
                 viewHolder.btnFastBuy.setEnabled(true);
                 viewHolder.btnFastBuy.setText(R.string.has_set);
@@ -176,6 +173,7 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
         //viewHolder.btnFastBuy.setEnabled(!list.get(position).isChecked.equals(Goods.GOODS_IS_BUY));
         viewHolder.btnFastBuy.setTag(position);
         viewHolder.btnFastBuy.setOnClickListener(clickListener);
+
         return convertView;
     }
 
@@ -186,11 +184,8 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
 
             int position = Integer.parseInt(v.getTag().toString());
             curPosition = position;
-            Log.d("onclick this positon." , position +  "-------");
             if(currentClockType.equals(Config.RUSH_GOODS_BEGINNING)){
                 isAdd = true;
-
-                //curPosition = position;
                 Goods goods = mList.get(position);
                 String goodsId = goods.goodsId;
 
@@ -227,7 +222,7 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
 
 
                 } else {
-                    toast.setView( setAlarmClock);
+                    toast.setView(setAlarmClock);
 
                     new Update(Goods.class)
                             .set("setAlarmClock=?", Goods.HAS_SET_ALARM_CLOCK)
@@ -261,16 +256,9 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
                     AlarmManager manager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
                     manager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),sender);
                 }
-
-
                 toast.show();
-
                 notifyDataSetChanged();
-               // ToastUtil.showShortToast(mContext, );
-
-
             }
-
         }
     };
 
@@ -302,8 +290,6 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
 
     @Override
     public void confirmAlarmColock(int type, String hour) {
-
-
 
     }
 
@@ -352,6 +338,7 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
             }
         };
     }
+
     private Response.Listener<Result> editGoodsListener(final String carId,final int count) {
         return new Response.Listener<Result>() {
             @Override

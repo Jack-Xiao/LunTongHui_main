@@ -37,6 +37,7 @@ public class Login {
     public String email;
     public String verification;
     public String type;
+    public String personnel; //是否员工  0 为否, 1 为是
 
 
     /**

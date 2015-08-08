@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -23,7 +22,6 @@ import com.louie.luntonghui.adapter.GoodsDetailListAdapter;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.ShowCarListEvent;
 import com.louie.luntonghui.model.db.Goods;
-import com.louie.luntonghui.model.db.GoodsDetail;
 import com.louie.luntonghui.model.result.CurrentBrandGoodsList;
 import com.louie.luntonghui.rest.ServiceManager;
 import com.louie.luntonghui.ui.BaseNormalActivity;
@@ -34,6 +32,7 @@ import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -58,6 +57,11 @@ public class GoodsDetailActivity extends BaseNormalActivity {
     public static final String SALES = "sales";
     public static final String COLLIIGATE = "colligate";
     public static final String PRICE = "price";
+    public static final String NEW_GOODS = "new_goods";
+    public static final int IS_NEW_GOODS = 1;
+    public static final int NOT_NEW_GOODS = 0;
+    public static final int INIT_PAGE = 1;
+    public static final int MAX_PAGE_SIZE = Integer.MAX_VALUE;
 
     public String url;
     public String id;
@@ -74,8 +78,8 @@ public class GoodsDetailActivity extends BaseNormalActivity {
     TextView price;
     @InjectView(R.id.navigation_search)
     TextView navigationSearch;
-/*    @InjectView(R.id.navigation_search_edit)
-    EditText navigationSearchEdit;*/
+    /*    @InjectView(R.id.navigation_search_edit)
+        EditText navigationSearchEdit;*/
     @InjectView(R.id.icon)
     ImageView icon;
 
@@ -104,6 +108,7 @@ public class GoodsDetailActivity extends BaseNormalActivity {
     private boolean isSearch = false;
     private String searchContent;
     public String userId;
+    private boolean isNewGods = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +124,11 @@ public class GoodsDetailActivity extends BaseNormalActivity {
             searchContent = bundle.getString(SearchActivity.SEARCH_CONTENT,
                     SearchActivity.SEARCH_DEFAULT_CONTENT);
             isSearch = true;
+        }
 
+        if (bundle != null && bundle.getInt(NEW_GOODS) == IS_NEW_GOODS) {
+
+            isNewGods = true;
         }
 
         sorting_up = getResources().getDrawable(R.drawable.category_product_up);
@@ -136,7 +145,6 @@ public class GoodsDetailActivity extends BaseNormalActivity {
         } else {
             show = "02";
         }
-
 
         data = new ArrayList<>();
 
@@ -158,9 +166,35 @@ public class GoodsDetailActivity extends BaseNormalActivity {
     }
 
     private void initSorting() {
+        display = DefaultShared.getString(App.PROVINCEID, App.DEFAULT_PROVINCEID);
+
+        switch (display) {
+            case "6":
+                display = "0";
+                break;
+            case "388":
+                display = "1";
+                break;
+        }
+
         String cType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
 
-        if (!isSearch) {
+        if (isNewGods) {
+            display = DefaultShared.getString(App.PROVINCEID, App.DEFAULT_PROVINCEID);
+
+            switch (display) {
+                case "6":
+                    display = "0";
+                    break;
+                case "388":
+                    display = "1";
+                    break;
+            }
+            //String cityId = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
+            String newGoodsUrl = String.format(ConstantURL.NEWGOODS, display, cType, INIT_PAGE, MAX_PAGE_SIZE);
+
+            url = newGoodsUrl;
+        } else if (!isSearch) {
             display = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
 
             String cityId = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
@@ -173,22 +207,11 @@ public class GoodsDetailActivity extends BaseNormalActivity {
 
             //id = getIntent().getBundleExtra(GOODSDETAILID);
 
-
             String initUrl = url + "&" + INTRO + "=" + intro +
                     "&" + SORTING + "=" + sorting;
 
         } else {
 
-            display = DefaultShared.getString(App.PROVINCEID,App.DEFAULT_PROVINCEID);
-
-            switch (display){
-                case "6":
-                    display = "0";
-                    break;
-                case "388":
-                    display = "1";
-                    break;
-            }
             //navigationSearch.setVisibility(View.GONE);
 
             try {
@@ -197,7 +220,7 @@ public class GoodsDetailActivity extends BaseNormalActivity {
                 e.printStackTrace();
             }
             String searchUrl = String.format(ConstantURL.GOODS_SEARCH_LIST, userId, searchContent,
-                    cType,display);
+                    cType, display);
             url = searchUrl;
             //executeRequest(new GsonRequest());
         }
@@ -206,6 +229,7 @@ public class GoodsDetailActivity extends BaseNormalActivity {
 
     private void executeUrl(String url) {
         executeRequest(new GsonRequest(url, CurrentBrandGoodsList.class, getGoodsList(), errorListener()));
+
     }
 
     private Response.Listener<CurrentBrandGoodsList> getGoodsList() {
@@ -234,7 +258,7 @@ public class GoodsDetailActivity extends BaseNormalActivity {
 
                                                    List<Goods> data = new ArrayList<Goods>();
 
-                                                   if (isSearch) {
+                                                   if (isSearch || isNewGods) {
                                                        List<Goods> lists1 = new ArrayList<Goods>();
                                                        lists1 = new Select()
                                                                .from(Goods.class)
@@ -298,7 +322,6 @@ public class GoodsDetailActivity extends BaseNormalActivity {
                                                        for (int i = 0; i < lists.size(); i++) {
                                                            curGoodsId.add(lists.get(i).goodsId);
                                                        }
-
                                                        List<Goods> lists1 = new ArrayList<Goods>();
                                                        lists1 = new Select()
                                                                .from(Goods.class)
@@ -466,7 +489,7 @@ public class GoodsDetailActivity extends BaseNormalActivity {
                                                            ActiveAndroid.setTransactionSuccessful();
                                                            ActiveAndroid.endTransaction();
                                                        }
-                                                       for(int i = 0; i < data.size(); i++) {
+                                                       for (int i = 0; i < data.size(); i++) {
                                                            if (goodsIds.contains(data.get(i).goodsId)) {
                                                                data.get(i).isChecked = Goods.GOODS_IS_BUY;
                                                            } else {
@@ -583,23 +606,37 @@ public class GoodsDetailActivity extends BaseNormalActivity {
         App.getBusInstance().unregister(this);
         super.onDestroy();
     }
+
     @OnClick(R.id.navigation_search)
-    public void navigationSearch(){
-        Intent intent = new Intent(GoodsDetailActivity.this,SearchActivity.class);
+    public void navigationSearch() {
+        Intent intent = new Intent(GoodsDetailActivity.this, SearchActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
     }
 
     @OnClick(R.id.car)
-    public void checkCar(){
+    public void checkCar() {
         App.getBusInstance().post(new ShowCarListEvent());
         IntentUtil.startActivity(GoodsDetailActivity.this, MainActivity.class);
         finish();
     }
+
     @OnClick(R.id.main_fab)
-    public void onOnClickCart(){
+    public void onOnClickCart() {
         App.getBusInstance().post(new ShowCarListEvent());
-        IntentUtil.startActivity(GoodsDetailActivity.this,MainActivity.class);
+        IntentUtil.startActivity(GoodsDetailActivity.this, MainActivity.class);
         finish();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

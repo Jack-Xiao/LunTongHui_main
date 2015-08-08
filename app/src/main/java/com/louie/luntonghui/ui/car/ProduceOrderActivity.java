@@ -25,26 +25,22 @@ import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.adapter.ProduceOrderAdapter;
 import com.louie.luntonghui.data.GsonRequest;
-import com.louie.luntonghui.event.LoginSuccessEvent;
 import com.louie.luntonghui.event.OrderConfirmEvent;
 import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.OrderConfirm;
 import com.louie.luntonghui.model.result.ProduceOrder;
-import com.louie.luntonghui.model.result.Result;
 import com.louie.luntonghui.ui.BaseNormalActivity;
-import com.louie.luntonghui.ui.MainActivity;
-import com.louie.luntonghui.ui.mine.MineAdditionAddressActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.BaseAlertDialogUtil;
 import com.louie.luntonghui.util.BaseMainAlertDialogUtil;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
-import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.MyListView;
 import com.louie.luntonghui.view.SlideSwitch;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -57,8 +53,6 @@ import java.util.regex.Pattern;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import me.drakeet.materialdialog.MaterialDialog;
-import retrofit.http.DELETE;
 
 /**
  * Created by Administrator on 2015/7/1.
@@ -204,9 +198,9 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                     } else {
                         value = Integer.parseInt(beforeText);
                     }
-                    if (s.toString().equals("")){
+                    if (s.toString().equals("")) {
                         value = 0;
-                    }else{
+                    } else {
                         value = Integer.parseInt(s.toString());
                     }
 
@@ -234,7 +228,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
 
                 double totals = totalOrgValue - curUseLunTongValue;
                 BigDecimal bg = new BigDecimal(totals);
-                goodsTotal.setText("￥" +  bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                goodsTotal.setText("￥" + bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 useLuntongMoneyCount.setSelection(useLuntongMoneyCount.getText().length());
             }
         });
@@ -384,7 +378,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                 .setNegativeContent(R.string.to_think_again)
                 .setPositiveContent(R.string.go_alway);
 
-        BaseAlertDialogUtil.getInstance().show(mContext,ProduceOrderActivity.this);
+        BaseAlertDialogUtil.getInstance().show(mContext, ProduceOrderActivity.this);
     }
 
     @Override
@@ -415,6 +409,16 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         }
 
         String url = String.format(ConstantURL.CONFIRM_ORDER,uid,addressId,payId,strUserFeedback,integral,display);
-        executeRequest(new GsonRequest(url,OrderConfirm.class,confirmOrderListener(),errorListener()));
+        executeRequest(new GsonRequest(url, OrderConfirm.class, confirmOrderListener(), errorListener()));
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

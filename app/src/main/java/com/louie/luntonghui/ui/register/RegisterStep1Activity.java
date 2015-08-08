@@ -1,9 +1,6 @@
 package com.louie.luntonghui.ui.register;
 
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -25,8 +22,8 @@ import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.ToastUtil;
 import com.squareup.otto.Subscribe;
+import com.umeng.analytics.MobclickAgent;
 
-import java.util.DuplicateFormatFlagsException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,11 +96,12 @@ public class RegisterStep1Activity extends BaseNormalActivity implements View.On
             ToastUtil.showLongToast(this, R.string.info_input_phone_number);
             return;
         }
+
         String url = String.format(ConstantURL.CHECKCODEURL, phoneNumber.getText().toString());
         //check the register time.
         initRegisterTime();
         int time = DefaultShared.getInt(REGISTER_COUNT, INITTIME);
-        if (time == 3) {
+        if (time >= 3) {
             //ToastUtil.showLongToast(this,"每天只能申请三次哦,");
             final MaterialDialog mMaterialDialog = new MaterialDialog(mContext);
             mMaterialDialog.setMessage(R.string.has_use_over_register_count)
@@ -124,7 +122,7 @@ public class RegisterStep1Activity extends BaseNormalActivity implements View.On
                     });
             return;
         } else {
-            time += time;
+            time += 1;
             DefaultShared.putInt(REGISTER_COUNT, time);
             DefaultShared.putLong(REGISTER_TIME, System.currentTimeMillis());
         }
@@ -175,6 +173,16 @@ public class RegisterStep1Activity extends BaseNormalActivity implements View.On
     @Subscribe
     public void registerSuccess(RegisterSuccessEvent event) {
         finish();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
 }

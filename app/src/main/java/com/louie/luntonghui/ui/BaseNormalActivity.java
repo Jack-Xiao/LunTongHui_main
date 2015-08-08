@@ -2,9 +2,7 @@ package com.louie.luntonghui.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
 import com.android.volley.Request;
@@ -19,8 +17,6 @@ import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.ToastUtil;
 
 import org.apache.http.HttpStatus;
-
-import javax.inject.Inject;
 
 import butterknife.OnClick;
 import butterknife.Optional;
@@ -58,8 +54,6 @@ public class BaseNormalActivity extends AppCompatActivity implements View.OnClic
                 }
                 switch (error.networkResponse.statusCode){
                     case HttpStatus.SC_NO_CONTENT:
-
-
                 }
                 ToastUtil.showLongToast(BaseNormalActivity.this, error.getMessage());
             }

@@ -9,6 +9,10 @@ import com.activeandroid.annotation.Table;
  */
 @Table( name = "User")
 public class User extends Model {
+    //是否员工: 0为否, 1为是
+    public static final String IS_EMPLOYEE = "is_employee";
+    public static final  String ISEMPLOYEE = "1";
+    public static final  String NOTEMPLOYEE = "0";
     //用户Id
     @Column(name = "uid")
     public String uid;

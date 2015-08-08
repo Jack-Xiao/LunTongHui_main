@@ -1,6 +1,5 @@
 package com.louie.luntonghui.ui.category;
 
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.LinearLayout;
@@ -9,10 +8,12 @@ import android.widget.TextView;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.model.db.GoodsDetail;
 import com.louie.luntonghui.ui.SecondLevelBaseActivity;
-import static com.louie.luntonghui.ui.category.GoodsDetailBuyActivity.DETAIL_ITEM;
+import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+
+import static com.louie.luntonghui.ui.category.GoodsDetailBuyActivity.DETAIL_ITEM;
 
 /**
  * Created by Administrator on 2015/6/24.
@@ -101,5 +102,15 @@ public class GoodsDetailBuyInfoActivity extends SecondLevelBaseActivity {
     @Override
     protected int getContentView() {
         return R.layout.activity_goods_detail_item_buy_info;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

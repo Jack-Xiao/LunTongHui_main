@@ -13,6 +13,7 @@ import com.louie.luntonghui.ui.SecondLevelBaseActivity;
 import com.louie.luntonghui.view.widget.OnWheelChangedListener;
 import com.louie.luntonghui.view.widget.WheelView;
 import com.louie.luntonghui.view.widget.adapters.ArrayWheelAdapter;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.List;
 import java.util.Map;
@@ -145,6 +146,15 @@ public class MineSelectRegionActivity extends SecondLevelBaseActivity implements
         intent.putExtra("district",mViewDistrict.toString());
         setResult(RESULTADDRESS, intent);
         finish();
-
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

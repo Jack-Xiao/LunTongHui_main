@@ -61,6 +61,7 @@ import com.louie.luntonghui.view.BadgeView;
 import com.louie.luntonghui.view.MyAlertDialogUtil;
 import com.louie.luntonghui.view.NavigationItem;
 import com.squareup.otto.Subscribe;
+import com.umeng.analytics.MobclickAgent;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
 
-import static android.support.v7.widget.Toolbar.*;
+import static android.support.v7.widget.Toolbar.OnClickListener;
 import static com.louie.luntonghui.ui.BaseNormalActivity.SUCCESSCODE1;
 import static com.louie.luntonghui.ui.register.RegisterLogin.HASLOGIN;
 import static com.louie.luntonghui.ui.register.RegisterLogin.LOGIN_IN;
@@ -152,6 +153,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         ButterKnife.inject(this);
         mContext = this;
 
+
         userId = DefaultShared.getString(RegisterLogin.USERUID, App.DEFAULT_USER_ID);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -218,8 +220,9 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         onTabChange(initTab);
         getGPSInfo();
         register();
-        initShopCar();
         initBadge();
+
+        initShopCar();
         initDateFormat();
     }
 
@@ -245,7 +248,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         String getCarList = String.format(ConstantURL.GET_CAR_LIST, userId);
         RequestManager.addRequest(new GsonRequest(
                 getCarList, CarList.class, getCarList(), errorListener()), this);
-
     }
 
     public Response.Listener<CarList> getCarList() {
@@ -287,8 +289,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                         }
                         return total;
                     }
-
-                    ;
 
                     @Override
                     protected void onPostExecute(Integer count) {
@@ -342,15 +342,24 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     protected void onResume() {
         super.onResume();
         refreshCarListCount(null);
+        MobclickAgent.onPageStart("SplashScreen");
+        MobclickAgent.onResume(this);
         String lastSECONDKILLDate = DefaultShared.getString(Config.SECOND_KILL, Config.DEFAULT_SECOND_KILL);
         Date curDate = new Date(System.currentTimeMillis());//获取当前时间
-        String str = dateFormat.format(curDate);
+        /*String str = dateFormat.format(curDate);
         if (!lastSECONDKILLDate.equals(str)) {
             DefaultShared.putString(Config.SECOND_KILL, str);
             String userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
             String url = String.format(ConstantURL.SECOND_KILL_GOODS, userType);
             RequestManager.addRequest(new GsonRequest(url, CurrentBrandGoodsList.class, getSecondKillGoods(), errorListener()), mContext);
-        }
+        }*/
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("SplashScreen");
+        MobclickAgent.onPause(this);
     }
 
     private Response.Listener<CurrentBrandGoodsList> getSecondKillGoods() {
@@ -656,7 +665,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
     @Override
     public void onBackPressed() {
-        finish();
+        exitApp();
     }
 
     @Subscribe
@@ -866,5 +875,23 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     @Override
     public void updateVersion() {
         checkVersion();
+    }
+
+
+    // 客户端退出
+    private long startexit = 0;
+    private int exitAppTimes = 0;
+
+    public void exitApp() {
+        if (System.currentTimeMillis() - startexit > 3000) {
+            exitAppTimes = 0;
+        }
+        ++exitAppTimes;
+        if (exitAppTimes == 1) {
+            startexit = System.currentTimeMillis();
+            ToastUtil.showShortToast(MainActivity.this, R.string.enter_exit);
+        } else if (exitAppTimes == 2) {
+            finish();
+        }
     }
 }

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
@@ -26,6 +25,7 @@ import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -76,6 +76,7 @@ public class RegisterLogin extends BaseNormalActivity {
     public static final String PHONE_NAME = "phone";
     public static final String PASSWORD = "password";
     ProgressDialog mProgressDialog;
+    private String mac;
 
 
     @Override
@@ -90,6 +91,7 @@ public class RegisterLogin extends BaseNormalActivity {
 
         mPattern = Pattern.compile("^\\d{11}$");
         mProgressDialog = new ProgressDialog(this);
+        mac = Config.getMacAddress(mContext);
 
         if(getIntent().getExtras()!=null && getIntent().getExtras().getString(PHONE_NAME)!=null){
             String phoneNumber = getIntent().getExtras().getString(PHONE_NAME);
@@ -102,7 +104,6 @@ public class RegisterLogin extends BaseNormalActivity {
         }
     }
 
-
     public void onClickLogin(View view) {
         String phoneNumber = mPhoneNumber.getText().toString().trim();
         String password = mPassword.getText().toString().trim();
@@ -114,7 +115,7 @@ public class RegisterLogin extends BaseNormalActivity {
             e.printStackTrace();
         }
 
-        String url = String.format(ConstantURL.LOGIN, phoneNumber, password);
+        String url = String.format(ConstantURL.LOGIN, phoneNumber, password,mac);
 
         mProgressDialog.show();
         executeRequest(new GsonRequest(url,
@@ -141,7 +142,7 @@ public class RegisterLogin extends BaseNormalActivity {
 //                            User user = User.load(User.class,)
                             User user;
                             //if(phoneNumber.)
-                            mMatcher = mPattern.matcher(mPhoneNumber.getText().toString());
+                            mMatcher = mPattern.matcher(phoneNumber);
                             if (mMatcher.find()) {
                                 user = new Select()
                                         .from(User.class)
@@ -218,6 +219,7 @@ public class RegisterLogin extends BaseNormalActivity {
                             DefaultShared.putString(USER_TYPE, login.type);
                             DefaultShared.putString(USERUID, login.userid);
                             DefaultShared.putLong(Config.LAST_SING_IN_TIME, Config.CLEAR_SIGN_IN);
+                            DefaultShared.putString(User.IS_EMPLOYEE,login.personnel);
                             App.getBusInstance().post(new LoginEvent());
                             Bundle bundle = new Bundle();
                             bundle.putInt(RegisterStep3Activity.INIT_TYPE, 2);
@@ -233,12 +235,14 @@ public class RegisterLogin extends BaseNormalActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        MobclickAgent.onPause(this);
         App.getBusInstance().unregister(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
         App.getBusInstance().register(this);
     }
 

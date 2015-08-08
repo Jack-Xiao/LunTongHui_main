@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
 import com.android.volley.Response;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.adapter.MineCustomerOrderListAdapter;
@@ -24,6 +23,7 @@ import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -300,5 +300,15 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
             customerYesterdayOrder.setTextColor(getResources().getColor(R.color.order_font_normal));
             customerTotalOrder.setTextColor(getResources().getColor(R.color.order_font_choose));
         }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

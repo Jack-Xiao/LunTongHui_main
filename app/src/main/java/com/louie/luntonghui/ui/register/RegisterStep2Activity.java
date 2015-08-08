@@ -16,13 +16,10 @@ import com.louie.luntonghui.event.RegisterSuccessEvent;
 import com.louie.luntonghui.model.result.CheckCode;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.util.ConstantURL;
-import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.ToastUtil;
 import com.squareup.otto.Subscribe;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -131,7 +128,7 @@ public class RegisterStep2Activity extends BaseNormalActivity {
         }
         Bundle bundle = new Bundle();
         bundle.putString(RegisterStep1Activity.PHONE_NUMBER,phoneNumber);
-        IntentUtil.startActivity(RegisterStep2Activity.this, RegisterStep3Activity.class,bundle);
+        IntentUtil.startActivity(RegisterStep2Activity.this, RegisterStep3Activity.class, bundle);
         finish();
     }
 
@@ -145,6 +142,16 @@ public class RegisterStep2Activity extends BaseNormalActivity {
     @Subscribe
     public void registerSuccess(RegisterSuccessEvent event){
         finish();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }
 

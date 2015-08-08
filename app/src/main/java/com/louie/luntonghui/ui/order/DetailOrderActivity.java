@@ -3,10 +3,8 @@ package com.louie.luntonghui.ui.order;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,8 +23,7 @@ import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.MyListView;
-
-import org.w3c.dom.Text;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +32,6 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-
-import static com.louie.luntonghui.model.result.ProduceOrder.*;
 
 /**
  * Created by Administrator on 2015/7/17.
@@ -277,5 +272,15 @@ public class DetailOrderActivity extends BaseNormalActivity {
                 ToastUtil.showShortToast(mContext, result.rsgmsg);
             }
         };
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

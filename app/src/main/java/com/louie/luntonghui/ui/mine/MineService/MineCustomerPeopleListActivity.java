@@ -13,16 +13,16 @@ import com.louie.luntonghui.R;
 import com.louie.luntonghui.adapter.MineServicePeopleAdapter;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.model.db.MineServicePeopleListTable;
+import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.MineServicePeopleListResult;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.view.MyListView;
+import com.umeng.analytics.MobclickAgent;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -54,6 +54,7 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
     private SimpleDateFormat normalDateFormat;
     private MineServicePeopleAdapter mAdapter;
     private Context mContext;
+    private boolean isMyWork = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +64,16 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
         mContext = this;
         toolbarTitle.setText(R.string.mine_customer_order_list);
         currentWeekTime = Config.getCurrentWeekModay();
-        peopleListFormat = new SimpleDateFormat("yy/MM/dd");
-        normalDateFormat = new SimpleDateFormat(Config.normalFormatter);
+        //peopleListFormat = new SimpleDateFormat("yy/MM/dd");
+        //normalDateFormat = new SimpleDateFormat(Config.normalFormatter);
         mAdapter = new MineServicePeopleAdapter(mContext);
         listView.setAdapter(mAdapter);
+
+        Bundle bundle = getIntent().getExtras();
+        if(bundle !=null &&
+                bundle.getString(User.IS_EMPLOYEE).equals(User.ISEMPLOYEE)){
+                isMyWork = true;
+        }
 
         queryCustomerPeopleList();
 
@@ -83,6 +90,7 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
             protected List<MineServicePeopleListTable> doInBackground(Object... params) {
                 List<MineServicePeopleListTable> list = new Select()
                         .from(MineServicePeopleListTable.class)
+                        .orderBy("register_time desc")
                         .execute();
                 return list;
             }
@@ -90,7 +98,7 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
             @Override
             protected void onPostExecute(List<MineServicePeopleListTable> list) {
 
-                for(int i =0;i<list.size();i++){
+                /*for(int i =0;i<list.size();i++){
                     try {
                         Date date = normalDateFormat.parse(list.get(i).registerTime);
                         String time = peopleListFormat.format(date);
@@ -98,7 +106,7 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                }
+                }*/
                 mAdapter.setData(list);
                 customerValue.setText(list.size() + "");
             }
@@ -116,7 +124,9 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
             protected List<MineServicePeopleListTable> doInBackground(Object... params) {
                 List<MineServicePeopleListTable> list = new Select()
                         .from(MineServicePeopleListTable.class)
-                        .where("datetime(register_time) > datetime(?)", currentWeekTime)
+                        //.where("datetime(register_time) > datetime(?)", currentWeekTime)/**/
+                        .where("register_time >= ?" ,currentWeekTime)
+                        .orderBy("register_time desc")
                         .execute();
 
                 return list;
@@ -125,7 +135,7 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
             @Override
             protected void onPostExecute(List<MineServicePeopleListTable> list) {
 
-                for(int i =0;i<list.size();i++){
+                /*for (int i = 0; i < list.size(); i++) {
                     try {
                         Date date = normalDateFormat.parse(list.get(i).registerTime);
                         String time = peopleListFormat.format(date);
@@ -133,7 +143,7 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                }
+                }*/
                 mAdapter.setData(list);
                 customerValue.setText(list.size() + "");
             }
@@ -141,7 +151,13 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
     }
 
     private void queryCustomerPeopleList() {
-        String url = String.format(ConstantURL.MINE_SERVICE_PEOPLE_LIST, userId);
+        String url;
+        if(isMyWork){
+            url = String.format(ConstantURL.GETUSER, userId);
+        }else{
+            url = String.format(ConstantURL.MINE_SERVICE_PEOPLE_LIST, userId);
+        }
+
         executeRequest(new GsonRequest(url, MineServicePeopleListResult.class,
                 peopleListRequest(), errorListener()));
 
@@ -176,5 +192,16 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
                 onClickCurrentWeekPeoples();
             }
         };
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

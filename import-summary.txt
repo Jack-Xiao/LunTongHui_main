@@ -7,11 +7,7 @@ The following files were *not* copied into the new Gradle project; you
 should evaluate whether these are still needed in your project and if
 so manually move them:
 
-* README.md
-* ant.properties
-* build.xml
 * pom.xml
-* proguard-project.txt
 
 Replaced Jars with Dependencies:
 --------------------------------
@@ -30,9 +26,9 @@ Moved Files:
 Android Gradle projects use a different directory structure than ADT
 Eclipse projects. Here's how the projects were restructured:
 
-* AndroidManifest.xml => Image/src/main/AndroidManifest.xml
-* res/ => Image/src/main/res/
-* src/ => Image/src/main/java/
+* AndroidManifest.xml => ViewPagerIndicator/src/main/AndroidManifest.xml
+* res/ => ViewPagerIndicator/src/main/res/
+* src/ => ViewPagerIndicator/src/main/java/
 
 Missing Android Support Repository:
 -----------------------------------

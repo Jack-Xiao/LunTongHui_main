@@ -474,19 +474,6 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
         ButterKnife.reset(this);
     }
 
-    class CarListCallback extends ResponseCallback<CarList> {
-        public CarListCallback(Fragment fragment) {
-            super(fragment);
-        }
-
-        @Override
-        public void success(final CarList carList, Response response) {
-
-            fillCarList(carList);
-        }
-    }
-
-
     @Override
     public void onDestroy() {
         App.getBusInstance().unregister(this);

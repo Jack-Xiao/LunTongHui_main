@@ -4,8 +4,6 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 
-import java.util.Date;
-
 /**
  * Created by Jack on 15/8/1.
  */

@@ -52,12 +52,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RelativeLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="@color/tinge_break_link"/>
 
     <RelativeLayout
+        android:layout_marginTop="10dp"
         android:id="@+id/mine_customer_order_list"
         android:background="@color/white"
         android:paddingRight="20dp"
@@ -80,12 +77,8 @@
             android:layout_height="wrap_content" />
 
     </RelativeLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="@color/tinge_break_link"/>
-
     <RelativeLayout
+        android:layout_marginTop="10dp"
         android:id="@+id/mine_service_cost_query"
         android:background="@color/white"
         android:paddingRight="20dp"

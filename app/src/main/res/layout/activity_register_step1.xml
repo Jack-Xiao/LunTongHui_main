@@ -70,6 +70,13 @@
             android:text="@string/next_step"
             android:hint="下一步"
             android:background="@drawable/next_step"/>
-
     </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="tesss"
+        android:text="@string/warning_register_info"/>
 </LinearLayout>

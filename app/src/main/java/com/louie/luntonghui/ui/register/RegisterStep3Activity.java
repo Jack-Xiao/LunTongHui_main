@@ -19,17 +19,17 @@ import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.LoginEvent;
-import com.louie.luntonghui.event.RegisterSuccessEvent;
 import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.Login;
-import com.louie.luntonghui.model.result.Register;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.ui.MainActivity;
+import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -79,6 +79,7 @@ public class RegisterStep3Activity extends BaseNormalActivity {
     private String strCheckCode;
     private CountDownTimer mCountDownTime;
     private List<RadioButton> radList;
+    private String mac;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +87,7 @@ public class RegisterStep3Activity extends BaseNormalActivity {
         setContentView(R.layout.register_regist);
         ButterKnife.inject(this);
 
+        mac = Config.getMacAddress(this);
         mPattern = Pattern.compile("^\\d{11}$");
         mProgress = new ProgressDialog(mContext);
         initView();
@@ -173,23 +175,26 @@ public class RegisterStep3Activity extends BaseNormalActivity {
         } else {
             url = String.format(ConstantURL.REGISTERRECOMMEND, username, phoneNumber, recommendCode);
         }*/
-        //新的注册接口
-        if (recommendCode.equals("")) {
-            url = String.format(ConstantURL.NEWREGISTER, username, phoneNumber);
-        } else {
-            url = String.format(ConstantURL.NEWREGISTERCOMMEND, username, phoneNumber, recommendCode);
-        }
 
-
-        String type ="";
+        String type = "1";
         for(int i =0;i<radList.size();i++){
             if(radList.get(i).isChecked()){
+                i = i + 1;
                 type= i+"";
                 break;
             }
         }
 
-        url = url + "&" + "type=" + type;
+        //新的注册接口
+        if (recommendCode.equals("")) {
+            url = String.format(ConstantURL.NEWREGISTER, username,password, phoneNumber,mac,type);
+        } else {
+            url = String.format(ConstantURL.NEWREGISTERCOMMEND, username, password, phoneNumber, recommendCode,mac,type);
+        }
+
+
+
+        //url = url + "&" + "type=" + type;
         //ProgressUtil.show(mContext, "请稍等");
 
         mProgress.show();
@@ -285,6 +290,7 @@ public class RegisterStep3Activity extends BaseNormalActivity {
                             DefaultShared.putInt(RegisterLogin.LOGIN_IN, RegisterLogin.HASLOGIN);
                             DefaultShared.putString(RegisterLogin.USER_TYPE, login.type);
                             DefaultShared.putString(RegisterLogin.USERUID, login.userid);
+                            DefaultShared.putString(User.IS_EMPLOYEE, login.personnel);
                             App.getBusInstance().post(new LoginEvent());
                             RegisterStep3Activity.this.finish();
                             Bundle bundle = new Bundle();
@@ -305,5 +311,15 @@ public class RegisterStep3Activity extends BaseNormalActivity {
     protected void onDestroy() {
         App.getBusInstance().unregister(this);
         super.onDestroy();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

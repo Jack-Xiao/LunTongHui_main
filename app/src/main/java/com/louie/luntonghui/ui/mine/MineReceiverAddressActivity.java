@@ -28,8 +28,7 @@ import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.view.RecyclerViewLinearLayoutViewItemDecoration;
 import com.squareup.otto.Subscribe;
-
-import static com.louie.luntonghui.view.RecyclerViewLinearLayoutViewItemDecoration.HORIZONTAL_LIST;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +37,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 import static com.louie.luntonghui.ui.register.RegisterLogin.USERUID;
+import static com.louie.luntonghui.view.RecyclerViewLinearLayoutViewItemDecoration.HORIZONTAL_LIST;
 
 /**
  * Created by Administrator on 2015/6/9.
@@ -211,5 +211,15 @@ public class MineReceiverAddressActivity extends SecondLevelBaseActivity {
     protected void onDestroy() {
         App.getBusInstance().unregister(this);
         super.onDestroy();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

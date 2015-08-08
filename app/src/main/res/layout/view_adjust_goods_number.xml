@@ -21,9 +21,8 @@
             android:id="@+id/goods_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1"
             android:textSize="18sp"
-            tools:text="110唐泽牌随动闸单开" />
+            tools:text="110唐泽牌随动闸单开都是放假了凯撒的减肥了看见俺收到了福建卡拉斯的" />
 
         <RelativeLayout
             android:layout_marginTop="10dp"
