@@ -1,5 +1,6 @@
 package com.louie.luntonghui.ui.mine;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -22,10 +23,12 @@ import com.louie.luntonghui.event.SaveAndModifyAddressEvent;
 import com.louie.luntonghui.model.db.Address;
 import com.louie.luntonghui.model.result.AddressList;
 import com.louie.luntonghui.ui.SecondLevelBaseActivity;
+import com.louie.luntonghui.ui.car.ProduceOrderActivity;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
+import com.louie.luntonghui.view.RecyclerItemClickListener;
 import com.louie.luntonghui.view.RecyclerViewLinearLayoutViewItemDecoration;
 import com.squareup.otto.Subscribe;
 import com.umeng.analytics.MobclickAgent;
@@ -59,6 +62,7 @@ public class MineReceiverAddressActivity extends SecondLevelBaseActivity {
     private List<Address> data;
     private long startTime;
     private long endTime;
+    private boolean isAddressSelect = false;
 
 
     @Override
@@ -67,6 +71,8 @@ public class MineReceiverAddressActivity extends SecondLevelBaseActivity {
         ButterKnife.inject(this);
         uid = DefaultShared.getString(USERUID, "0");
         App.getBusInstance().register(this);
+
+        isAddressSelect = getIntent().getBooleanExtra(ProduceOrderActivity.ADDRESS_SELECT,isAddressSelect);
 
         mUrl = String.format(ConstantURL.ADDRESSLIST, uid);
         //test(url);
@@ -98,9 +104,36 @@ public class MineReceiverAddressActivity extends SecondLevelBaseActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new RecyclerViewLinearLayoutViewItemDecoration(this, HORIZONTAL_LIST));
 
+        if(isAddressSelect){
+            mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void OnItemClick(View view, int position) {
+                    Address address = mAdapter.getAddress(position);
+                    Intent intent = new Intent();
+                    intent.putExtra(PROVINCE_ID,address.province);
+                    intent.putExtra(CITY_ID,address.city);
+                    intent.putExtra(DISTRICT_ID,address.district);
+                    intent.putExtra(DETAIL_ADDRESS,address.address);
+                    intent.putExtra(PHONE_NUMBER,address.phone);
+                    intent.putExtra(CONSIGNER,address.consignee);
+                    intent.putExtra(ADDRESS_ID,address.addressId);
+                    setResult(RESULT_OK,intent);
+                    finish();
+                }
+            }));
+        }
+
         reference();
 
+
     }
+    public static final String ADDRESS_ID = "address_id";
+    public static final String PHONE_NUMBER = "phone_number";
+    public static final String CONSIGNER = "consigner";
+    public static final String PROVINCE_ID = "province_id";
+    public static final String CITY_ID = "city_id";
+    public static final String DISTRICT_ID = "district_id";
+    public static final String DETAIL_ADDRESS = "detail_address";
 
 
     public Response.Listener<AddressList> getAddressList() {

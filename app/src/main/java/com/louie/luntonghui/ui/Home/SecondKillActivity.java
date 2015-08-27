@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,6 +17,7 @@ import android.widget.TextView;
 
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
+import com.activeandroid.query.Update;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -42,6 +42,7 @@ import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
+import com.louie.luntonghui.view.BadgeView;
 import com.louie.luntonghui.view.MyListView;
 import com.squareup.picasso.Picasso;
 import com.umeng.analytics.MobclickAgent;
@@ -60,7 +61,7 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2015/7/24.
  */
-public class SecondKillActivity extends BaseNormalActivity {
+public class SecondKillActivity extends BaseNormalActivity implements SecondKillAdapter.ReferenceListener {
 
     @InjectView(R.id.empty_rush_goods)
     TextView emptyRushGoods;
@@ -76,7 +77,8 @@ public class SecondKillActivity extends BaseNormalActivity {
     @InjectView(R.id.whole_content)
     ScrollView wholeContent;
     @InjectView(R.id.main_fab)
-    FloatingActionButton mainFab;
+    com.shamanland.fab.FloatingActionButton mainFab;
+
     private Timer timer = new Timer();
     @InjectView(R.id.toolbar_navigation)
     ImageView toolbarNavigation;
@@ -118,6 +120,7 @@ public class SecondKillActivity extends BaseNormalActivity {
     private static final int BEGINRUSH = 2;
     private static final int FINISHRUSH = 3;
     private boolean firstInitTimer;
+    private BadgeView mBadgeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +160,7 @@ public class SecondKillActivity extends BaseNormalActivity {
                 break;
         }
 
+        initBadgeView();
         killAdverUrl = String.format(ConstantURL.SECOND_KILL_ADVERT, userType, display, cityId);
 
         //initCountDownTime();
@@ -174,6 +178,13 @@ public class SecondKillActivity extends BaseNormalActivity {
                 IntentUtil.startActivity(SecondKillActivity.this, GoodsDetailBuyActivity.class, bundle);
             }
         });
+    }
+
+    private void initBadgeView() {
+        mBadgeView = new BadgeView(mContext,mainFab);
+        mBadgeView.setTextSize(Config.BADGEVIEW_SIZE_BIG);
+
+        onReference();
 
     }
 
@@ -188,14 +199,15 @@ public class SecondKillActivity extends BaseNormalActivity {
 
         RequestManager.addRequest(new GsonRequest(killUrl, SecondKillGoodsResult.class,
                 getSecondKillGoods(), errorGoodsAdverListener()), mContext);
+
     }
 
     protected Response.ErrorListener errorGoodsAdverListener() {
         Picasso.with(mContext)
-                .load(R.drawable.no_second_kill)
+                .load(R.drawable.no_second_kill_new)
                 .into(imgAdvertise);
         // lineRushGoods.setVisibility(View.GONE);
-        emptyRushGoods.setVisibility(View.VISIBLE);
+        //emptyRushGoods.setVisibility(View.VISIBLE);
         lineRushGoods.setVisibility(View.GONE);
         progress.setVisibility(View.GONE);
 
@@ -221,7 +233,7 @@ public class SecondKillActivity extends BaseNormalActivity {
                   /*  ImageCacheManager.loadImage(R.drawable.no_second_kill,
                             ImageCacheManager.getImageListener(imgAdvertise))*/
                     Picasso.with(mContext)
-                            .load(R.drawable.no_second_kill)
+                            .load(R.drawable.no_second_kill_new)
                             .into(imgAdvertise);
                     return;
                 }
@@ -333,12 +345,7 @@ public class SecondKillActivity extends BaseNormalActivity {
                                     .where("is_second_kill = ?", Config.SECONDVKILLGOODS)
                                     .execute();
                             data.addAll(data1);
-                        } else {
-
-
                         }
-
-
                         return data;
                     }
 
@@ -352,7 +359,8 @@ public class SecondKillActivity extends BaseNormalActivity {
                             lineRushGoods.setVisibility(View.VISIBLE);
                             emptyRushGoods.setVisibility(View.GONE);
                             listview.setVisibility(View.VISIBLE);
-                            mAdapter.setData(list, ALARM_CLOCK_TIME);
+                            //mAdapter.setData(list, ALARM_CLOCK_TIME);
+                            initSecondKill();
                         } else {
                             lineRushGoods.setVisibility(View.GONE);
                             emptyRushGoods.setVisibility(View.VISIBLE);
@@ -364,15 +372,78 @@ public class SecondKillActivity extends BaseNormalActivity {
         };
     }
 
-    private void initSecondTime(String startTime, String endTime) {
+    private void initSecondKill() {
+        long currentTime = System.currentTimeMillis();
+        long surplus = END_SECOND_KILL - currentTime;
 
+        ALARM_CLOCK_TIME = BEGIN_SECOND_KILL - Config.MINUTE_MILLIS;
+
+        long hour = surplus / Config.HOUR_MILLIS;
+        surplus = surplus - (hour * Config.HOUR_MILLIS);
+        long minute = surplus / Config.MINUTE_MILLIS;
+        surplus = surplus - (minute * Config.MINUTE_MILLIS);
+        long second = surplus / Config.SECOND_MILLIS;
+        secondKillHour.setText(String.format("%02d", hour) + "");
+        secondKillMinute.setText(String.format("%02d", minute) + "");
+        secondKillSecond.setText(String.format("%02d", second) + "");
+
+        if (currentTime < BEGIN_SECOND_KILL) {
+            state = NOTBEGIN;
+            for (int i = 0; i < data.size(); i++) {
+                data.get(i).canRushGoods = Config.CAN_SET_ALARM_CLOCK;
+            }
+            mAdapter.setData(data, ALARM_CLOCK_TIME);
+        }
+
+
+        if(surplus > 0 && currentTime >BEGIN_SECOND_KILL){
+            for (int i = 0; i < data.size(); i++) {
+                data.get(i).canRushGoods = Config.RUSH_GOODS_BEGINNING;
+            }
+            mAdapter.setData(data, ALARM_CLOCK_TIME);
+        }
+
+        if (surplus == 0){
+            if (currentTime < END_SECOND_KILL && currentTime > BEGIN_SECOND_KILL) {
+                if (state != BEGINRUSH) {
+                    state = BEGINRUSH;
+                    for (int i = 0; i < data.size(); i++) {
+                        data.get(i).canRushGoods = Config.RUSH_GOODS_BEGINNING;
+                    }
+                    mAdapter.setData(data, ALARM_CLOCK_TIME);
+                }
+            }
+        }
+
+
+        if(surplus < 0){
+            secondKillHour.setText(R.string.kill_zero);
+            secondKillMinute.setText(R.string.kill_zero);
+            secondKillSecond.setText(R.string.kill_zero);
+            if (state != FINISHRUSH) {
+                state = FINISHRUSH;
+                for (int i = 0; i < data.size(); i++) {
+                    data.get(i).canRushGoods = Config.RUSH_GOODS_FINISH;
+                }
+                mAdapter.setData(data, ALARM_CLOCK_TIME);
+            }
+        }
+    }
+
+    private void initSecondTime(String startTime, String endTime) {
         startTime = startTime + ":00";
         endTime = endTime + ":00";
         BEGIN_SECOND_KILL = Config.getTimeMill(startTime);
         END_SECOND_KILL = Config.getTimeMill(endTime);
+
         ALARM_CLOCK_TIME = BEGIN_SECOND_KILL - Config.MINUTE_MILLIS;
         String beginRushTime = Config.getRushTimeValue(startTime) + " 开抢";
         rushGoodsTime.setText(beginRushTime);
+
+        long currentTime = System.currentTimeMillis();
+        long surplus = END_SECOND_KILL - currentTime;
+
+
     }
 
     private void initCountDownTime() {
@@ -387,6 +458,7 @@ public class SecondKillActivity extends BaseNormalActivity {
         //executeRequest(new GsonRequest(killUrl, CurrentBrandGoodsList.class, getSecondeKillProduct(), errorListener()));
         listview.setAdapter(mAdapter);
         //queryGoods();
+
     }
 
 
@@ -399,24 +471,16 @@ public class SecondKillActivity extends BaseNormalActivity {
                     long currentTime = System.currentTimeMillis();
                     long surplus = END_SECOND_KILL - currentTime;
 
-                    if (currentTime < BEGIN_SECOND_KILL) {
+                    /*if (currentTime < BEGIN_SECOND_KILL) {
                         state = NOTBEGIN;
                         for (int i = 0; i < data.size(); i++) {
                             data.get(i).canRushGoods = Config.CAN_SET_ALARM_CLOCK;
                         }
                         mAdapter.setData(data, ALARM_CLOCK_TIME);
+                    }*/
 
-                    }
-                    if (surplus > 0) {
-                        if (currentTime < END_SECOND_KILL && currentTime > BEGIN_SECOND_KILL) {
-                            if (state != BEGINRUSH) {
-                                state = BEGINRUSH;
-                                for (int i = 0; i < data.size(); i++) {
-                                    data.get(i).canRushGoods = Config.RUSH_GOODS_BEGINNING;
-                                }
-                                mAdapter.setData(data, ALARM_CLOCK_TIME);
-                            }
-                        }
+                    if(surplus >= 0){
+
                         long hour = surplus / Config.HOUR_MILLIS;
                         surplus = surplus - (hour * Config.HOUR_MILLIS);
                         long minute = surplus / Config.MINUTE_MILLIS;
@@ -425,7 +489,19 @@ public class SecondKillActivity extends BaseNormalActivity {
                         secondKillHour.setText(String.format("%02d", hour) + "");
                         secondKillMinute.setText(String.format("%02d", minute) + "");
                         secondKillSecond.setText(String.format("%02d", second) + "");
-                    } else {
+                    }
+
+                    if ((currentTime > BEGIN_SECOND_KILL) && (currentTime < (BEGIN_SECOND_KILL +2000))){
+
+                        state = BEGINRUSH;
+                                for (int i = 0; i < data.size(); i++) {
+                                    data.get(i).canRushGoods = Config.RUSH_GOODS_BEGINNING;
+                                }
+                                mAdapter.setData(data, ALARM_CLOCK_TIME);
+                    }
+
+                    if(BEGIN_SECOND_KILL !=0 && surplus < 0){
+
                         secondKillHour.setText(R.string.kill_zero);
                         secondKillMinute.setText(R.string.kill_zero);
                         secondKillSecond.setText(R.string.kill_zero);
@@ -435,12 +511,16 @@ public class SecondKillActivity extends BaseNormalActivity {
                                 data.get(i).canRushGoods = Config.RUSH_GOODS_FINISH;
                             }
                             mAdapter.setData(data, ALARM_CLOCK_TIME);
+                            new Update(Goods.class)
+                                    .set("setAlarmClock=?", Goods.NOT_SET_ALARM_CLOCK)
+                                    .execute();
                         }
                         handler.removeCallbacks(mRunnable);
                         timer.cancel();
                     }
                     break;
             }
+
             if(firstInitTimer){
                 progress.setVisibility(View.GONE);
                 wholeContent.setVisibility(View.VISIBLE);
@@ -472,7 +552,7 @@ public class SecondKillActivity extends BaseNormalActivity {
                 handler.sendMessage(message);
             }
         };
-        timer.schedule(task, DELAYTIME, 5);
+        timer.schedule(task,5,DELAYTIME);
     }
 
     @Override
@@ -492,5 +572,29 @@ public class SecondKillActivity extends BaseNormalActivity {
         startActivity(intent);
         App.getBusInstance().post(new ShowCarListEvent());
         finish();
+    }
+
+
+    @Override
+    public void onReference() {
+        int total = 0;
+        List<ShoppingCar> list = new Select()
+                .from(ShoppingCar.class)
+                .execute();
+
+        for(int i=0;i<list.size();i++){
+            total += Integer.parseInt(list.get(i).goodsNumber);
+        }
+
+        if(total == 0){
+            mBadgeView.hide();
+        }else{
+            if(total > 99){
+                mBadgeView.setText("99+");
+            }else{
+                mBadgeView.setText(total+"");
+            }
+            mBadgeView.show();
+        }
     }
 }

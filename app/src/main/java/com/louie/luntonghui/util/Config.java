@@ -50,6 +50,7 @@ public class Config {
     public static final int NOT_NEED_UPDATE = 0;
 
     public static final int BADGEVIEW_SIZE = 10;
+    public static final int BADGEVIEW_SIZE_BIG = 12;
 
     public static final String DEFAULT_SECOND_KILL = "00000000";
     public static final String SECOND_KILL = "second_kill";
@@ -78,6 +79,7 @@ public class Config {
     public static final String normalFormatter = "yyyy-MM-dd HH:mm:ss";
     public static final String onlyDateFormatter = "yyyy-MM-dd";
     public static final String oneDateFormatter = "yyyy/MM/dd";
+    public static final String  newApkName = "new_轮通惠.apk";
 
 
     public static int getCurrentVersion() {

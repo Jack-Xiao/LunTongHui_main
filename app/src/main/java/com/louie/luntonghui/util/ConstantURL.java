@@ -7,9 +7,9 @@ public class ConstantURL {
 
     public static final String SUCCESSCODE = "000";
 
-    //public static final String HOST = "http://120.25.224.250/api/"; //测试 Ip
-    //public static final String HOST = "http://192.168.0.254/ecs/api/"; //测试 Ip
-    public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
+    public static final String HOST = "http://120.25.224.250/api/"; //测试 Ip
+    //ublic static final String HOST = "http://192.168.0.254/ecs/api/"; //测试 Ip
+    //public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
 
     public static final String MODE = "mode=test";
 
@@ -23,6 +23,9 @@ public class ConstantURL {
     private static final String ARGSCONTENT7 = "%7$s";
     private static final String ARGSCONTENT8 = "%8$s";
     private static final String ARGSCONTENT9 = "%9$s";
+    private static final String ARGSCONTENT10 = "%10$s";
+    private static final String ARGSCONTENT11 = "%11$s";
+    private static final String ARGSCONTENT12 = "%12$s";
 
     public static final String INITPASSWORD = "000000";
 
@@ -96,7 +99,7 @@ public class ConstantURL {
         收货地址管理: 我的地址管理, 地址新增/修改, 地址删除
      */
     public static final String ADDRESSLIST = HOST +
-            "mobile.php?act=myaddressmgn&user_id=" + ARGSCONTENT1 + "&mode = test";
+            "mobile.php?act=myaddressmgn&user_id=" + ARGSCONTENT1 + "&mode=test";
 
     public static final String ADDADDRESS = HOST
             + "mobile.php?act=newaddress&" + MODE + "&"
@@ -325,8 +328,7 @@ public class ConstantURL {
             +"mode=test";
 
     //代注册
-    public static final String PROXYREGISTER =
-            HOST +
+    /*public static final String PROXYREGISTER = HOST +
                     "mobile.php?act=new_users" + "&"
                     +"username=" + ARGSCONTENT1 + "&"
                     +"password=" + ARGSCONTENT2 + "&"
@@ -334,5 +336,49 @@ public class ConstantURL {
                     +"mac=" + ARGSCONTENT4 + "&"
                     +"s_ctype=" + ARGSCONTENT5 + "&"
                     +"salesman=" + ARGSCONTENT6 + "&"
-                    +"mode=test";
+                    +"mode=test";*/
+    //代注册
+    public static final String PROXYREGISTER = HOST +
+                    "mobile.php?act=new_users" + "&"
+                    +"username=" + ARGSCONTENT1 + "&"
+                    +"password=" + ARGSCONTENT2 + "&"
+                    +"tel=" + ARGSCONTENT3 + "&"
+                    +"mac=" + ARGSCONTENT4 + "&"
+                    +"s_ctype=" + ARGSCONTENT5 + "&"
+                    +"salesman=" + ARGSCONTENT6 + "&"
+                    +"mode=test" + "&"
+                    +"type=" + ARGSCONTENT7 + "&"
+                    +"province=" + ARGSCONTENT8 + "&"
+                    +"city=" + ARGSCONTENT9 + "&"
+                    +"district=" + ARGSCONTENT10 + "&"
+                    +"address=" + ARGSCONTENT11;
+
+
+
+    //删除关注
+    public static final String DELETEATTENTION = HOST
+            +"mobile.php?act=delete_collection&mode=test" + "&"
+            +"user_id=" + ARGSCONTENT1 + "&"
+            +"rec_id=" + ARGSCONTENT2;
+
+    //我的关注
+    public static final String MINEATTENTION = HOST
+            +"mobile.php?act=collection_list&mode=test"  + "&"
+            +"user_id=" + ARGSCONTENT1 + "&"
+            +"ctype=" + ARGSCONTENT2;
+
+    //修改订单商品数量
+    public static final String FIXORDERNUMBER = HOST
+            +"mobile.php?act=changeordernew" +"&"
+            +"mode=test" + "&"
+            +"user_id=" + ARGSCONTENT1 + "&"
+            +"order_id=" + ARGSCONTENT2 + "&"
+            +"new_number=" + ARGSCONTENT3;
+
+    //删除订单商品
+    public static final String DELORDERGOODS = HOST
+            +"mobile.php?act=deleteordergoods" + "&"
+            +"mode=test" + "&"
+            +"order_id=" + ARGSCONTENT1 + "&"
+            +"goods_id=" +  ARGSCONTENT2;
 }

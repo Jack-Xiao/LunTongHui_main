@@ -9,6 +9,7 @@ import com.activeandroid.annotation.Table;
  */
 @Table(name = "shopping_car")
 public class ShoppingCar extends Model {
+    public static final String NOTGIVEAWAY = "0";
 
     @Column(name = "car_id")
     public String carId;
@@ -40,4 +41,13 @@ public class ShoppingCar extends Model {
     @Column(name = "unit")
     public String unit;
 
+    //不为0，则为某个商品的赠品
+    @Column(name = "rid")
+    public String rId;
+
+    @Column(name = "discount_type")
+    public String discountType;
+    //折扣价  /10;
+    @Column(name = "discount")
+    public String discount;
 }

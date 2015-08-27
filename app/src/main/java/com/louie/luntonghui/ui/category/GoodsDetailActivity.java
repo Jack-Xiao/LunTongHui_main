@@ -22,16 +22,19 @@ import com.louie.luntonghui.adapter.GoodsDetailListAdapter;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.ShowCarListEvent;
 import com.louie.luntonghui.model.db.Goods;
+import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.CurrentBrandGoodsList;
 import com.louie.luntonghui.rest.ServiceManager;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.ui.MainActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.ui.search.SearchActivity;
+import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
+import com.louie.luntonghui.view.BadgeView;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.UnsupportedEncodingException;
@@ -51,7 +54,7 @@ import static com.louie.luntonghui.ui.register.RegisterLogin.USER_WHOLESALER;
 /**
  * Created by Administrator on 2015/6/19.
  */
-public class GoodsDetailActivity extends BaseNormalActivity {
+public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDetailListAdapter.ReferenceBadgeListener {
     public static final String GOODSDETAILURL = "url";
     public static final String GOODSDETAILID = "goods_id";
     public static final String SALES = "sales";
@@ -62,7 +65,6 @@ public class GoodsDetailActivity extends BaseNormalActivity {
     public static final int NOT_NEW_GOODS = 0;
     public static final int INIT_PAGE = 1;
     public static final int MAX_PAGE_SIZE = Integer.MAX_VALUE;
-
     public String url;
     public String id;
     @InjectView(R.id.listview)
@@ -82,6 +84,10 @@ public class GoodsDetailActivity extends BaseNormalActivity {
         EditText navigationSearchEdit;*/
     @InjectView(R.id.icon)
     ImageView icon;
+
+    @InjectView(R.id.main_fab)
+    //com.melnykov.fab.FloatingActionButton mainFab;
+    com.shamanland.fab.FloatingActionButton mainFab;
 
     private RecyclerView mRecyclerView;
     private ServiceManager.LunTongHuiApi api;
@@ -151,6 +157,9 @@ public class GoodsDetailActivity extends BaseNormalActivity {
         mAdapter = new GoodsDetailListAdapter(GoodsDetailActivity.this);
         listView.setAdapter(mAdapter);
 
+        //listView.setOnTouchListener(new ShowHideOnScroll(mainFab));
+        initBadgeView();
+
         initSorting();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -163,6 +172,13 @@ public class GoodsDetailActivity extends BaseNormalActivity {
                 IntentUtil.startActivity(GoodsDetailActivity.this, GoodsDetailBuyActivity.class, bundle);
             }
         });
+    }
+
+    private BadgeView mBadgeView;
+
+    private void initBadgeView() {
+        mBadgeView = new BadgeView(mContext, mainFab);
+        mBadgeView.setTextSize(Config.BADGEVIEW_SIZE_BIG);
     }
 
     private void initSorting() {
@@ -248,6 +264,7 @@ public class GoodsDetailActivity extends BaseNormalActivity {
                                                    progress.setVisibility(View.GONE);
                                                    if (goodses == null) return;
                                                    mAdapter.setData(goodses);
+                                                   referenceBadge();
                                                }
 
                                                @Override
@@ -259,12 +276,15 @@ public class GoodsDetailActivity extends BaseNormalActivity {
                                                    List<Goods> data = new ArrayList<Goods>();
 
                                                    if (isSearch || isNewGods) {
-                                                       List<Goods> lists1 = new ArrayList<Goods>();
-                                                       lists1 = new Select()
+                                                       //List<Goods> lists1 = new ArrayList<Goods>();
+                                                       /*lists1 = new Select()
                                                                .from(Goods.class)
                                                                .where("isChecked = ?", Goods.GOODS_IS_BUY)
+                                                               .execute();*/
+                                                       List <ShoppingCar> lists1 = new ArrayList<>();
+                                                       lists1 = new Select()
+                                                               .from(ShoppingCar.class)
                                                                .execute();
-
                                                        List<String> goodsIds = new ArrayList<String>();
                                                        for (int i = 0; i < lists1.size(); i++) {
                                                            goodsIds.add(lists1.get(i).goodsId);
@@ -299,6 +319,7 @@ public class GoodsDetailActivity extends BaseNormalActivity {
                                                            goods1.goodsParentId = goodsParentId;
                                                            goods1.guige = entity.guige;
                                                            goods1.unit = entity.danwei;
+                                                           goods1.discountType = entity.discount_type;
                                                            //goods1.save();
                                                            data.add(goods1);
                                                        }
@@ -322,12 +343,16 @@ public class GoodsDetailActivity extends BaseNormalActivity {
                                                        for (int i = 0; i < lists.size(); i++) {
                                                            curGoodsId.add(lists.get(i).goodsId);
                                                        }
-                                                       List<Goods> lists1 = new ArrayList<Goods>();
+                                                       /*List<Goods> lists1 = new ArrayList<Goods>();
                                                        lists1 = new Select()
                                                                .from(Goods.class)
                                                                .where("goods_parent_id = ? and isChecked = ?", goodsParentId, Goods.GOODS_IS_BUY)
-                                                               .execute();
+                                                               .execute();*/
 
+                                                       List <ShoppingCar> lists1 = new ArrayList<>();
+                                                       lists1 = new Select()
+                                                               .from(ShoppingCar.class)
+                                                               .execute();
                                                        List<String> goodsIds = new ArrayList<String>();
                                                        for (int i = 0; i < lists1.size(); i++) {
                                                            goodsIds.add(lists1.get(i).goodsId);
@@ -365,6 +390,7 @@ public class GoodsDetailActivity extends BaseNormalActivity {
                                                                    goods1.goodsParentId = goodsParentId;
                                                                    goods1.guige = entity.guige;
                                                                    goods1.unit = entity.danwei;
+                                                                   goods1.discountType = entity.discount_type;
                                                                    //goods1.save();
                                                                    data.add(goods1);
 
@@ -396,6 +422,7 @@ public class GoodsDetailActivity extends BaseNormalActivity {
                                                                        goods.goodsParentId = goodsParentId;
                                                                        goods.guige = entity.guige;
                                                                        goods.unit = entity.danwei;
+                                                                       goods.discountType = entity.discount_type;
                                                                        goods.save();
                                                                    }
                                                                }
@@ -483,6 +510,7 @@ public class GoodsDetailActivity extends BaseNormalActivity {
                                                                goods.isChecked = Goods.GOODS_IS_NOT_BUY;
                                                                goods.guige = entity.guige;
                                                                goods.unit = entity.danwei;
+                                                               goods.discountType = entity.discount_type;
                                                                goods.save();
                                                                data.add(goods);
                                                            }
@@ -638,5 +666,28 @@ public class GoodsDetailActivity extends BaseNormalActivity {
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    public void referenceBadge() {
+        int total = 0;
+        List<ShoppingCar> list = new Select()
+                .from(ShoppingCar.class)
+                .execute();
+
+        for(int i=0;i<list.size();i++){
+            total += Integer.parseInt(list.get(i).goodsNumber);
+        }
+
+        if(total == 0){
+            mBadgeView.hide();
+        }else{
+            if(total > 99){
+                mBadgeView.setText("99+");
+            }else{
+                mBadgeView.setText(total+"");
+            }
+            mBadgeView.show();
+        }
     }
 }

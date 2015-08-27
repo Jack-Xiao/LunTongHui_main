@@ -1,6 +1,5 @@
 package com.louie.luntonghui.task;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,12 +11,12 @@ import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.util.ClientUtil;
 import com.louie.luntonghui.util.Config;
+import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.ToastUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -31,7 +30,6 @@ import me.drakeet.materialdialog.MaterialDialog;
 public class UpdateVersionTask extends AsyncTask<Object, Integer, Boolean> {
     private Context mContext;
     private NumberProgressBar mProgressDialog;
-    private String newAppName;
 
     private int downLength = 0;
     private int total = 0;
@@ -39,32 +37,33 @@ public class UpdateVersionTask extends AsyncTask<Object, Integer, Boolean> {
     private int lastProgress = 0;
     private File newAPKFile;
     private MaterialDialog materialDialog;
+    public static final int NEED_VIEW = 1;
+    public static final int NOT_NEED_VIEW = 0;
+    private int currViewType;
 
-    public UpdateVersionTask(Context context) {
+    public UpdateVersionTask(Context context, int viewType) {
+        //mListener = context;
         mContext = context;
         //mProgressDialog = new ProgressDialog(mContext);
-
+        currViewType = viewType;
         materialDialog = new MaterialDialog(mContext);
-        View contentView= LayoutInflater.from(mContext).inflate(R.layout.view_progressbar,null);
-        mProgressDialog =(NumberProgressBar) contentView.findViewById(R.id.number_progress_bar) ;
+        View contentView = LayoutInflater.from(mContext).inflate(R.layout.view_progressbar, null);
+        mProgressDialog = (NumberProgressBar) contentView.findViewById(R.id.number_progress_bar);
         materialDialog.setView(contentView)
-        .setCanceledOnTouchOutside(false)
-        .setTitle(R.string.updating);
-
+                .setCanceledOnTouchOutside(false)
+                .setTitle(R.string.updating);
 
         /*mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.setIndeterminate(false);
         mProgressDialog.setCanceledOnTouchOutside(false);*/
 
-        newAppName = "new_轮通惠.apk";
     }
 
 
     @Override
     protected void onPreExecute() {
-        materialDialog.show();
+        if (NEED_VIEW == currViewType) materialDialog.show();
         mProgressDialog.setProgress(progress);
-
     }
 
     @Override
@@ -80,7 +79,7 @@ public class UpdateVersionTask extends AsyncTask<Object, Integer, Boolean> {
             http.connect(); //连接
             if (http.getResponseCode() == Config.CONNECT_SUCCESS) {
                 total = http.getContentLength();
-                createApkFile();
+                newAPKFile = ClientUtil.createApkFile();
                 InputStream inputStream = http.getInputStream();
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); //缓存
                 byte[] buffer = new byte[1024 * 10];
@@ -114,10 +113,10 @@ public class UpdateVersionTask extends AsyncTask<Object, Integer, Boolean> {
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-        downLength +=values[0];
-        if(total !=0){
-            progress =(int)((float)downLength /total *100);
-            if((progress >= lastProgress +1) || progress ==100){
+        downLength += values[0];
+        if (total != 0) {
+            progress = (int) ((float) downLength / total * 100);
+            if ((progress >= lastProgress + 1) || progress == 100) {
                 lastProgress = progress;
                 mProgressDialog.setProgress(progress);
             }
@@ -126,33 +125,22 @@ public class UpdateVersionTask extends AsyncTask<Object, Integer, Boolean> {
 
     @Override
     protected void onPostExecute(Boolean isSuccess) {
-        materialDialog.dismiss();
-        if(isSuccess){
+        UpdateService.finishUpdated();
+        if (NEED_VIEW == currViewType) materialDialog.dismiss();
+        if (isSuccess) {
+            DefaultShared.putInt(UpdateService.UPDATE_SERVICE,
+                    Config.NEED_UPDATE);
             try {
                 Intent apkIntent = new Intent(Intent.ACTION_VIEW);
                 apkIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 Uri puri = Uri.fromFile(newAPKFile);
                 apkIntent.setDataAndType(puri, "application/vnd.android.package-archive");
                 mContext.startActivity(apkIntent);
-            }catch (Exception e){
-                ToastUtil.showShortToast(mContext,R.string.install_fail);
+            } catch (Exception e) {
+                ToastUtil.showShortToast(mContext, R.string.install_fail);
             }
-        }else{
-            ToastUtil.showShortToast(mContext,R.string.update_fail);
-        }
-
-    }
-
-    private void createApkFile() {
-        try {
-            String mDirPath = ClientUtil.getDownDir();
-            newAPKFile = new File(mDirPath, newAppName);
-            if (newAPKFile.exists()) {
-                newAPKFile.delete();
-            }
-            newAPKFile.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            ToastUtil.showShortToast(mContext, R.string.update_fail);
         }
     }
 }

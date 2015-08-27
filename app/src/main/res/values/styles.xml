@@ -186,5 +186,14 @@
         <item name="android:paddingBottom">7dp</item>
     </style>
 
+    <style name="present_discount_style">
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:gravity">center</item>
+        <item name = "android:background">@color/next_step</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
 
  </resources>

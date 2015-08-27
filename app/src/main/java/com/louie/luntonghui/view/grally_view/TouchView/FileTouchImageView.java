@@ -18,34 +18,27 @@
 package com.louie.luntonghui.view.grally_view.TouchView;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-import com.louie.luntonghui.view.grally_view.TouchView.InputStreamWrapper.InputStreamProgressListener;
-
-public class FileTouchImageView extends UrlTouchImageView 
-{
+public class FileTouchImageView extends UrlTouchImageView {
 	
-    public FileTouchImageView(Context ctx)
-    {
+    public FileTouchImageView(Context ctx) {
         super(ctx);
-
     }
-    public FileTouchImageView(Context ctx, AttributeSet attrs)
-    {
+
+    public FileTouchImageView(Context ctx, AttributeSet attrs) {
         super(ctx, attrs);
     }
 
-    public void setUrl(String imagePath)
-    {
+
+    public void setUrl(String imagePath) {
         new ImageLoadTask().execute(imagePath);
+        //Picasso.with(mContext).load(imagePath).into(mImageView);
+        //super.setUrl(imagePath);
     }
+
     //No caching load
-    public class ImageLoadTask extends UrlTouchImageView.ImageLoadTask
+   /* public class ImageLoadTask extends UrlTouchImageView.ImageLoadTask
     {
         @Override
         protected Bitmap doInBackground(String... strings) {
@@ -55,12 +48,10 @@ public class FileTouchImageView extends UrlTouchImageView
             	File file = new File(path);
             	FileInputStream fis = new FileInputStream(file);
                 InputStreamWrapper bis = new InputStreamWrapper(fis, 8192, file.length());
-                bis.setProgressListener(new InputStreamProgressListener()
-				{					
+                bis.setProgressListener(new InputStreamProgressListener() {
 					@Override
 					public void onProgress(float progressValue, long bytesLoaded,
-							long bytesTotal)
-					{
+							long bytesTotal) {
 						publishProgress((int)(progressValue * 100));
 					}
 				});
@@ -71,5 +62,5 @@ public class FileTouchImageView extends UrlTouchImageView
             }
             return bm;
         }
-    }
+    }*/
 }

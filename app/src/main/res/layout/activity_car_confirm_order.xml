@@ -13,7 +13,7 @@
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-            android:layout_gravity="center"
+        android:layout_gravity="center"
         android:id="@+id/progress"
         android:visibility="visible" />
 
@@ -67,6 +67,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="20dp"
                             android:textSize="14sp"
+                            android:maxLines="1"
                             tools:text="15989054686" />
                     </LinearLayout>
 
@@ -81,6 +82,7 @@
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/address_select_more"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"

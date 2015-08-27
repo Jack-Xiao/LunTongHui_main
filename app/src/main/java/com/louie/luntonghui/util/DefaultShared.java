@@ -1,11 +1,12 @@
 package com.louie.luntonghui.util;
 
-import java.util.Map;
-
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
+
 import com.louie.luntonghui.App;
+
+import java.util.Map;
 
 
 /**

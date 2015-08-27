@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,10 +62,15 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
     private Intent intent;
     private PendingIntent sender;
     private long ALARM_TIME;
+    public ReferenceListener mListener;
 
+    public interface ReferenceListener{
+        public void onReference();
+    }
 
     public SecondKillAdapter(SecondKillActivity context) {
         mContext = context;
+        mListener = context;
         mList = new ArrayList<Goods>();
         inflater = LayoutInflater.from(mContext);
         userId = DefaultShared.getString(RegisterLogin.USERUID, "0");
@@ -229,8 +235,8 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
                             .where("goods_id=?", goodsId)
                             .execute();
                     mList.get(position).setAlarmClock = Goods.HAS_SET_ALARM_CLOCK;
-
                 }
+
                 int receiverSize = new Select()
                         .from(Goods.class)
                         .where("setAlarmClock = ?", Goods.HAS_SET_ALARM_CLOCK)
@@ -238,7 +244,6 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
 
                 //cancel the alarm clock.
                 if(receiverSize == 0){
-
                     AlarmManager am = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
                     am.cancel(sender);
                 }else{
@@ -246,12 +251,15 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
                     calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                    long currentTime = System.currentTimeMillis();
+                    long alarmTime = ALARM_TIME - currentTime;
 
-                    long speedSecond = ALARM_TIME / 1000L;
 
+                    //long speedSecond = ALARM_TIME / 1000L;
+                    long speedSecond = alarmTime / 1000L;
                     int intSpeedSecond = (int)speedSecond;
                     //intSpeedSecond = 10;
-
+                    Log.d("second_kill",intSpeedSecond +" 秒之后会有闹钟");
                     calendar.add(Calendar.SECOND,intSpeedSecond);
                     AlarmManager manager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
                     manager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),sender);
@@ -332,6 +340,7 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
                     car.carId = result.cat_id;
                     car.save();
                     notifyDataSetChanged();
+                    mListener.onReference();
                 }else{
                     ToastUtil.showShortToast(mContext,result.rsgmsg);
                 }
@@ -349,6 +358,7 @@ public class SecondKillAdapter extends BaseAdapter implements AlertDialogUtil.Al
                             .set("goods_number = ?",count)
                             .where("car_id=?",carId)
                             .execute();
+                    mListener.onReference();
                 }else{
                     ToastUtil.showShortToast(mContext,result.rsgmsg);
                 }

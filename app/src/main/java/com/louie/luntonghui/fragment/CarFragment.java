@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +42,7 @@ import com.louie.luntonghui.model.result.Result;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.car.ProduceOrderActivity;
 import com.louie.luntonghui.ui.mine.MineAdditionAddressActivity;
+import com.louie.luntonghui.ui.mine.MineAttentionActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
@@ -52,7 +52,6 @@ import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.ItemDivider;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +60,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.Optional;
-import retrofit.client.Response;
 import rx.Observer;
 
 import static com.louie.luntonghui.ui.register.RegisterLogin.USERUID;
@@ -132,8 +130,10 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
     private List<String> goodsIdList;
     private View emptyView;
     private ProgressDialog mProgressDialog;
+    private boolean isInsertSuccess;
 
     public OnReferenCartListener mCartListener;
+    private String dbOperFial ="";
 
 
     @Override
@@ -270,6 +270,10 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
     @Override
     public void onStart() {
         super.onStart();
+        getCarList();
+    }
+
+    public void getCarList(){
         String url = String.format(ConstantURL.GET_CAR_LIST, userId);
         RequestManager.addRequest(new GsonRequest(url, CarList.class, getCarListListener(), errorListener()), this);
     }
@@ -280,17 +284,21 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
             public void onResponse(final CarList carList) {
                 TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<ShoppingCar>>() {
                     @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                        if(progress !=null) progress.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
                     protected List<ShoppingCar> doInBackground(Object... params) {
                         goodsIdList = new ArrayList<>();
                         new Delete()
                                 .from(ShoppingCar.class)
                                 .execute();
-
                         List<ShoppingCar> data = new ArrayList<ShoppingCar>();
                         if(carList !=null && carList.goods_list !=null) {
                             try {
                                 ActiveAndroid.beginTransaction();
-                                Log.d("test. car list", carList.goods_list.size() + "");
                                 for (int i = 0; i < carList.goods_list.size(); i++) {
                                     ShoppingCar car = new ShoppingCar();
                                     car.carId = carList.goods_list.get(i).rec_id;
@@ -302,11 +310,17 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
                                     car.goodsName = carList.goods_list.get(i).goods_name;
                                     car.guige = carList.goods_list.get(i).guige;
                                     car.unit = carList.goods_list.get(i).danwei;
+                                    car.rId = carList.goods_list.get(i).rid;
+                                    car.discountType = carList.goods_list.get(i).discount_type;
+                                    car.discount = carList.goods_list.get(i).discount;
                                     car.save();
+                                    isInsertSuccess = true;
                                     data.add(car);
                                 }
                                 ActiveAndroid.setTransactionSuccessful();
-                            } finally {
+                            }catch(Exception e){
+                                dbOperFial = e.getStackTrace().toString();
+                            }finally {
                                 ActiveAndroid.endTransaction();
                             }
                         }
@@ -316,23 +330,19 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
                     @Override
                     protected void onPostExecute(List<ShoppingCar> list) {
                         if (progress != null) progress.setVisibility(View.GONE);
-
                         postValue(list);
 
-                        if(list.size() == 0){
-                            return;
-                        }else{
-
-                        }
                         int total=0;
                         for(int i =0;i<list.size();i++){
+                            if(!list.get(i).rId.equals("0")) continue;
                             total += Integer.parseInt(list.get(i).goodsNumber);
                         }
+
                         if(mCartListener!=null) mCartListener.referenceCart(total);
 
                         if(mPlaying!=null)mPlaying.setText("去结算(" + carList.total.real_goods_count + ")");
                         if(goodsTotoal!=null)goodsTotoal.setText("￥" + carList.total.goods_price);
-                        mAdapter.setData(list);
+                        if(list.size() !=0)mAdapter.setData(list);
                     }
                 });
             }
@@ -377,41 +387,28 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
                         .execute();
 
                 List<ShoppingCar> data = new ArrayList<ShoppingCar>();
-                ActiveAndroid.beginTransaction();
+                try {
 
-                for (int i = 0; i < carList.goods_list.size(); i++) {
-                    //if (!goodsIdList.contains(carList.goods_list.get(i).goods_id))
-                    {
-                        ShoppingCar car = new ShoppingCar();
-                        car.carId = carList.goods_list.get(i).rec_id;
-                        car.isChecked = INITCHECKED;
-                        car.goodsShopPrice = carList.goods_list.get(i).goods_price;
-                        car.goodsImage = carList.goods_list.get(i).goods_img;
-                        car.goodsNumber = carList.goods_list.get(i).goods_number;
-                        car.goodsId = carList.goods_list.get(i).goods_id;
-                        car.goodsName = carList.goods_list.get(i).goods_name;
-                        car.guige = carList.goods_list.get(i).guige;
-                        car.unit = carList.goods_list.get(i).danwei;
-                        car.save();
-                        data.add(car);
-                    } /*else {
-                        new Update(ShoppingCar.class)
-                                .set("goods_shop_price=?," +
-                                                "goods_image=?," +
-                                                "goods_number=?,"+
-                                                "car_id=?,"+
-                                                "goods_name=?",
-                                        carList.goods_list.get(i).goods_price,
-                                        carList.goods_list.get(i).goods_img,
-                                        carList.goods_list.get(i).goods_number,
-                                        carList.goods_list.get(i).rec_id,
-                                        carList.goods_list.get(i).goods_name)
-                                .where("goods_id=?",carList.goods_list.get(i).goods_id)
-                                .execute();
-                    }*/
+                    ActiveAndroid.beginTransaction();
+
+                    for (int i = 0; i < carList.goods_list.size(); i++) {
+                            ShoppingCar car = new ShoppingCar();
+                            car.carId = carList.goods_list.get(i).rec_id;
+                            car.isChecked = INITCHECKED;
+                            car.goodsShopPrice = carList.goods_list.get(i).goods_price;
+                            car.goodsImage = carList.goods_list.get(i).goods_img;
+                            car.goodsNumber = carList.goods_list.get(i).goods_number;
+                            car.goodsId = carList.goods_list.get(i).goods_id;
+                            car.goodsName = carList.goods_list.get(i).goods_name;
+                            car.guige = carList.goods_list.get(i).guige;
+                            car.unit = carList.goods_list.get(i).danwei;
+                            car.save();
+                            data.add(car);
+                    }
+                    ActiveAndroid.setTransactionSuccessful();
+                }finally {
+                    ActiveAndroid.endTransaction();
                 }
-                ActiveAndroid.setTransactionSuccessful();
-                ActiveAndroid.endTransaction();
                 return data;
             }
 
@@ -495,8 +492,11 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
     private int totalCount;
 
     public void reference() {
+        getCarList();
         //final double total;
-        TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<ShoppingCar>>() {
+        //executeRequest(new GsonRequest());
+
+        /*TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<ShoppingCar>>() {
             @Override
             protected List<ShoppingCar> doInBackground(Object... params) {
                 double tempTotal = 0.00;
@@ -522,16 +522,15 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
 
             @Override
             protected void onPostExecute(List<ShoppingCar> list) {
-                progress.setVisibility(View.GONE);
-                mPlaying.setText("去结算(" + totalCount + ")");
-                mCartListener.referenceCart(totalCount);
+                if(progress !=null)progress.setVisibility(View.GONE);
+                if(mPlaying !=null)mPlaying.setText("去结算(" + totalCount + ")");
+                if(mCartListener !=null)mCartListener.referenceCart(totalCount);
                 //bg = new BigDecimal(totalPrice);
                 //bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()
-                        goodsTotoal.setText("￥" + new DecimalFormat("0.00").format(totalPrice));
+                if(goodsTotoal !=null)goodsTotoal.setText("￥" + new DecimalFormat("0.00").format(totalPrice));
                 mAdapter.setData(list);
-
             }
-        });
+        });*/
     }
 
     public void clearCar() {
@@ -563,7 +562,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
             @Override
             public void onErrorResponse(VolleyError error) {
                 ToastUtil.showLongToast(mContext, error.getMessage());
-                Log.d("error  ....", error.getMessage());
+                /*Log.d("error  ....", error.getMessage());*/
             }
         };
     }
@@ -624,7 +623,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
     @Optional
     @OnClick(R.id.mine_attention)
     public void OnClickMineAttention() {
-        ToastUtil.showLongToast(getActivity(), R.string.does_not_deploy);
+        IntentUtil.startActivityWiehAlpha(getActivity(), MineAttentionActivity.class);
     }
 
     @Override

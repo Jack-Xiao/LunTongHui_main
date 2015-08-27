@@ -43,7 +43,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     private String getCurrentActivityName(Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Activity.ACTIVITY_SERVICE);
 
-
         // get the info from the currently running task
         List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
 

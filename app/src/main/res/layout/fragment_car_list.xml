@@ -37,11 +37,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-
         <include android:id="@+id/empty_view" layout="@layout/fragment_car_empty_view1"/>
 
     </RelativeLayout>
-
 
 
     <RelativeLayout
@@ -83,7 +81,6 @@
                 android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:singleLine="true"
                 android:textColor="@color/white"
                 tools:text="￥123456.0" />

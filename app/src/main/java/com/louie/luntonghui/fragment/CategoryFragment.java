@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -70,6 +71,9 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
     private List<String> categoryList;
     private List<GoodsList.Goods_listEntity> goodsLists;
     private Context mContext;
+    public static final String SCROLL_LOCATION = "scroll_location";
+    public static final String SCROLL_RPOS_LOCATION = "scroll_pros_location";
+    private int INIT_SCROLL = 0;
 
     private GoodsList lists;
     public int INITCATEGORYITEM = 0;
@@ -80,7 +84,7 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
     private int notNeedUpdate = 0;
     public static final String PROVIUS_SELECTED_ITEM = "provious_selected_item";
     private int currentItem =0;
-
+    private boolean firstRun = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -196,12 +200,31 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
         mGoodDetail = (ListView) contentView.findViewById(R.id.goods_detail);
 
         mGoodList.setOnItemClickListener(this);
+        mGoodDetail.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    // scrollPos记录当前可见的List顶端的一行的位置
+                    scrollPos = mGoodDetail.getFirstVisiblePosition();
+                    if (mDetailAdapter!= null) {
+                        View v = mGoodDetail.getChildAt(0);
+                        scrollTop=( v ==null)?0:v.getTop();
+                        DefaultShared.putInt(SCROLL_LOCATION, scrollTop);
+                        DefaultShared.putInt(SCROLL_RPOS_LOCATION,scrollPos);
+                    }
+                }
+            }
 
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            }
+        });
         parserArgument();
-
 
         return contentView;
     }
+    private int scrollPos;
+    private int scrollTop;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -216,13 +239,13 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onStart() {
         super.onStart();
+        firstRun = true;
         INITCATEGORYITEM = DefaultShared.getInt(Config.LAST_SELECT_CATEGORY_ITEM, currentItem);
         initValue();
 
     }
 
     private void parserArgument() {
-
         Bundle bundle = getArguments();
         if (bundle != null) {
             queryContent = bundle.getString(Config.FASTQUERYARG);
@@ -283,8 +306,14 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
         mDetailAdapter = new GoodsDetailAdapter(getActivity(), goods_list1);
         mHomeAdapter.setBackground(position);
         mGoodDetail.setAdapter(mDetailAdapter);
-        DefaultShared.putInt(Config.LAST_SELECT_CATEGORY_ITEM, currentItem);
+        if(firstRun){
+            scrollTop = DefaultShared.getInt(SCROLL_LOCATION, INIT_SCROLL);
+            scrollPos = DefaultShared.getInt(SCROLL_RPOS_LOCATION,INIT_SCROLL);
+            mGoodDetail.setSelectionFromTop(scrollPos,scrollTop);
+        }
 
+        DefaultShared.putInt(Config.LAST_SELECT_CATEGORY_ITEM, currentItem);
+        firstRun = false;
     }
 
     @Override

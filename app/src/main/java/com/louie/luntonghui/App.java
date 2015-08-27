@@ -15,6 +15,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.GeofenceClient;
 import com.baidu.location.LocationClient;
+import com.facebook.stetho.Stetho;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.model.db.HotSearchTable;
 import com.louie.luntonghui.model.db.Order;
@@ -25,6 +26,7 @@ import com.louie.luntonghui.model.result.HotSearch;
 import com.louie.luntonghui.model.result.OrderList;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.register.RegisterLogin;
+import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.TaskUtils;
@@ -69,6 +71,9 @@ public class App extends Application {
     public static final String PROVINCEID = "province_id";
     public static final String USERUID = "user_uid";
     public static final String DEFAULT_USER_ID = "-1";
+    public static final String DEFAULT_CITY = "广州";
+    public static final String DEFAULT_PROVINCE = "广东";
+
 
     public static final String GOODS_TOP_PARENT_ID = "-1";
 
@@ -79,8 +84,8 @@ public class App extends Application {
     public MyLocationListener mMyLocationListener;
     public Vibrator mVibrator;
     public String strLocation;
-    public String cityName;
-    public String provinceName;
+    public String cityName = "";
+    public String provinceName = "";
 
     public Map<String, String> idNList;
     public Map<String, String> nameidList;
@@ -103,6 +108,7 @@ public class App extends Application {
         //Fabric.with(this, new Crashlytics(), new Twitter(authConfig));
         //Fabric.with(this,new Crashlytics());
 
+
         ActiveAndroid.initialize(this);
         application = this;
         parserXml();
@@ -110,7 +116,6 @@ public class App extends Application {
         initOrderList();
 
         initImageLoader(getApplicationContext());
-
 
         mLocationClient = new LocationClient(this.getApplicationContext());
         mMyLocationListener = new MyLocationListener();
@@ -121,13 +126,15 @@ public class App extends Application {
     }
 
     private void initDebug() {
-/*        Stetho.initialize(
-                Stetho.newInitializerBuilder(this)
-                        .enableDumpapp(
-                                Stetho.defaultDumperPluginsProvider(this))
-                        .enableWebKitInspector(
-                                Stetho.defaultInspectorModulesProvider(this))
-                        .build());*/
+        if(BuildConfig.DEBUG) {
+            Stetho.initialize(
+                    Stetho.newInitializerBuilder(this)
+                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                            .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                            .build());
+
+            String deviceInfo = Config.getDeviceInfo(application);
+        }
     }
 
 
@@ -143,11 +150,9 @@ public class App extends Application {
         return new Response.Listener<OrderList>() {
             @Override
             public void onResponse(final OrderList orderList) {
-                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<Order>>() {
-                    @Override
-                    protected List<Order> doInBackground(Object... params) {
+
                         List<Order> data = new ArrayList<Order>();
-                        if (orderList != null && orderList.mysalelist !=null) {
+                        if (orderList != null && orderList.mysalelist != null) {
                             try {
                                 new Delete()
                                         .from(Order.class)
@@ -171,16 +176,13 @@ public class App extends Application {
                                 ActiveAndroid.endTransaction();
                             }
                         }
-                        return data;
-                    }
-                });
             }
         };
     }
 
 
     public void initDB() {
-       //String userId = DefaultShared.getString(USERUID, DEFAULT_USER_ID);
+        //String userId = DefaultShared.getString(USERUID, DEFAULT_USER_ID);
         /* String cityId = DefaultShared.getString(CITYID, DEFAULT_CITYID);
         String userType = DefaultShared.getString(RegisterLogin.USER_TYPE,RegisterLogin.USER_DEFAULT);
         String url = String.format(ConstantURL.GOODS_LIST, cityId,userType);
@@ -229,10 +231,9 @@ public class App extends Application {
                                 .execute();
 
                         List<ShoppingCar> data = new ArrayList<ShoppingCar>();
-                        if(carList !=null && carList.goods_list !=null) {
+                        if (carList != null && carList.goods_list != null) {
                             try {
                                 ActiveAndroid.beginTransaction();
-                                Log.d("test. car list", carList.goods_list.size() + "");
                                 for (int i = 0; i < carList.goods_list.size(); i++) {
                                     ShoppingCar car = new ShoppingCar();
                                     car.carId = carList.goods_list.get(i).rec_id;
@@ -253,7 +254,9 @@ public class App extends Application {
                             }
                         }
                         return data;
-                    };
+                    }
+
+                    ;
                 });
             }
         };
@@ -263,26 +266,22 @@ public class App extends Application {
         return new Response.Listener<HotSearch>() {
             @Override
             public void onResponse(final HotSearch hotSearch) {
-                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Void>() {
-                    @Override
-                    protected Void doInBackground(Object... params) {
-                        ActiveAndroid.beginTransaction();
                         if (hotSearch != null && hotSearch.listallcat != null) {
                             new Delete()
                                     .from(HotSearchTable.class)
                                     .execute();
-
-                            for (int i = 0; i < hotSearch.listallcat.size(); i++) {
-                                HotSearchTable table = new HotSearchTable();
-                                table.hotSearchChar = hotSearch.listallcat.get(i).name;
-                                table.save();
+                            try {
+                                ActiveAndroid.beginTransaction();
+                                for (int i = 0; i < hotSearch.listallcat.size(); i++) {
+                                    HotSearchTable table = new HotSearchTable();
+                                    table.hotSearchChar = hotSearch.listallcat.get(i).name;
+                                    table.save();
+                                }
+                            } finally {
+                                ActiveAndroid.setTransactionSuccessful();
+                                ActiveAndroid.endTransaction();
                             }
                         }
-                        ActiveAndroid.setTransactionSuccessful();
-                        ActiveAndroid.endTransaction();
-                        return null;
-                    }
-                });
             }
         };
     }
@@ -366,7 +365,7 @@ public class App extends Application {
                 cityName = location.getCity().replace("市", "");
                 provinceName = location.getProvince().replace("省", "");
                 location.getProvince();
-                sb.append(location.getDirection());
+                //sb.append(location.getDirection() + "");  可能为null
             } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                 sb.append("\naddr : ");
                 sb.append(location.getAddrStr());
@@ -374,7 +373,7 @@ public class App extends Application {
                 provinceName = location.getProvince().replace("省", "");
                 //运营商信息
                 sb.append("\noperationers : ");
-                sb.append(location.getOperators());
+                sb.append(location.getOperators() + "");
             }
             Log.d("current city", cityName + "");
             Log.d("current city", provinceName + "");
@@ -402,7 +401,7 @@ public class App extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        ActiveAndroid.dispose();
+        RequestManager.cancelAll();
     }
 
 

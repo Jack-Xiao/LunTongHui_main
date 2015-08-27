@@ -120,7 +120,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <android.support.design.widget.FloatingActionButton
+   <!-- <android.support.design.widget.FloatingActionButton
         android:id="@+id/main_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -133,5 +133,18 @@
         android:src="@drawable/menu_cart_icon"
         app:borderWidth="0dp"
         app:elevation="20dp"
-        app:layout_anchorGravity="right|bottom" />
+        app:layout_anchorGravity="right|bottom" />-->
+
+    <com.shamanland.fab.FloatingActionButton
+        android:id="@+id/main_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/menu_cart_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="60dp"
+        android:layout_marginRight="80dp"
+        app:floatingActionButtonColor="@color/material_green_A200"
+        app:floatingActionButtonSize="normal" />
+
 </RelativeLayout>

@@ -3,6 +3,7 @@ package com.louie.luntonghui.util;
 import android.os.Environment;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by Administrator on 2015/7/16.
@@ -23,4 +24,23 @@ public class ClientUtil {
         return file.getAbsolutePath();
     }
 
+    public static File createApkFile() {
+        File newAPKFile = null;
+        try {
+            String mDirPath = getDownDir();
+            newAPKFile = new File(mDirPath, Config.newApkName);
+            if (newAPKFile.exists()) {
+                newAPKFile.delete();
+            }
+            newAPKFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return newAPKFile;
+    }
+
+    public static void installApk(){
+
+
+    }
 }

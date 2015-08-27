@@ -24,6 +24,7 @@ import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.DailySignIn;
 import com.louie.luntonghui.net.RequestManager;
+import com.louie.luntonghui.ui.mine.MineAttentionActivity;
 import com.louie.luntonghui.ui.mine.MineReceiverAddressActivity;
 import com.louie.luntonghui.ui.mine.MineService.MineServiceProviderActivity;
 import com.louie.luntonghui.ui.mine.MineService.MineWorkActivity;
@@ -106,7 +107,7 @@ public class MineFragment1 extends BaseFragment {
         String[] customType = getResources().getStringArray(R.array.custom_type);
         mUid = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
         userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.DEFAULT_USER_ID);
-        if (!userType.equals(RegisterLogin.DEFAULT_USER_ID)) {
+        if (!userType.equals(RegisterLogin.DEFAULT_USER_ID)){
             if (userType.equals("")) {
                 userType = RegisterLogin.USER_DEFAULT;
             }
@@ -114,7 +115,6 @@ public class MineFragment1 extends BaseFragment {
             mCustomType = customType[iType];
         }
         employeeType = DefaultShared.getString(User.IS_EMPLOYEE, User.NOTEMPLOYEE);
-
     }
 
     @Nullable
@@ -161,7 +161,6 @@ public class MineFragment1 extends BaseFragment {
             @Override
             protected User doInBackground(Void... params) {
 
-
                 User user = new Select()
                         .from(User.class)
                         .where("uid = ?", mUid)
@@ -177,7 +176,8 @@ public class MineFragment1 extends BaseFragment {
                 phoneNumber.setText("手机号:" + user.mobilePhone);
                 customType.setText("类型:" + mCustomType);
                 luntongMoney.setText(user.integral);
-                statusValue.setText(user.integral);
+                //statusValue.setText(user.integral);
+                statusValue.setText(0 + "");
             }
         });
     }
@@ -190,7 +190,8 @@ public class MineFragment1 extends BaseFragment {
 
     @OnClick(R.id.mine_attention)
     public void onAttentionClick() {
-        if (!loginUser()) return;
+        //if (!loginUser()) return;
+        IntentUtil.startActivityWiehAlpha(getActivity(), MineAttentionActivity.class);
     }
 
     @OnClick(R.id.mine_address_manager)
@@ -326,7 +327,8 @@ public class MineFragment1 extends BaseFragment {
                         @Override
                         protected void onPostExecute(Object o) {
                             luntongMoney.setText(dailySignIn.total);
-                            statusValue.setText(dailySignIn.total);
+                            //statusValue.setText(dailySignIn.total);
+                            statusValue.setText(0+"");
                         }
                     });
 

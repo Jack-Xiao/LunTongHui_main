@@ -63,6 +63,7 @@ public class Goods extends Model {
     public String discount;
     @Column(name = "discount_time")
     public String discountTime;
+
     @Column(name = "discount_name")
     public String discountName;
 
@@ -91,5 +92,8 @@ public class Goods extends Model {
 
     @Column(name = "setAlarmClock")
     public String setAlarmClock;
+
+    @Column(name = "discount_type")
+    public String discountType;
 
 }

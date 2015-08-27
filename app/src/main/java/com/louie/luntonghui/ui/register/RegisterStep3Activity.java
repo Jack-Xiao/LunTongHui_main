@@ -81,6 +81,8 @@ public class RegisterStep3Activity extends BaseNormalActivity {
     private List<RadioButton> radList;
     private String mac;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -291,6 +293,12 @@ public class RegisterStep3Activity extends BaseNormalActivity {
                             DefaultShared.putString(RegisterLogin.USER_TYPE, login.type);
                             DefaultShared.putString(RegisterLogin.USERUID, login.userid);
                             DefaultShared.putString(User.IS_EMPLOYEE, login.personnel);
+                            try {
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             App.getBusInstance().post(new LoginEvent());
                             RegisterStep3Activity.this.finish();
                             Bundle bundle = new Bundle();

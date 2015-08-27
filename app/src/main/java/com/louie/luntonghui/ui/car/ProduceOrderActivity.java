@@ -31,6 +31,7 @@ import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.OrderConfirm;
 import com.louie.luntonghui.model.result.ProduceOrder;
 import com.louie.luntonghui.ui.BaseNormalActivity;
+import com.louie.luntonghui.ui.mine.MineReceiverAddressActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.BaseAlertDialogUtil;
 import com.louie.luntonghui.util.BaseMainAlertDialogUtil;
@@ -58,7 +59,8 @@ import butterknife.OnClick;
  * Created by Administrator on 2015/7/1.
  */
 public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwitch.SlideListener
-                            ,BaseAlertDialogUtil.BaseAlertDialogListener,BaseMainAlertDialogUtil.BaseMainAlertDialogListener{
+                            ,BaseAlertDialogUtil.BaseAlertDialogListener,BaseMainAlertDialogUtil.BaseMainAlertDialogListener,
+                                ProduceOrderAdapter.FixOrderListener{
 
     @InjectView(R.id.toolbar_navigation)
     ImageView toolbarNavigation;
@@ -106,6 +108,8 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
     RelativeLayout totalPrice;
     private int addressId;
     private static final int REQUESTCODE = 0x1;
+    public static final String ADDRESS_SELECT = "address_select";
+    public static final boolean isAddressSelect = true;
 
     private String userId;
     public Map<String, String> regions;
@@ -122,7 +126,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         setContentView(R.layout.activity_car_confirm_order);
         ButterKnife.inject(this);
         App.getBusInstance().register(this);
-        mAdapter = new ProduceOrderAdapter(this);
+        mAdapter = new ProduceOrderAdapter(this,this);
         listView.setAdapter(mAdapter);
 
 
@@ -148,7 +152,14 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                 .from(ShoppingCar.class)
                 .execute();
         StringBuilder ids = new StringBuilder("");
+
+        if(list.size() == 0){
+            ToastUtil.showShortToast(mContext,"购物车内没有商品!");
+            return;
+        }
+
         for (int i = 0; i < list.size(); i++) {
+            if(!list.get(i).rId.equals("0")) continue;
             ids.append(list.get(i).carId + "," + list.get(i).goodsNumber + ":");
         }
         String new_number = ids.toString();
@@ -162,8 +173,25 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUESTCODE){
+        if(requestCode == REQUESTCODE && resultCode == RESULT_OK){
+            String provinceId = data.getStringExtra(MineReceiverAddressActivity.PROVINCE_ID);
+            String cityId = data.getStringExtra(MineReceiverAddressActivity.CITY_ID);
+            String districtId = data.getStringExtra(MineReceiverAddressActivity.DISTRICT_ID);
+            String strAddressId = data.getStringExtra(MineReceiverAddressActivity.ADDRESS_ID);
+            String consigner = data.getStringExtra(MineReceiverAddressActivity.CONSIGNER);
+            String detailAddress = data.getStringExtra(MineReceiverAddressActivity.DETAIL_ADDRESS);
+            String strPhoneNumber = data.getStringExtra(MineReceiverAddressActivity.PHONE_NUMBER);
 
+
+            addressId = Integer.parseInt(strAddressId);
+            String province = regions.get(provinceId) + "省";
+            String city = regions.get(cityId) + "市";
+            String district = regions.get(districtId);
+            String addressDetail = detailAddress ;
+
+            username.setText(consigner);
+            phoneNumber.setText(strPhoneNumber);
+            regionDetail.setText(province + city + district + addressDetail);
         }
     }
 
@@ -276,7 +304,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                 username.setText(produceOrder.consignee.get(0).consignee);
                 phoneNumber.setText(produceOrder.consignee.get(0).mobile);
                 regionDetail.setText(province + city + district + addressDetail);
-                mAdapter.setData(produceOrder.cart_goods);
+                mAdapter.setData(produceOrder.cart_goods,false);
 
                 goodsValueValue.setText("￥" + produceOrder.total.goods_price + "");
                 freightValue.setText("￥" + produceOrder.total.shipping_fee);
@@ -421,4 +449,21 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         super.onPause();
         MobclickAgent.onPause(this);
     }
+
+    @Override
+    public void reference() {
+
+    }
+
+    @OnClick(R.id.address_select_more)
+    public void addressSelect(){
+        Intent intent = new Intent();
+        intent.putExtra(ADDRESS_SELECT,isAddressSelect);
+        intent.setClass(ProduceOrderActivity.this, MineReceiverAddressActivity.class);
+
+        startActivityForResult(intent, REQUESTCODE);
+
+    }
+
+
 }

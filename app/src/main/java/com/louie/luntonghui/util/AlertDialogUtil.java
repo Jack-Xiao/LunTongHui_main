@@ -128,7 +128,7 @@ public class AlertDialogUtil {
             public void onClick(View v) {
                 int result = 1;
                 try {
-                    //result = Integer.parseInt(holder.strContent.getText().toString());
+                    result = Integer.parseInt(mContent.getText().toString());
                 } catch (Exception e) {
                     result = 1;
                 }

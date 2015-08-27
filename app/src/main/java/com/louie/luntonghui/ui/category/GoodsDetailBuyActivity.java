@@ -7,11 +7,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,10 +27,12 @@ import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.ShowCarListEvent;
+import com.louie.luntonghui.model.db.AttentionGoods;
 import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.GoodsDetail;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.AddGoodsResult;
+import com.louie.luntonghui.model.result.AddtionAttentionResult;
 import com.louie.luntonghui.model.result.CarList;
 import com.louie.luntonghui.model.result.DetailItem;
 import com.louie.luntonghui.model.result.Result;
@@ -55,6 +60,10 @@ import butterknife.OnClick;
 import cn.lightsky.infiniteindicator.InfiniteIndicatorLayout;
 import cn.lightsky.infiniteindicator.slideview.BaseSliderView;
 import cn.lightsky.infiniteindicator.slideview.DefaultSliderView;
+import rx.Observer;
+import rx.android.app.AppObservable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 
 import static com.louie.luntonghui.ui.category.GoodsDetailActivity.GOODSDETAILID;
 
@@ -102,7 +111,22 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
 
     @InjectView(R.id.into_car)
     TextView intoCar;
+    @InjectView(R.id.toolbar_navigation)
+    ImageView toolbarNavigation;
+    @InjectView(R.id.toolbar_title)
+    TextView toolbarTitle;
+    @InjectView(R.id.sales_promotion_value)
+    TextView salesPromotionValue;
+    @InjectView(R.id.line_sales_promotion)
+    LinearLayout lineSalesPromotion;
+    @InjectView(R.id.minus)
+    ImageButton minus;
+    @InjectView(R.id.plus)
+    ImageButton plus;
+    @InjectView(R.id.car_list)
+    ImageView carList;
 
+    Toast toast;
 
     private String goodsId;
 
@@ -119,9 +143,12 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
     private BadgeView mBadgeView;
     private ShoppingCar mCar;
     private String[] imgList;
-    public static final String sliderName ="extra";
+    public static final String sliderName = "extra";
     public static final String IMAGES = "images";
     public static final String INDEX = "index";
+    //private List<String> attentionGoodsIds;
+    private GoodsDetail currentGoodsDetail;
+    private HashMap<String,String> attentionGoodsMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,49 +159,50 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
 
         mContext = this;
 
-        mCarList = (ImageView)findViewById(R.id.car_list);
+        mCarList = (ImageView) findViewById(R.id.car_list);
         mgAttention = new ImageView(mContext);
         mgAttention.setImageResource(R.drawable.product_attention_info);
 
         mgAttentionCancel = new ImageView(mContext);
         mgAttentionCancel.setImageResource(R.drawable.product_attention_cancel_info);
-
+        attentionGoodsMap = new HashMap<>();
 
         String cityId = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
         Bundle bundle = getIntent().getExtras();
         String goodsId = bundle.getString(GOODSDETAILID);
-        String userType = DefaultShared.getString(RegisterLogin.USER_TYPE,RegisterLogin.USER_DEFAULT);
+        String userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
         mGoodsId = goodsId;
-        String url = String.format(ConstantURL.GOODS_DETAIL_ITEM, goodsId, cityId,userType);
+        String url = String.format(ConstantURL.GOODS_DETAIL_ITEM, goodsId, cityId, userType);
 
         initView();
         initBadgeView();
+
         executeRequest(new GsonRequest(url, DetailItem.class, getGoodsItemDetail(), errorListener()));
-        String userId = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
+        //String userId = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
 
        /* url = String.format(ConstantURL.GET_CAR_LIST, userId);
         executeRequest(new GsonRequest(url, CarList.class, getCarList(), errorListener()));*/
-        initCart();
-    }
-
-    private void initCart() {
-
-
     }
 
     private void initBadgeView() {
-        mBadgeView = new BadgeView(mContext,mCarList);
+        mBadgeView = new BadgeView(mContext, mCarList);
         List<ShoppingCar> list = new Select()
                 .from(ShoppingCar.class)
                 .execute();
         int total = 0;
-        for(int i =0;i<list.size();i++){
+        for (int i = 0; i < list.size(); i++) {
             total += Integer.parseInt(list.get(i).goodsNumber);
         }
-        if(total >0){
-            mBadgeView.setText(total +"");
+        if (total > 0) {
+            if(total>99){
+                mBadgeView.setText("99+");
+            }else{
+                mBadgeView.setText(total + "");
+            }
             mBadgeView.setTextSize(Config.BADGEVIEW_SIZE);
             mBadgeView.show();
+        }else{
+            mBadgeView.hide();
         }
     }
 
@@ -189,20 +217,17 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         badgeView1.setText( "1");
         badgeView1.show();*/
 
-
         mCarList.setImageResource(R.drawable.product_cart_select);
 
-        int size = new Select()
-                .from(Goods.class)
-                .where("goods_id= ? and goods_attention=?", mGoodsId, Goods.GOODS_ATTENTION)
-                .execute()
-                .size();
-        if(size == 0){
-            attention.setImageResource(R.drawable.product_cancel_attention);
-        }else{
-            attention.setImageResource(R.drawable.product_attention);
+        List<AttentionGoods> attGoodsList = new Select()
+                .from(AttentionGoods.class)
+                .execute();
+
+        for (int i = 0; i < attGoodsList.size(); i++) {
+            attentionGoodsMap.put(attGoodsList.get(i).goodsId,attGoodsList.get(i).recId);
         }
 
+        adjustAttentionGoods();
         productViewpager = (InfiniteIndicatorLayout) findViewById(R.id.product_viewpager);
 
 
@@ -228,12 +253,19 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         content.setText(result + "");
     }
 
+    private void adjustAttentionGoods() {
+        if (!attentionGoodsMap.keySet().contains(mGoodsId)) {
+            attention.setImageResource(R.drawable.product_cancel_attention);
+        } else {
+            attention.setImageResource(R.drawable.product_attention);
+        }
+    }
+
     @OnClick(R.id.goods_introduce)
     public void onIntroduce() {
         Bundle bundle = new Bundle();
         bundle.putParcelable(DETAIL_ITEM, mGoods);
         IntentUtil.startActivity(GoodsDetailBuyActivity.this, GoodsDetailBuyInfoActivity.class, bundle);
-
     }
 
     private Response.Listener<CarList> getCarList() {
@@ -277,6 +309,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
 
                         if (goodsDetails != null) {
                             GoodsDetail goods = goodsDetails.get(0);
+                            currentGoodsDetail = goods;
 
                             String goodsId = goods.goodsId;
                             List<Goods> list = new Select()
@@ -284,21 +317,22 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                                     .where("goods_id=?", goodsId)
                                     .execute();
 
-                            if(list!=null ) {
-                                if (list.size()>0 && list.get(0).goodsAttention != null && list.get(0).goodsAttention.equals(Goods.GOODS_ATTENTION)) {
+                            /*if (list != null) {
+                                if (list.size() > 0 && list.get(0).goodsAttention != null && list.get(0).goodsAttention.equals(Goods.GOODS_ATTENTION)) {
                                     attention.setImageResource(R.drawable.product_attention);
                                 } else {
                                     attention.setImageResource(R.drawable.product_cancel_attention);
                                 }
-                            }
+                            }*/
+
                             mCar = new Select()
                                     .from(ShoppingCar.class)
-                                    .where("goods_id=?",goodsId)
+                                    .where("goods_id=?", goodsId)
                                     .executeSingle();
-                            if(mCar !=null){
+                            if (mCar != null) {
                                 content.setText(mCar.goodsNumber + "");
-                            }else{
-                                content.setText( 1 +"");
+                            } else {
+                                content.setText(1 + "");
                             }
 
                             mGoods = goods;
@@ -306,7 +340,14 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                             goodsStandardValue.setText(goods.guiGe);
                             marketpPrice.setText("￥" + goods.marketPrice + "/个");
                             marketpPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                            shopPrice.setText("￥" + goods.shopPrice +"/个");
+                            shopPrice.setText("￥" + goods.shopPrice + "/个");
+                            if (goods.hasPromotion.equals(GoodsDetail.HASPROMOTION)) {
+                                lineSalesPromotion.setVisibility(View.VISIBLE);
+                                salesPromotionValue.setText(goods.promotionName);
+                            } else {
+                                lineSalesPromotion.setVisibility(View.GONE);
+                            }
+
                             //showGoodsPicture();
                             initViewPager();
                         }
@@ -334,6 +375,8 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                                 goods.marketPrice = listallcat.get(i).market_price;
                                 goods.shopPrice = listallcat.get(i).shop_price;
                                 goods.goodsDesc = listallcat.get(i).goods_desc;
+                                goods.hasPromotion = listallcat.get(i).discounta;
+                                goods.promotionName = listallcat.get(i).discount_name;
 
                                 goods.save();
                                 goodses.add(goods);
@@ -361,7 +404,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
             DefaultSliderView textSliderView = new DefaultSliderView(this);
             textSliderView
                     .image(urlMaps.get(name))
-                    .setScaleType(BaseSliderView.ScaleType.Fit)
+                    .setScaleType(BaseSliderView.ScaleType.CenterCrop)
                     .setOnSliderClickListener(this);
             textSliderView.getBundle()
                     .putString(sliderName, name);
@@ -374,79 +417,19 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
     @Override
     protected void onPause() {
         super.onPause();
-        productViewpager.stopAutoScroll();
+        //productViewpager.stopAutoScroll();
         MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        productViewpager.startAutoScroll();
+        //productViewpager.startAutoScroll();
         MobclickAgent.onResume(this);
     }
 
-/*
-    private void showGoodsPicture() {
-        initIndicator();
-        goodsPicture = new ImageView(this);
-        mAdapter = new ShowGoodsAdapter(goodsBoughtList);
-        viewPager.setAdapter(mAdapter);
-        viewPager.addOnPageChangeListener(new ShowGoodsListener());
-    }*/
-
-
     private ArrayList<View> goodsImages;
 
-  /*  class ShowGoodsAdapter extends PagerAdapter {
-        private List<DetailItem.ListallcatEntity.Bought_goodsEntity> mList;
-
-        public ShowGoodsAdapter(List<DetailItem.ListallcatEntity.Bought_goodsEntity> goodsBoughtList) {
-            mList = goodsBoughtList;
-        }
-
-        @Override
-        public int getCount() {
-            return goodsBoughtList.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            ImageView imageView = (ImageView) goodsImages.get(position);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            Picasso.with(mContext)
-                    .load(mList.get(position).img_url)
-                    .into(imageView);
-            container.removeView(goodsImages.get(position));
-            container.addView(goodsImages.get(position));
-            return goodsImages.get(position);
-        }
-    }
-
-    class ShowGoodsListener implements ViewPager.OnPageChangeListener {
-
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            for (int i = 0; i < indicator_imgs.length; i++) {
-                indicator_imgs[i].setImageResource(R.drawable.page);
-            }
-            indicator_imgs[position].setImageResource(R.drawable.page_now);
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-
-        }
-    }*/
 
     private int result = 1;
 
@@ -481,30 +464,84 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
 
     @OnClick(R.id.attention)
     public void onAttentation(View vi) {
-        int size = new Select()
-                .from(Goods.class)
-                .where("goods_id= ? and goods_attention=?", mGoodsId, Goods.GOODS_ATTENTION)
-                .execute()
-                .size();
-        Toast toast = Toast.makeText(mContext, "", Toast.LENGTH_LONG);
+
+        toast = Toast.makeText(mContext, "", Toast.LENGTH_SHORT);
+
+
         toast.setGravity(Gravity.CENTER, 0, 0);
-        if (size == 1) {
+        if (attentionGoodsMap.keySet().contains(mGoodsId)) {
             toast.setView(mgAttentionCancel);
-            new Update(Goods.class)
-                    .set("goods_attention=?", Goods.GOODS_ATTENTION_CANCEL)
-                    .where("goods_id=?", mGoodsId)
-                    .execute();
-            attention.setImageResource(R.drawable.product_cancel_attention);
+            //mApi.cancelMineAttentionGoods(userId,userType);
+            AppObservable.bindActivity(this, mApi.cancelMineAttentionGoods(userId, attentionGoodsMap.get(mGoodsId)))
+                    .map(new Func1<Result, Void>() {
+                        @Override
+                        public Void call(Result result) {
+                            Log.d("observer", " result cancel " + result.rsgcode + " " + result.rsgmsg);
+                            Log.d("observer", "" + result.rsgcode.equals(SUCCESSCODE));
+                            if(result.rsgcode.equals(SUCCESSCODE)){
+                                Log.d("observer","into  cancel ");
+                                new Delete()
+                                        .from(AttentionGoods.class)
+                                        .where("goods_id = ?", mGoodsId)
+                                        .execute();
+                                attentionGoodsMap.remove(mGoodsId);
+
+                            }else{
+                                ToastUtil.showShortToast(mContext,result.rsgmsg);
+                            }
+                            return null;
+                        }
+                    })
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(observer);
+
         } else {
+            AppObservable.bindActivity(this, mApi.addMineAttentionGoods(userId, mGoodsId))
+                    .map(new Func1<AddtionAttentionResult, Void>() {
+                        @Override
+                        public Void call(AddtionAttentionResult result) {
+                            if (result.rsgcode.equals(SUCCESSCODE)) {
+                                Log.d("observer","into  addtion ");
+                                AttentionGoods goods = new AttentionGoods();
+                                goods.goodsId = mGoodsId;
+                                goods.marketPrice = currentGoodsDetail.marketPrice;
+                                goods.shopPrice = currentGoodsDetail.shopPrice;
+                                goods.goodsName = currentGoodsDetail.goodsName;
+                                goods.recId = result.rec_id;
+                                goods.save();
+                                attentionGoodsMap.put(mGoodsId,result.rec_id);
+                            }else{
+                                ToastUtil.showShortToast(mContext,result.rsgmsg);
+                            }
+                            return null;
+                        }
+                    })
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(observer);
             toast.setView(mgAttention);
-            new Update(Goods.class)
-                    .set("goods_attention=?", Goods.GOODS_ATTENTION)
-                    .where("goods_id=?", mGoodsId)
-                    .execute();
-            attention.setImageResource(R.drawable.product_attention);
         }
-        toast.show();
     }
+
+
+    Observer<Void> observer = new Observer<Void>() {
+        @Override
+        public void onCompleted() {
+            Log.d("observer", "onCompleted");
+            toast.show();
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.d("observer", "onError");
+            ToastUtil.showShortToast(mContext, R.string.network_connect_fail);
+        }
+
+        @Override
+        public void onNext(Void aVoid) {
+            Log.d("observer", "onNext");
+            adjustAttentionGoods();
+        }
+    };
 
     @OnClick(R.id.into_car)
     public void OnClickIntoCar(View vi) {
@@ -512,36 +549,35 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         String goodsId = mGoodsId;
 
         String number = content.getText().toString();
-        if(number.length() == 0){
-            ToastUtil.showShortToast(mContext,R.string.input_buy_count);
+        if (number.length() == 0) {
+            ToastUtil.showShortToast(mContext, R.string.input_buy_count);
             return;
         }
 
         mCar = new Select()
                 .from(ShoppingCar.class)
-                .where("goods_id=?",goodsId)
+                .where("goods_id=?", goodsId)
                 .executeSingle();
 
-        if(mCar == null){
+        if (mCar == null) {
             String url = String.format(ConstantURL.ADD_GOODS, userId, goodsId, number);
             executeRequest(new GsonRequest(url, AddGoodsResult.class, addGoods(goodsId, number), errorListener()));
-        }else{
+        } else {
 
             String carId = mCar.carId;
 
-            String url = String.format(ConstantURL.EDIT_GOODS,carId,userId,number);
+            String url = String.format(ConstantURL.EDIT_GOODS, carId, userId, number);
             RequestManager.addRequest(new GsonRequest(url, Result.class,
                     editGoodsListener(carId, Integer.parseInt(number)), errorListener()), this);
         }
     }
 
 
-    private Response.Listener<Result> editGoodsListener(final String carId,final int count) {
+    private Response.Listener<Result> editGoodsListener(final String carId, final int count) {
         return new Response.Listener<Result>() {
             @Override
             public void onResponse(Result result) {
-                if(result.rsgcode.equals(ConstantURL.SUCCESSCODE)){
-
+                if (result.rsgcode.equals(ConstantURL.SUCCESSCODE)) {
 
                     TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Integer>() {
                         @Override
@@ -570,14 +606,14 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                         }
                     });
 
-                }else{
-                    ToastUtil.showShortToast(mContext,result.rsgmsg);
+                } else {
+                    ToastUtil.showShortToast(mContext, result.rsgmsg);
                 }
             }
         };
     }
 
-    private Response.Listener<AddGoodsResult> addGoods(final String goodsId,final String number) {
+    private Response.Listener<AddGoodsResult> addGoods(final String goodsId, final String number) {
         return new Response.Listener<AddGoodsResult>() {
             @Override
             public void onResponse(final AddGoodsResult result) {
@@ -625,13 +661,13 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
 
         bundle.putStringArray(IMAGES, imgList);
         //IntentUtil.startActivity(GoodsDetailBuyActivity.this, SpaceImageDetailActivity.class,bundle);
-        IntentUtil.startActivity(GoodsDetailBuyActivity.this, ImageActivity.class,bundle);
+        IntentUtil.startActivity(GoodsDetailBuyActivity.this, ImageActivity.class, bundle);
 
     }
 
     @OnClick(R.id.car_list)
-    public void onCarList(){
-        Intent intent= new Intent(GoodsDetailBuyActivity.this, MainActivity.class);
+    public void onCarList() {
+        Intent intent = new Intent(GoodsDetailBuyActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         App.getBusInstance().post(new ShowCarListEvent());

@@ -38,12 +38,14 @@ import com.louie.luntonghui.fragment.HomeFragment;
 import com.louie.luntonghui.fragment.MineFragment1;
 import com.louie.luntonghui.fragment.OrderFragment;
 import com.louie.luntonghui.fragment.OrderFragment.ComeBackListener;
+import com.louie.luntonghui.model.db.AttentionGoods;
 import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.CarList;
 import com.louie.luntonghui.model.result.CurrentBrandGoodsList;
 import com.louie.luntonghui.model.result.DailySignIn;
+import com.louie.luntonghui.model.result.MineAttentionResult;
 import com.louie.luntonghui.model.result.VersionUpdate;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.task.UpdateVersionTask;
@@ -115,6 +117,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     private List<Fragment> fragmentes;
     public int initTab = 0;
     private String userId;
+    private String userType;
+
 
     private int[] normalImage = {
             R.drawable.navigation_homebutton_normal,
@@ -152,9 +156,22 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         mContext = this;
-
+        //开启推送功能
+        /*PushAgent mPushAgent = PushAgent.getInstance(mContext);
+        mPushAgent.enable();
+        String device_token = UmengRegistrar.getRegistrationId(mContext);*/
 
         userId = DefaultShared.getString(RegisterLogin.USERUID, App.DEFAULT_USER_ID);
+        userType = DefaultShared.getString(RegisterLogin.USER_TYPE,RegisterLogin.USER_DEFAULT);
+
+        try {
+           /* mPushAgent.getTagManager().add(userType);
+            mPushAgent.addAlias(userId, "native");*/
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             initTab = bundle.getInt(RegisterStep3Activity.INIT_TYPE);
@@ -213,6 +230,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         listFragment.add(new CarFragment());
         listFragment.add(new OrderFragment());
 
+
         checkVersion();
 
         initNavigation();
@@ -220,11 +238,65 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         onTabChange(initTab);
         getGPSInfo();
         register();
+
+        initMineAttention();
+
         initBadge();
 
         initShopCar();
         initDateFormat();
     }
+
+    private void initMineAttention() {
+        if (userId.equals(App.DEFAULT_USER_ID)) return;
+        String url = String.format(ConstantURL.MINEATTENTION,userId,userType);
+        RequestManager.addRequest(
+                new GsonRequest(url,MineAttentionResult.class,
+                        mineAttentionRequest(),errorListener()),this);
+    }
+
+    private Response.Listener<MineAttentionResult> mineAttentionRequest() {
+        return new Response.Listener<MineAttentionResult>() {
+            @Override
+            public void onResponse(final MineAttentionResult list) {
+                        new Delete()
+                                .from(AttentionGoods.class)
+                                .execute();
+                        for (int i = 0; i < list.listallcat.size(); i++) {
+                            MineAttentionResult.ListallcatEntity entity = list.listallcat.get(i);
+                            AttentionGoods goods1 = new AttentionGoods();
+                            goods1.goodsId = entity.goods_id;
+                            goods1.goodsName = entity.goods_name;
+                            goods1.goodsImg = entity.goods_img;
+                            goods1.goodsSN = entity.goods_sn;
+                            goods1.goodsNumber = entity.goods_number;
+                            goods1.marketPrice = entity.market_price;
+                            goods1.shopPrice = entity.shop_price;
+                            goods1.gysMoney = entity.gys_money;
+                            goods1.promotePrice = entity.promote_price;
+                            goods1.goodsBrief = entity.goods_brief;
+                            goods1.goodsDesc = entity.goods_desc;
+                            goods1.sortOrder = entity.sort_order;
+                            goods1.isBest = entity.is_best;
+                            goods1.isNew = entity.is_new;
+                            goods1.isHot = entity.is_hot;
+                            goods1.display = entity.display;
+                            goods1.giveIntegral = entity.give_integral;
+                            goods1.integral = entity.integral;
+                            goods1.isPromote = entity.is_promote;
+                            goods1.discounta = entity.discounta;
+                            goods1.discount = entity.discount;
+                            goods1.discountTime = entity.discount_time;
+                            goods1.discountName = entity.discount_name;
+                            goods1.guige = entity.guige;
+                            goods1.unit = entity.danwei;
+                            goods1.recId = entity.rec_id;
+                            goods1.save();
+                        }
+            }
+        };
+    }
+
 
     public void initConfig(){
         //init category tab selecte item.
@@ -233,7 +305,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
     private void initDateFormat() {
         dateFormat = new SimpleDateFormat("yyyyMMdd");
-
     }
 
     private void initBadge() {
@@ -266,7 +337,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                         if (carList != null && carList.goods_list != null) {
                             try {
                                 ActiveAndroid.beginTransaction();
-                                Log.d("test. car list", carList.goods_list.size() + "");
                                 for (int i = 0; i < carList.goods_list.size(); i++) {
                                     ShoppingCar car = new ShoppingCar();
                                     car.carId = carList.goods_list.get(i).rec_id;
@@ -302,6 +372,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     }
 
     private void checkVersion() {
+       /* Intent mServiceIntent = new Intent(MainActivity.this, UpdateService.class);
+        startService(mServiceIntent);*/
         curVersionNumber = Config.getCurrentVersion();
         String url = String.format(ConstantURL.CHECKVERSION, curVersionNumber);
         RequestManager.addRequest(new GsonRequest(url, VersionUpdate.class,
@@ -321,19 +393,29 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     private Response.Listener<VersionUpdate> updateApp() {
         return new Response.Listener<VersionUpdate>() {
             @Override
-            public void onResponse(VersionUpdate versionUpdate) {
+            public void onResponse(final VersionUpdate versionUpdate) {
+                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
+                    @Override
+                    protected Object doInBackground(Object... params) {
 
-                if (!versionUpdate.listallcat.rsgcode.equals(SUCCESSCODE1)) {
-                    curUpdateUrl = versionUpdate.listallcat.url;
+                        return null;
+                    }
+                    @Override
+                    protected void onPostExecute(Object o) {
+                        if (!versionUpdate.listallcat.rsgcode.equals(SUCCESSCODE1)) {
+                            curUpdateUrl = versionUpdate.listallcat.url;
 
-                    MyAlertDialogUtil.getInstance()
-                            .setMessage(versionUpdate.listallcat.remark)
-                            .setCanceledOnTouchOutside(false)
-                            .setNegativeContent(R.string.update_not)
-                            .setPositiveContent(R.string.update_now);
+                            MyAlertDialogUtil.getInstance()
+                                    .setMessage(versionUpdate.listallcat.remark)
+                                    .setCanceledOnTouchOutside(false)
+                                    .setNegativeContent(R.string.update_not)
+                                    .setPositiveContent(R.string.update_now);
 
-                    MyAlertDialogUtil.getInstance().show(MainActivity.this, MainActivity.this);
-                }
+                            MyAlertDialogUtil.getInstance().show(MainActivity.this, MainActivity.this);
+                        }
+                    }
+                });
+
             }
         };
     }
@@ -346,6 +428,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         MobclickAgent.onResume(this);
         String lastSECONDKILLDate = DefaultShared.getString(Config.SECOND_KILL, Config.DEFAULT_SECOND_KILL);
         Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+
+
         /*String str = dateFormat.format(curDate);
         if (!lastSECONDKILLDate.equals(str)) {
             DefaultShared.putString(Config.SECOND_KILL, str);
@@ -657,8 +741,9 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
 
     @Override
-    protected void onDestroy() {
+        protected void onDestroy() {
         App.getBusInstance().unregister(this);
+        RequestManager.cancelAll(this);
         super.onDestroy();
     }
 
@@ -781,7 +866,11 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         if (index == 0) {
             mBadgeView.hide();
         } else {
-            mBadgeView.setText(index + "");
+            if(index >99){
+                mBadgeView.setText("99+");
+            }else{
+                mBadgeView.setText(index + "");
+            }
             mBadgeView.show();
         }
     }
@@ -793,8 +882,9 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
     @Override
     public void confirmUpdate() {
-        UpdateVersionTask task = new UpdateVersionTask(MainActivity.this);
+        UpdateVersionTask task = new UpdateVersionTask(MainActivity.this,UpdateVersionTask.NEED_VIEW);
         task.execute(curUpdateUrl);
+        //checkVersion();*/
     }
 
     @Subscribe
@@ -883,7 +973,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     private int exitAppTimes = 0;
 
     public void exitApp() {
-        if (System.currentTimeMillis() - startexit > 3000) {
+        if (System.currentTimeMillis() - startexit > 2000) {
             exitAppTimes = 0;
         }
         ++exitAppTimes;

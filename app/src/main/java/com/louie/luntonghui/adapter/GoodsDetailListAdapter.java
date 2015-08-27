@@ -1,25 +1,20 @@
 package com.louie.luntonghui.adapter;
 
-import android.content.ContentUris;
 import android.content.Context;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.activeandroid.query.Select;
 import com.activeandroid.query.Update;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-//import com.facebook.drawee.view.SimpleDraweeView;
 import com.android.volley.toolbox.ImageLoader;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
@@ -37,13 +32,11 @@ import com.louie.luntonghui.util.AlertDialogUtil;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.ToastUtil;
-import com.louie.luntonghui.view.MarketPriceView;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+//import com.facebook.drawee.view.SimpleDraweeView;
 
 /**
  * Created by Administrator on 2015/6/23.
@@ -59,14 +52,20 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
     private int curPosition;
     private boolean isAdd = true;
     private ShoppingCar car;
+    public ReferenceBadgeListener mListener;
 
+    public interface ReferenceBadgeListener{
+        public void referenceBadge();
+    }
     public GoodsDetailListAdapter(GoodsDetailActivity goodsDetailActivity) {
         list = new ArrayList<>();
         mContext = goodsDetailActivity;
+        mListener = goodsDetailActivity;
         inflater = LayoutInflater.from(goodsDetailActivity);
         mApi = RetrofitUtils.createApi(mContext, ServiceManager.LunTongHuiApi.class);
         userId = DefaultShared.getString(RegisterLogin.USERUID,"0");
     }
+
 
     public List<Goods> getData(){
         return list;
@@ -99,6 +98,9 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
             viewHolder.mMarketPrice = (TextView)convertView.findViewById(R.id.market_price);
             viewHolder.servicePrice = (TextView)convertView.findViewById(R.id.service_price);
             viewHolder.btnFastBuy = (Button)convertView.findViewById(R.id.fast_buy);
+            viewHolder.present = (TextView)convertView.findViewById(R.id.present);
+            viewHolder.discount = (TextView)convertView.findViewById(R.id.discount);
+            viewHolder.prim = (TextView)convertView.findViewById(R.id.prim);
 
             convertView.setTag(viewHolder);
         }else{
@@ -146,6 +148,33 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
         //viewHolder.btnFastBuy.setEnabled(!list.get(position).isChecked.equals(Goods.GOODS_IS_BUY));
         viewHolder.btnFastBuy.setTag(position);
         viewHolder.btnFastBuy.setOnClickListener(clickListener);
+        Integer discountType = Integer.parseInt(list.get(position).discountType);
+
+        viewHolder.prim.setVisibility(View.GONE);
+        viewHolder.discount.setVisibility(View.GONE);
+        viewHolder.present.setVisibility(View.GONE);
+
+        String birary = Integer.toBinaryString(discountType);
+        if(discountType !=0) {
+            for(int i =birary.length() -1;i>=0;i--){
+               if(i== birary.length() -1){
+                   Log.d("length ", birary.substring(birary.length()-1) + "-1");
+                   if(birary.substring(birary.length()-1).equals("1"))
+                       viewHolder.discount.setVisibility(View.VISIBLE);
+               }else if(i == birary.length() -2){
+                   Log.d("length ",birary.substring(birary.length()-2,birary.length() -1) + "-2");
+                   if(birary.substring(birary.length()-2,birary.length() -1).equals("1"))
+                    viewHolder.present.setVisibility(View.VISIBLE);
+               }else{
+                   Log.d("length ", birary.substring(i,i+1) + "-3");
+                   if(birary.substring(i,i+1).equals("1")){
+                       viewHolder.prim.setVisibility(View.VISIBLE);
+                       break;
+                   }
+               }
+            }
+        }
+
         return convertView;
     }
 
@@ -226,6 +255,7 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
                     car.goodsId = goodsId;
                     car.carId = result.cat_id;
                     car.save();
+                    mListener.referenceBadge();
                     notifyDataSetChanged();
                 }else{
                     ToastUtil.showShortToast(mContext,result.rsgmsg);
@@ -253,7 +283,6 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
             String url = String.format(ConstantURL.EDIT_GOODS,carId,userId,count);
             RequestManager.addRequest(new GsonRequest(url,Result.class,
                     editGoodsListener(carId,count),errorListener()),this);
-
         }
     }
 
@@ -267,6 +296,7 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
                             .set("goods_number = ?",count)
                             .where("car_id=?",carId)
                             .execute();
+                    mListener.referenceBadge();
                 }else{
                     ToastUtil.showShortToast(mContext,result.rsgmsg);
                 }
@@ -282,6 +312,11 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
         TextView mShopPrice;
         TextView servicePrice;
         Button btnFastBuy;
+
+        TextView present;
+        TextView discount;
+        TextView prim;
+
         public ImageLoader.ImageContainer imageRequest;
     }
 }

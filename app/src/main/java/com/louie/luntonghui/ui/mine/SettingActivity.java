@@ -13,6 +13,7 @@ import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.ExitAppEvent;
+import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.VersionUpdate;
 import com.louie.luntonghui.net.RequestManager;
@@ -90,7 +91,7 @@ public class SettingActivity extends BaseNormalActivity implements MyAlertDialog
                         versionUpdate.listallcat.rsgcode.equals(SUCCESSCODE1)) {
                     ToastUtil.showLongToast(mContext, versionUpdate.listallcat.remark);
                 } else {
-
+                    curUpdateUrl = versionUpdate.listallcat.url;
                     MyAlertDialogUtil instance = MyAlertDialogUtil.getInstance()
                             .setMessage(versionUpdate.listallcat.remark)
                             .setCanceledOnTouchOutside(false)
@@ -105,7 +106,7 @@ public class SettingActivity extends BaseNormalActivity implements MyAlertDialog
 
     @Override
     public void confirmUpdate() {
-        UpdateVersionTask task = new UpdateVersionTask(mContext);
+        UpdateVersionTask task = new UpdateVersionTask(mContext,UpdateVersionTask.NEED_VIEW);
         task.execute(curUpdateUrl);
     }
 
@@ -132,6 +133,10 @@ public class SettingActivity extends BaseNormalActivity implements MyAlertDialog
         new Delete()
                 .from(User.class)
                 .execute();
+        new Delete()
+                .from(ShoppingCar.class)
+                .execute();
+
         DefaultShared.putString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
         DefaultShared.putString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
 

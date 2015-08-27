@@ -208,4 +208,10 @@
 
     <color name="second_kill_color">#505050</color>
     <color name="second_kill_red_font_color">#a40000</color>
+
+    <color name="red_primary_dark">#921D17</color>
+
+
+    <color name="ripple">#F06292</color>
+    <color name="accent_pressed">#C2185B</color>
 </resources>

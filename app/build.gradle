@@ -41,7 +41,6 @@ repositories {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':InfiniteIndicator')
-    compile files('libs/volley.jar')
     compile files('libs/BaiduLBS_Android.jar')
     compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.squareup.picasso:picasso:2.3.2'
@@ -59,16 +58,22 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:palette-v7:22.2.0'
     compile 'com.android.support:design:22.2.0'
-
     compile 'me.drakeet.materialdialog:library:1.2.2'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
     compile 'com.squareup.dagger:dagger:1.2.2'
     compile 'com.daimajia.numberprogressbar:library:1.2@aar'
     compile 'com.facebook.stetho:stetho:1.0.1'
-
     compile 'com.github.chrisbanes.photoview:library:1.2.3'
     compile 'me.zhanghai.android.materialprogressbar:library:1.0.2'
     compile 'com.android.support:support-v4:22.2.1'
-
     compile 'com.umeng.analytics:analytics:latest.integration'
+
+    compile 'com.facebook.stetho:stetho:1.1.1'
+    compile 'com.facebook.stetho:stetho-urlconnection:1.1.1'
+    compile 'com.facebook.stetho:stetho-okhttp:1.1.1'
+
+    compile 'com.squareup.okio:okio:1.5.0'
+    compile 'com.readystatesoftware.systembartint:systembartint:1.0.4'
+    compile 'com.shamanland:fab:0.0.8'
+    compile 'com.mcxiaoke.volley:library:1.0.18'
 }

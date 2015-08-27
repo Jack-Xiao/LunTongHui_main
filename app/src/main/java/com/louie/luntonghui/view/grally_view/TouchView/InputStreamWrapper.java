@@ -17,11 +17,9 @@ public class InputStreamWrapper extends BufferedInputStream
 
 	@Override
 	public synchronized int read(byte[] buffer, int offset, int byteCount)
-			throws IOException
-	{
+			throws IOException {
 		mBytesLoaded += byteCount;
-		if (mProgressListener != null) 
-		{
+		if (mProgressListener != null) {
 			mProgressListener.onProgress(mBytesLoaded * 1.0f / mContentLen, mBytesLoaded, mContentLen);
 		}
 		return super.read(buffer, offset, byteCount);

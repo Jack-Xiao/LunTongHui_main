@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
@@ -19,6 +18,7 @@ import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.Login;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.ui.MainActivity;
+import com.louie.luntonghui.ui.register.retrivepassword.RetrivePassword1Activity;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
@@ -63,8 +63,6 @@ public class RegisterLogin extends BaseNormalActivity {
     TextView toolbarCancel;
     @InjectView(R.id.toolbar_title)
     TextView toolbarTitle;
-    @InjectView(R.id.login_clear)
-    ImageView loginClear;
 
     @InjectView(R.id.third_account)
     TextView thirdAccount;
@@ -223,6 +221,12 @@ public class RegisterLogin extends BaseNormalActivity {
                             App.getBusInstance().post(new LoginEvent());
                             Bundle bundle = new Bundle();
                             bundle.putInt(RegisterStep3Activity.INIT_TYPE, 2);
+                            try {
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             IntentUtil.startActivity(RegisterLogin.this, MainActivity.class,bundle);
                             RegisterLogin.this.finish();
                         }
@@ -256,5 +260,17 @@ public class RegisterLogin extends BaseNormalActivity {
     public void OnQuiteRegister() {
         IntentUtil.startActivityFromMain(RegisterLogin.this, RegisterStep1Activity.class);
         finish();
+    }
+
+    @OnClick(R.id.retrive_password)
+    public void onClickRetrivePassword(){
+        IntentUtil.startActivity(RegisterLogin.this, RetrivePassword1Activity.class);
+    }
+
+    public void onClickClearUsername(){
+        mPhoneNumber.setText("");
+    }
+    public void onClickClearPassword(){
+        mPassword.setText("");
     }
 }

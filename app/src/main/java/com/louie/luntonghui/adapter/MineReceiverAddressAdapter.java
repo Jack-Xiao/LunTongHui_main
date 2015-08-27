@@ -1,28 +1,21 @@
 package com.louie.luntonghui.adapter;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Region;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.model.db.Address;
-import com.louie.luntonghui.model.result.Login;
 import com.louie.luntonghui.model.result.Result;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.mine.MineAdditionAddressActivity;
@@ -34,13 +27,9 @@ import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
-import com.louie.luntonghui.view.MyAlertDialogUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -57,6 +46,11 @@ public class MineReceiverAddressAdapter extends RecyclerView.Adapter<MineReceive
     private String uid;
     private int curDelPostion;
 
+
+    public Address getAddress(int position){
+
+        return data.get(position);
+    }
 
     public void setData(List<Address> data) {
         this.data.clear();

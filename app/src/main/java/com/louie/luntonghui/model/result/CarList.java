@@ -45,7 +45,7 @@ public class CarList {
          * discount : 0
          * goods_attr :
          * pid : 463
-         * rid : 0
+         * rid : 0    //
          * extension_code :
          * discount_name : 0
          * can_handsel : 0
@@ -95,6 +95,7 @@ public class CarList {
         public String goods_img;
         public String guige;
         public String danwei;
+        public String discount_type;
 
         public class ImgEntity {
             /**

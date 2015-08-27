@@ -1,14 +1,12 @@
 package com.louie.luntonghui.net;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import com.louie.luntonghui.util.Config;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,7 +23,9 @@ public class OkHttpUtils {
                     sigleton = new OkHttpClient();
                     sigleton.setCache(new Cache(cacheDir, Config.RESPONSE_CACHE_SIZE));
                     sigleton.setConnectTimeout(Config.HTTP_CONNECT_TIMEOUT, TimeUnit.MILLISECONDS);
-                    sigleton.setReadTimeout(Config.HTTP_READ_TIMEOUT,TimeUnit.MILLISECONDS);
+                    sigleton.setReadTimeout(Config.HTTP_READ_TIMEOUT, TimeUnit.MILLISECONDS);
+
+                    //if(BuildConfig.DEBUG)sigleton.networkInterceptors().add(new StethoInterceptor());
                 }
             }
         }

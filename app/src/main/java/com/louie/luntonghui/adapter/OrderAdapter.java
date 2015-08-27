@@ -14,7 +14,6 @@ import com.louie.luntonghui.R;
 import com.louie.luntonghui.model.db.Order;
 import com.louie.luntonghui.ui.order.DetailOrderActivity;
 import com.louie.luntonghui.util.IntentUtil;
-import com.louie.luntonghui.util.ToastUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

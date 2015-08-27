@@ -6,8 +6,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.activeandroid.query.Delete;
@@ -44,8 +43,6 @@ import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.MyAdjustPriceView;
 
-import static com.louie.luntonghui.ui.register.RegisterLogin.USERUID;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,12 +54,14 @@ import me.drakeet.materialdialog.MaterialDialog;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
+import static com.louie.luntonghui.ui.register.RegisterLogin.USERUID;
+
 /**
  * Created by Administrator on 2015/6/25.
  */
 public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.ViewHolder>
-        implements MyAdjustPriceView.TextChangeListener,AlertDialogUtil.AlertDialogListener,
-                    BaseAlertDialogUtil.BaseAlertDialogListener{
+        implements MyAdjustPriceView.TextChangeListener, AlertDialogUtil.AlertDialogListener,
+        BaseAlertDialogUtil.BaseAlertDialogListener {
     //private CarList carLists;
     private Context mContext;
     private LayoutInflater inflater;
@@ -98,7 +97,7 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
     }
 
     public void setData(List<ShoppingCar> list) {
-        if(nativeCarList == null){
+        if (nativeCarList == null) {
             nativeCarList = new ArrayList<>();
 
         }
@@ -118,13 +117,14 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
 
         holder.goodsName.setText(nativeCarList.get(position).goodsName);
         final String goodsName = nativeCarList.get(position).goodsName;
-        final String goodsPrice= "￥"+ nativeCarList.get(position).goodsShopPrice;
+        final String goodsPrice = "￥" + nativeCarList.get(position).goodsShopPrice;
         final String strGuige = nativeCarList.get(position).guige;
         final String strUnit = nativeCarList.get(position).unit;
 
-        boolean isChecked =  nativeCarList.get(position).isChecked.equals("1") ? true : false;
+        boolean isChecked = nativeCarList.get(position).isChecked.equals("1") ? true : false;
 
         holder.checked.setChecked(isChecked);
+
         holder.checked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -133,13 +133,13 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
                     state = "1";
                     mProgressDialog.show();
                     Map<String, String> options = new HashMap<String, String>();
-                    options.put("goods_id",nativeCarList.get(position).goodsId);
+                    options.put("goods_id", nativeCarList.get(position).goodsId);
                     options.put("number", nativeCarList.get(position).goodsNumber);
                     options.put("userid", userId);
                     //Result result = mApi.addCarGoods(options);
-                    String url = String.format(ConstantURL.ADD_GOODS,userId,nativeCarList.get(position).goodsId,
-                                        holder.strContent.getText().toString());
-                    RequestManager.addRequest(new GsonRequest(url,Result.class,changeCheckState(position,state),errorListener()),mContext);
+                    String url = String.format(ConstantURL.ADD_GOODS, userId, nativeCarList.get(position).goodsId,
+                            holder.strContent.getText().toString());
+                    RequestManager.addRequest(new GsonRequest(url, Result.class, changeCheckState(position, state), errorListener()), mContext);
 
                 } else {
                     state = "0";
@@ -147,6 +147,95 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
                     String url = String.format(ConstantURL.CAR_GOODS_DEL, nativeCarList.get(position).carId);
                     RequestManager.addRequest(new GsonRequest(url, Result.class, changeCheckState(position, state), errorListener()), mContext);
                 }
+            }
+        });
+
+
+
+
+
+     /*   holder.btnMinus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int result = 1;
+                try {
+                    result = Integer.parseInt(holder.strContent.getText().toString());
+                } catch (Exception e) {
+                    result = 1;
+                }
+
+
+                if (result > 1) {
+                    result--;
+                    notifyNumberChanged(holder, result, position,holder.checked.isChecked());
+                } else {
+                    return;
+                }
+            }
+        });*/
+
+        /*holder.btnPlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int result = 1;
+                try {
+                    result = Integer.parseInt(holder.strContent.getText().toString());
+                } catch (Exception e) {
+                    result = 1;
+                }
+                result++;
+                notifyNumberChanged(holder, result, position,holder.checked.isChecked());
+            }
+        });
+        //holder.strContent.setOnClickListener(new OnClickListener());
+        holder.strContent.setTag(position);
+        final String content = nativeCarList.get(position).goodsNumber;
+        holder.strContent.setText(content);*/
+
+        final String content = nativeCarList.get(position).goodsNumber;
+        holder.strContent.setText(content);
+
+        String rid = nativeCarList.get(position).rId;
+        if (rid.equals(ShoppingCar.NOTGIVEAWAY)) {
+            holder.imgDelete.setImageResource(R.drawable.cart_delete_icon);
+            holder.imgDelete.setVisibility(View.VISIBLE);
+            holder.imgDelete.setEnabled(true);
+            holder.strContent.setBackgroundResource(R.drawable.base_frame);
+            holder.btnPlus.setVisibility(View.VISIBLE);
+            holder.btnMinus.setVisibility(View.VISIBLE);
+            holder.goodsPrice.setVisibility(View.VISIBLE);
+            //holder.strContent.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+        } else {
+            holder.imgDelete.setImageResource(R.drawable.giveaway);
+            holder.strContent.setBackgroundResource(R.color.background_main_grey);
+            holder.imgDelete.setEnabled(false);
+            holder.goodsPrice.setVisibility(View.GONE);
+            holder.btnMinus.setVisibility(View.GONE);
+            holder.btnPlus.setVisibility(View.GONE);
+        }
+
+        holder.linAdjustCount.setEnabled(rid.equals(ShoppingCar.NOTGIVEAWAY));
+        holder.btnPlus.setEnabled(rid.equals(ShoppingCar.NOTGIVEAWAY));
+        holder.btnMinus.setEnabled(rid.equals(ShoppingCar.NOTGIVEAWAY));
+        holder.strContent.setEnabled(rid.equals(ShoppingCar.NOTGIVEAWAY));
+
+
+        holder.btnPlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adjustGoods(goodsName, goodsPrice, strUnit, strGuige, holder, position, content);
+            }
+        });
+        holder.btnMinus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adjustGoods(goodsName, goodsPrice, strUnit, strGuige, holder, position, content);
+            }
+        });
+        holder.strContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adjustGoods(goodsName, goodsPrice, strUnit, strGuige, holder, position, content);
             }
         });
 
@@ -168,12 +257,139 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
             }
         });
 
-        holder.btnMinus.setOnClickListener(new View.OnClickListener() {
+        /*Picasso.with(mContext)
+                .load(nativeCarList.get(position).goodsImage)
+                .into(holder.goodsImg);*/
+
+    /*    Uri uri = Uri.parse(nativeCarList.get(position).goodsImage);
+        holder.goodsImg.setImageURI(uri);*/
+        if (holder.imageRequest != null) {
+            holder.imageRequest.cancelRequest();
+        }
+        holder.imageRequest = ImageCacheManager.loadImage(nativeCarList.get(position).goodsImage,
+                ImageCacheManager.getImageListener(holder.goodsImg));
+
+        holder.goodsPrice.setText("价格:￥" + nativeCarList.get(position).goodsShopPrice);
+
+        Integer discountType = Integer.parseInt(nativeCarList.get(position).discountType);
+        String birary = Integer.toBinaryString(discountType);
+
+        holder.prim.setVisibility(View.GONE);
+        holder.discount.setVisibility(View.GONE);
+        holder.present.setVisibility(View.GONE);
+
+        if (discountType != 0) {
+            for (int i = birary.length() - 1; i >= 0; i--) {
+                if (i == birary.length() - 1) {
+                    Log.d("length ", birary.substring(birary.length() - 1) + "-1");
+                    if (birary.substring(birary.length() - 1).equals("1"))
+                        holder.discount.setVisibility(View.VISIBLE);
+                    if (!nativeCarList.get(position).discount.equals("0")) {
+                        double discount = 0;
+                        discount = Double.parseDouble(nativeCarList.get(position).discount);
+                        double curGoodsShopPrice = Double.parseDouble(nativeCarList.get(position).goodsShopPrice);
+                        double curPrince = curGoodsShopPrice * discount / 10;
+                        holder.goodsPrice.setText("价格:￥" + curPrince);
+                    }
+                } else if (i == birary.length() - 2) {
+                    Log.d("length ", birary.substring(birary.length() - 2, birary.length() - 1) + "-2");
+                    if (birary.substring(birary.length() - 2, birary.length() - 1).equals("1")) {
+                        holder.present.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    Log.d("length ", birary.substring(i, i + 1) + "-3");
+                    if (birary.substring(i, i + 1).equals("1")) {
+                        holder.prim.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                }
+            }
+        }
+        holder.mineCount.setText("数量/" + nativeCarList.get(position).unit);
+    }
+    //adjustGoods(goodsName,goodsPrice,strUnit,strGuige,holder,position);
+
+    public void adjustGoods(String goodsName, String goodsPrice, String strUnit, String strGuige,
+                            final ViewHolder holder, final int position, String content) {
+        //AlertDialogUtil.getInstance().show(mContext,CarFragmentAdapter.this, );
+        View contentView = LayoutInflater.from(mContext).inflate(R.layout.view_adjust_goods_number, null);
+        ImageButton btnMinus = (ImageButton) contentView.findViewById(R.id.minus);
+        ImageButton btnPlus = (ImageButton) contentView.findViewById(R.id.plus);
+        TextView tvGoodsName = (TextView) contentView.findViewById(R.id.goods_name);
+        TextView tvShopPrice = (TextView) contentView.findViewById(R.id.shop_price);
+        TextView guige = (TextView) contentView.findViewById(R.id.guige);
+
+        Button btnConfirm = (Button) contentView.findViewById(R.id.confirm);
+        Button btnCacnel = (Button) contentView.findViewById(R.id.cancel);
+
+
+        tvGoodsName.setText(goodsName);
+        tvShopPrice.setText(goodsPrice + "/" + strUnit);
+
+        guige.setText("规格:" + strGuige);
+
+
+        final EditText mContent = (EditText) contentView.findViewById(R.id.content);
+        final int[] curResult = new int[1];
+
+        mContent.setText(content + "");
+        mContent.setSelection(mContent.length());
+
+
+        final MaterialDialog mMaterialDialog = new MaterialDialog(mContext);
+
+        mMaterialDialog.setView(contentView)
+                .setCanceledOnTouchOutside(true);
+
+        mMaterialDialog.show();
+
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    curResult[0] = Integer.parseInt(mContent.getText().toString());
+                    //mListener.reset(curResult[0]);
+                    //
+                } catch (Exception e) {
+                    ToastUtil.showShortToast(mContext, R.string.please_input_number);
+                    return;
+                }
+                notifyNumberChanged(holder, curResult[0], position, holder.checked.isChecked());
+                mMaterialDialog.dismiss();
+            }
+        });
+
+        btnCacnel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMaterialDialog.dismiss();
+            }
+        });
+
+
+        btnPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int result = 1;
                 try {
-                    result = Integer.parseInt(holder.strContent.getText().toString());
+                    result = Integer.parseInt(mContent.getText().toString());
+                } catch (Exception e) {
+                    result = 1;
+                }
+                result++;
+                //notifyPriceChanged(holder, result);
+                mContent.setText(result + "");
+                //notifyNumberChanged(holder, result, position, holder.checked.isChecked());
+            }
+        });
+
+
+        btnMinus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int result = 1;
+                try {
+                    result = Integer.parseInt(mContent.getText().toString());
                 } catch (Exception e) {
                     result = 1;
                 }
@@ -181,281 +397,42 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
 
                 if (result > 1) {
                     result--;
-                    notifyNumberChanged(holder, result, position,holder.checked.isChecked());
+                    ///notifyPriceChanged(holder, result);
+                    mContent.setText(result + "");
+                    //notifyNumberChanged(holder, result, position, holder.checked.isChecked());
                 } else {
                     return;
                 }
             }
         });
-
-        holder.btnPlus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int result = 1;
-                try {
-                    result = Integer.parseInt(holder.strContent.getText().toString());
-                } catch (Exception e) {
-                    result = 1;
-                }
-                result++;
-                notifyNumberChanged(holder, result, position,holder.checked.isChecked());
-            }
-        });
-        //holder.strContent.setOnClickListener(new OnClickListener());
-        holder.strContent.setTag(position);
-        final String content = nativeCarList.get(position).goodsNumber;
-        holder.strContent.setText(content);
-
-        holder.strContent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //AlertDialogUtil.getInstance().show(mContext,CarFragmentAdapter.this, );
-                View contentView = LayoutInflater.from(mContext).inflate(R.layout.view_adjust_goods_number, null);
-                ImageButton btnMinus = (ImageButton) contentView.findViewById(R.id.minus);
-                ImageButton btnPlus = (ImageButton) contentView.findViewById(R.id.plus);
-                TextView tvGoodsName = (TextView) contentView.findViewById(R.id.goods_name);
-                TextView tvShopPrice = (TextView) contentView.findViewById(R.id.shop_price);
-                TextView guige = (TextView)contentView.findViewById(R.id.guige);
-
-
-                Button btnConfirm = (Button) contentView.findViewById(R.id.confirm);
-                Button btnCacnel = (Button) contentView.findViewById(R.id.cancel);
-
-
-                tvGoodsName.setText(goodsName);
-                tvShopPrice.setText(goodsPrice +"/" + strUnit);
-
-                guige.setText("规格:" + strGuige);
-
-
-                final EditText mContent = (EditText) contentView.findViewById(R.id.content);
-                final int[] curResult = new int[1];
-
-                mContent.setText(content + "");
-                mContent.setSelection(mContent.length());
-
-
-                final MaterialDialog mMaterialDialog = new MaterialDialog(mContext);
-
-                mMaterialDialog.setView(contentView)
-                        .setCanceledOnTouchOutside(true);
-
-                mMaterialDialog.show();
-
-                btnConfirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        try {
-                            curResult[0] = Integer.parseInt(mContent.getText().toString());
-                            //mListener.reset(curResult[0]);
-                            //
-                        } catch (Exception e) {
-                            ToastUtil.showShortToast(mContext, R.string.please_input_number);
-                            return;
-                        }
-                        notifyNumberChanged(holder, curResult[0], position, holder.checked.isChecked());
-                        mMaterialDialog.dismiss();
-                    }
-                });
-
-                btnCacnel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mMaterialDialog.dismiss();
-                    }
-                });
-
-
-                btnPlus.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int result = 1;
-                        try {
-                            result = Integer.parseInt(mContent.getText().toString());
-                        } catch (Exception e) {
-                            result = 1;
-                        }
-                        result++;
-                        //notifyPriceChanged(holder, result);
-                        notifyNumberChanged(holder, result, position, holder.checked.isChecked());
-                        mContent.setText(result + "");
-                    }
-                });
-
-
-                btnMinus.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int result = 1;
-                        try {
-                            //result = Integer.parseInt(holder.strContent.getText().toString());
-                        } catch (Exception e) {
-                            result = 1;
-                        }
-
-
-                        if (result > 1) {
-                            result--;
-                            ///notifyPriceChanged(holder, result);
-                            mContent.setText(result + "");
-                            notifyNumberChanged(holder, result, position, holder.checked.isChecked());
-                        } else {
-                            return;
-                        }
-                    }
-                });
-
-                /*View contentView = LayoutInflater.from(mContext).inflate(R.layout.view_adjust_goods_number, null);
-                Button btnMinus = (Button) contentView.findViewById(R.id.minus);
-                Button btnPlus = (Button) contentView.findViewById(R.id.plus);
-                final EditText mContent = (EditText) contentView.findViewById(R.id.content);
-                final int[] curResult = new int[1];
-                mContent.setText(content);
-                mContent.setSelection(content.length());
-                new AlertDialog.Builder(mContext)
-                        .setView(contentView)
-                        .setCancelable(true)
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    curResult[0] = Integer.parseInt(mContent.getText().toString());
-                                } catch (Exception e) {
-                                    ToastUtil.showShortToast(mContext, "请输入数字");
-                                    return;
-                                }
-
-                                //holder.strContent.setText(mContent.getText());
-                                //setContent(mContent.getText().toString());
-                                notifyNumberChanged(holder, curResult[0], position,holder.checked.isChecked());
-                                dialog.dismiss();
-                            }
-                        })
-                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .create()
-                        .show();
-
-                btnPlus.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int result = 1;
-                        try {
-                            result = Integer.parseInt(mContent.getText().toString());
-                        } catch (Exception e) {
-                            result = 1;
-                        }
-                        result++;
-                        //notifyPriceChanged(holder, result);
-                        mContent.setText(result + "");
-                    }
-                });
-
-
-                btnMinus.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int result = 1;
-                        try {
-                            result = Integer.parseInt(holder.strContent.getText().toString());
-                        } catch (Exception e) {
-                            result = 1;
-                        }
-
-
-                        if (result > 1) {
-                            result--;
-                            ///notifyPriceChanged(holder, result);
-                            mContent.setText(result + "");
-                        } else {
-                            return;
-                        }
-                    }
-                });*/
-            }
-        });
-
-
-        holder.strContent.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-/*
-                int newNumber =Integer.parseInt(s.toString());
-                notifyNumberChanged(holder, newNumber, position, holder.checked.isChecked());*/
-                //holder.strContent.setSelection(holder.strContent.getText().length());
-                /*if (holder.strContent.getText().toString().equals("")) {
-                    holder.strContent.setText("1");
-                    return ;
-                }
-
-
-                String recId = carLists.goods_list.get(position).rec_id;
-
-                //Result result = mApi.editCarGoods(recId,userId,newNumber);
-                String urlString = String.format(ConstantURL.EDIT_GOODS,recId,userId,newNumber);
-
-                RequestManager.addRequest(new GsonRequest(urlString,Result.class,editGoodsResponse(),errorListener()),this);*/
-
-            }
-        });
-
-
-        /*Picasso.with(mContext)
-                .load(nativeCarList.get(position).goodsImage)
-                .into(holder.goodsImg);*/
-
-    /*    Uri uri = Uri.parse(nativeCarList.get(position).goodsImage);
-        holder.goodsImg.setImageURI(uri);*/
-        if(holder.imageRequest !=null){
-            holder.imageRequest.cancelRequest();
-        }
-        holder.imageRequest = ImageCacheManager.loadImage(nativeCarList.get(position).goodsImage,
-                    ImageCacheManager.getImageListener(holder.goodsImg));
-
-
-        holder.goodsPrice.setText("价格:￥" + nativeCarList.get(position).goodsShopPrice);
     }
 
     private Response.Listener<Result> deleteGoodsRequest(final int position) {
         return new Response.Listener<Result>() {
             @Override
             public void onResponse(Result result) {
-                if(result.rsgcode.equals(BaseNormalActivity.SUCCESSCODE)){
+                if (result.rsgcode.equals(BaseNormalActivity.SUCCESSCODE)) {
 
                     ToastUtil.showShortToast(mContext, R.string.delete_success);
                     String recId = nativeCarList.get(position).carId;
                     new Delete().
                             from(ShoppingCar.class)
-                            .where("car_id = ?",recId)
+                            .where("car_id = ?", recId)
                             .execute();
                     refListen.reference(0);
-                }else{
-                    ToastUtil.showShortToast(mContext,result.rsgmsg);
+                } else {
+                    ToastUtil.showShortToast(mContext, result.rsgmsg);
                 }
             }
         };
     }
 
-    private void updateCheckState(final String carId,boolean isChecked) {
+    private void updateCheckState(final String carId, boolean isChecked) {
         final String state;
-        if(isChecked){
+        if (isChecked) {
             state = "1";
-        }else{
-            state ="0";
+        } else {
+            state = "0";
         }
 
         TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
@@ -484,7 +461,7 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
         };
     }
 
-    private void notifyNumberChanged(ViewHolder holder, int result, int position,final boolean isChecked) {
+    private void notifyNumberChanged(ViewHolder holder, int result, int position, final boolean isChecked) {
         holder.strContent.setText(result + "");
         if (holder.strContent.getText().toString().equals("")) {
             holder.strContent.setText("1");
@@ -496,7 +473,11 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
         String newNumber = holder.strContent.getText().toString();
         //Result result = mApi.editCarGoods(recId,userId,newNumber);
 
-        if(isChecked){
+        String urlString = String.format(ConstantURL.EDIT_GOODS, recId, userId, newNumber);
+        RequestManager.addRequest(new GsonRequest(urlString,
+                Result.class, editGoodsResponse(), errorListener()), this);
+
+        /*if(isChecked){
 
         }else{
             ToastUtil.showShortToast(mContext,"请勾选该商品");
@@ -510,12 +491,12 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
                 .set("goods_number=?",newNumber)
                 .where("car_id=?",recId)
                 .execute();
-        refListen.reference(1);
+        refListen.reference(1);*/
+
     }
 
 
-
-    public Response.Listener<Result> changeCheckState(final int position,final String state) {
+    public Response.Listener<Result> changeCheckState(final int position, final String state) {
         return new Response.Listener<Result>() {
             @Override
             public void onResponse(Result result) {
@@ -570,10 +551,10 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
     public void confirm() {
 
         String receId = nativeCarList.get(mPostion).carId;
-        String url = String.format(ConstantURL.CAR_GOODS_DEL,receId);
+        String url = String.format(ConstantURL.CAR_GOODS_DEL, receId);
 
-        RequestManager.addRequest(new GsonRequest(url,Result.class,
-                deleteGoodsRequest(mPostion),errorListener()),mContext);
+        RequestManager.addRequest(new GsonRequest(url, Result.class,
+                deleteGoodsRequest(mPostion), errorListener()), mContext);
     }
 
     class CarlListCallback implements Callback<CarList> {
@@ -616,6 +597,20 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
 
         @InjectView(R.id.delete)
         ImageView imgDelete;
+
+        @InjectView(R.id.adjust_count)
+        LinearLayout linAdjustCount;
+
+        @InjectView(R.id.present)
+        TextView present;
+        @InjectView(R.id.discount)
+        TextView discount;
+
+        @InjectView(R.id.prim)
+        TextView prim;
+
+        @InjectView(R.id.car_mine_count)
+        TextView mineCount;
 
         public ImageLoader.ImageContainer imageRequest;
 

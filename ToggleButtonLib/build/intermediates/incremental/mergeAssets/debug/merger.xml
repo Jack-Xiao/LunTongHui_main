@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="/Users/Jack/Downloads/LunTongHuiCopy3-master/ToggleButtonLib/assets"/></dataSet><dataSet config="debug"><source path="/Users/Jack/Downloads/LunTongHuiCopy3-master/ToggleButtonLib/src/debug/assets"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="/Users/Jack/AndroidStudioProjects/LunTongHui_main/ToggleButtonLib/assets"/></dataSet><dataSet config="debug"><source path="/Users/Jack/AndroidStudioProjects/LunTongHui_main/ToggleButtonLib/src/debug/assets"/></dataSet></merger>

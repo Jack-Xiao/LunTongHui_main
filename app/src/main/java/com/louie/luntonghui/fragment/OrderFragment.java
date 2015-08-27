@@ -1,7 +1,6 @@
 package com.louie.luntonghui.fragment;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -80,14 +79,13 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
     public static final String TYPE = "type";
     private int ferenceState;
     private ComeBackListener mBackListener;
-    ProgressDialog mProgressDialog;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App.getBusInstance().register(this);
         tvList = new ArrayList<>();
-        mProgressDialog = new ProgressDialog(getActivity());
 
 //        test(); //测试友盟
     }
@@ -133,7 +131,9 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
         tvList.add(hasCancel);
 
         swipeContainer.setOnRefreshListener(this);
-        swipeContainer.setColorScheme(android.R.color.holo_blue_bright,
+
+        swipeContainer.setColorSchemeResources(
+                android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
@@ -159,7 +159,6 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
         } else {
             onRefresh();
         }
-
     }
 
     private void parseArgument() {
@@ -215,10 +214,12 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
 
     public void OnClickOrderNavigation(final int chooseIndex) {
         for (int i = 0; i < tvList.size(); i++) {
-            if (chooseIndex == i) {
-                tvList.get(i).setTextColor(getResources().getColor(R.color.order_font_choose));
-            } else {
-                tvList.get(i).setTextColor(getResources().getColor(R.color.order_font_normal));
+            if(isAdded() && getActivity()!=null) {
+                if (chooseIndex == i) {
+                    tvList.get(i).setTextColor(getResources().getColor(R.color.order_font_choose));
+                } else {
+                    tvList.get(i).setTextColor(getResources().getColor(R.color.order_font_normal));
+                }
             }
         }
 
@@ -243,7 +244,6 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
         TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<Order>>() {
             @Override
             protected void onPreExecute() {
-                mProgressDialog.show();
                 if (emptyView != null) emptyView.setVisibility(View.GONE);
                 if (recyclerView != null) recyclerView.setVisibility(View.GONE);
             }
@@ -266,7 +266,6 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
 
             @Override
             protected void onPostExecute(List<Order> orders) {
-                mProgressDialog.dismiss();
                 if (orders.size() == 0) {
                     if (emptyView != null) emptyView.setVisibility(View.VISIBLE);
                     if (recyclerView != null) recyclerView.setVisibility(View.GONE);
@@ -279,6 +278,10 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
         });
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
 
     @Override
     public void onRefresh() {

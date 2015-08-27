@@ -64,6 +64,7 @@ public class CurrentBrandGoodsList {
         public String market_price;
         public String guige;
         public String goods_img;
+        public String discount_type;
     }
 
 

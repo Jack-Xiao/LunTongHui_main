@@ -1,0 +1,1 @@
+ALTER TABLE shopping_car  Add COLUMN rid TEXT;

@@ -28,6 +28,7 @@ import com.louie.luntonghui.event.SaveAndModifyAddressEvent;
 import com.louie.luntonghui.model.db.Address;
 import com.louie.luntonghui.model.result.Result;
 import com.louie.luntonghui.ui.SecondLevelBaseActivity;
+import com.louie.luntonghui.ui.register.ProxyRegisterActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
@@ -60,6 +61,15 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
     public static final int NOT_SETTLE_ACCOUNT = 0;
     public static final int HAS_SETTLE_ACCOUNT = 1;
     private int SETTLE_ACCOUNT_VALUE = 0;
+
+    public static final String PROVINCE_ID = "province_id";
+    public static final String CITY_ID = "city_id";
+    public static final String STREE_ID = "stree_id";
+    public static final String PROVINCE  = "province";
+    public static final String CITY = "city";
+    public static final String STREE = "stree";
+
+    public static final String DETAIL_ADDRESS = "detail_address";;
 
     @InjectView(R.id.consignee_value)
     EditText consigneeValue;
@@ -97,6 +107,7 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
     private String districtId;
     private String initDistrictName;
     private boolean isFirstClick =true;
+    private Bundle proxyBundle;
 
 
     private Context mContext;
@@ -123,6 +134,7 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
 
     @InjectView(R.id.progres)
     ProgressBar progress;
+    private boolean isProxy = false;
 
 
     @Override
@@ -142,9 +154,17 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
         Address address = getIntent().getParcelableExtra(ADDRESSKEY);
         idNList =((App)getApplication()).idNList;
         nameIdList = ((App) getApplication()).nameidList;
-        userId = DefaultShared.getString(RegisterLogin.USERUID,"0");
+        userId = DefaultShared.getString(RegisterLogin.USERUID, "0");
         placeValue.setOnClickListener(listener);
         Bundle bundle = getIntent().getExtras();
+
+        proxyBundle = getIntent().getBundleExtra(ProxyRegisterActivity.PROXY);
+
+        if(proxyBundle !=null){
+            consigneeValue.setText(proxyBundle.getString(ProxyRegisterActivity.CONSIGNEE));
+            mobileValue.setText(proxyBundle.getString(ProxyRegisterActivity.TEL_PHONE));
+            isProxy = true;
+        }
 
         if(bundle !=null){
             SETTLE_ACCOUNT_VALUE = bundle.getInt(SETTLE_ACCOUNT);
@@ -165,7 +185,9 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
             newAddress.indexOf(curProvinceName,0);*/
             newAddress = newAddress.replaceFirst(curProvinceName ,"");
             newAddress = newAddress.replaceFirst(curCityName ,"");
-            newAddress = newAddress.replaceFirst(curDistrict ,"");
+
+            if(curDistrict != null) newAddress = newAddress.replaceFirst(curDistrict ,"");
+
             addressId = address.addressId;
 
             streeValue.setText(newAddress);
@@ -173,8 +195,12 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
 
             defalutSelect.setChecked(address.defaultSelect.equals(ADDRESSDEFAULTSELECT));
          }else{
-            curProvinceName = DefaultShared.getString(App.PROVINCE,"广东").replace("市","").replace("省","");
-            curCityName = DefaultShared.getString(App.CITY,"广州").replace("市","");
+
+            curProvinceName = DefaultShared.getString(App.PROVINCE,App.DEFAULT_PROVINCE).replace("市","").replace("省","");
+            curCityName = DefaultShared.getString(App.CITY, App.DEFAULT_CITY).replace("市","");
+            curProvinceName = curProvinceName.equals("")? App.DEFAULT_PROVINCE : curProvinceName;
+            curCityName = curCityName.equals("")? App.DEFAULT_CITY : curCityName;
+
         }
        /* cityPlaceValue.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,7 +251,7 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
             return ;
         }
 
-        strMobileValue =EncoderURL.encode(mobileValue.getText().toString().trim());
+        strMobileValue = EncoderURL.encode(mobileValue.getText().toString().trim());
         if(String.valueOf(strMobileValue).equals("")){
             ToastUtil.showShortToast(mContext,R.string.mobile_not_empty);
             return;
@@ -243,21 +269,35 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
             return;
         }
 
-
         provinceId = nameIdList.get(curProvinceName);
         cityId = nameIdList.get(curCityName);
         districtId =nameIdList.get(curDistrict);
-        String url;
-        if(isModify){
-            url = String.format(ConstantURL.MODIFYADDRESS,userId,addressId,
-                            strPlace,strConsignee,strMobileValue,
-                            provinceId,cityId,districtId,intSelect);
+        if(isProxy){
+
+            Intent intent = new Intent();
+            intent.putExtra(PROVINCE_ID,provinceId);
+            intent.putExtra(CITY_ID,cityId);
+            intent.putExtra(STREE_ID,districtId);
+            intent.putExtra(DETAIL_ADDRESS,streeValue.getText().toString().replace(" ", ""));
+            intent.putExtra(PROVINCE,curProvinceName);
+            intent.putExtra(CITY,curCityName);
+            intent.putExtra(STREE,curDistrict);
+            setResult(RESULT_OK, intent);
+            finish();
+
         }else{
-            url = String.format(ConstantURL.ADDADDRESS,userId,
-                            strPlace,strConsignee,strMobileValue,
-                            provinceId,cityId,districtId,intSelect);
+            String url;
+            if(isModify){
+                url = String.format(ConstantURL.MODIFYADDRESS,userId,addressId,
+                                strPlace,strConsignee,strMobileValue,
+                                provinceId,cityId,districtId,intSelect);
+            }else{
+                url = String.format(ConstantURL.ADDADDRESS,userId,
+                                strPlace,strConsignee,strMobileValue,
+                                provinceId,cityId,districtId,intSelect);
+            }
+            executeRequest(new GsonRequest(url, Result.class, addOrModifyAddress(), errorListener()));
         }
-        executeRequest(new GsonRequest(url, Result.class, addOrModifyAddress(), errorListener()));
     }
 
 
@@ -449,7 +489,6 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
         mViewProvince.setViewAdapter(new ArrayWheelAdapter<Object>(MineAdditionAddressActivity.this,
                 mProvinceDatas));
 
-
         // 设置可见条目数量
         mViewProvince.setVisibleItems(WHEELSHOWVIEW);
         mViewCity.setVisibleItems(WHEELSHOWVIEW);
@@ -488,7 +527,8 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
 
         if(isFirstClick) curDistrict = initDistrictName;
         if(isModify){
-            if(curDistrict != ""){
+            if(curDistrict == null) curDistrict = ""; // some district is none. @20150824
+            if(curDistrict.equals("")){
                 List<String> list = cityNameMap.get(curCityName);
                 Object[] arrays ;
                 if(list == null){

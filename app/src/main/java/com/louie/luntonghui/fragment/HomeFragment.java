@@ -28,8 +28,9 @@ import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.DailySignIn;
 import com.louie.luntonghui.model.result.HomeAdver;
 import com.louie.luntonghui.net.RequestManager;
-import com.louie.luntonghui.ui.category.GoodsDetailActivity;
 import com.louie.luntonghui.ui.Home.SecondKillActivity;
+import com.louie.luntonghui.ui.category.GoodsDetailActivity;
+import com.louie.luntonghui.ui.mine.MineAttentionActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.ui.search.SearchActivity;
 import com.louie.luntonghui.util.Config;
@@ -55,6 +56,8 @@ import cn.lightsky.infiniteindicator.slideview.DefaultSliderView;
 public class HomeFragment extends BaseFragment implements BaseSliderView.OnSliderClickListener{
     @InjectView(R.id.home_viewpager)
     InfiniteIndicatorLayout mAnimCircleIndicator;
+    //@InjectView(R.id.home_viewpager)
+
 
     @InjectView(R.id.home_recommend)
     LinearLayout mRecommend;
@@ -126,6 +129,24 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
     }
 
 
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -134,8 +155,8 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
 
         initIntegral();
 
-
         initAdver();
+        //initAdver();
         search.setVisibility(View.GONE);
         navigationSearchEdit.setVisibility(View.GONE);
         //testAnimCircleIndicator(); //广告页
@@ -195,12 +216,15 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
                     @Override
                     protected void onPostExecute(List<String> list) {
                         try {
+                            //mAnimCircleIndicator.removeAllSliders();
                             for (int i = 0; i < list.size(); i++) {
                                 DefaultSliderView textSliderView = new DefaultSliderView(mContext);
                                 Log.d("imag..", list.get(i) + "...");
                                 textSliderView
                                         .image(list.get(i))
                                         .setScaleType(BaseSliderView.ScaleType.Fit);
+                                        /*.showImageResForEmpty(R.drawable.default_image_in_no_source)
+                                        .showImageResForError(R.drawable.default_image_in_no_source);*/
                                 mAnimCircleIndicator.addSlider(textSliderView);
                             }
                             mAnimCircleIndicator.setIndicatorPosition(InfiniteIndicatorLayout.
@@ -282,7 +306,8 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
 
     @OnClick(R.id.mine_attention)
     public void onAttention() {
-        ToastUtil.showShortToast(mContext, R.string.does_not_deploy);
+        //ToastUtil.showShortToast(mContext, R.string.does_not_deploy);
+        IntentUtil.startActivityWiehAlpha(getActivity(), MineAttentionActivity.class);
     }
 
 

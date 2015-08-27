@@ -18,4 +18,8 @@
 
     <item name = "navigation_search_content" type="id"/>
     <item name="auto_search_textview" type="id"/>
+    
+    <item name="app_bar_layout" type="id"/>
+    <item name="app_toolbar" type="id"/>
+    <item name="swipe_refresh_layout" type="id"/>
 </resources>

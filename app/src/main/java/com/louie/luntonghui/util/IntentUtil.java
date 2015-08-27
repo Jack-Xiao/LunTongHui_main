@@ -1,14 +1,12 @@
 package com.louie.luntonghui.util;
 
-import java.util.Map;
-
-import org.apache.http.message.BasicNameValuePair;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.louie.luntonghui.R;
+
+import org.apache.http.message.BasicNameValuePair;
 
 /**
   * @author xuxd
@@ -93,5 +91,18 @@ public class IntentUtil {
 		intent.putExtras(bundle);
 		activity.startActivity(intent);
 	}
+	public static void startActivityWiehAlpha(Activity activity,Class<?> clazz){
+		Intent intent=new Intent();
+		intent.setClass(activity, clazz);
+		activity.startActivity(intent);
+		activity.overridePendingTransition(R.anim.activity_alpha_in, R.anim.activity_alpha_out);
+	}
 
+	public static void startActivityWiehAlpha(Activity activity,Class<?> clazz,Bundle bundle){
+		Intent intent=new Intent();
+		intent.setClass(activity,clazz);
+		intent.putExtras(bundle);
+		activity.startActivity(intent);
+		activity.overridePendingTransition(R.anim.activity_alpha_in, R.anim.activity_alpha_out);
+	}
 }

@@ -1,19 +1,21 @@
 package com.louie.luntonghui.rest;
 
+import com.louie.luntonghui.model.result.AddtionAttentionResult;
 import com.louie.luntonghui.model.result.CarList;
 import com.louie.luntonghui.model.result.CheckCode;
 import com.louie.luntonghui.model.result.GoodsList;
-import com.louie.luntonghui.model.result.GoodsList;
 import com.louie.luntonghui.model.result.GoodsThinkSearchList;
+import com.louie.luntonghui.model.result.MineAttentionResult;
 import com.louie.luntonghui.model.result.Result;
+import com.louie.luntonghui.model.result.RetrivePasswordResult;
 
 import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.http.Field;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
-import retrofit.http.PATCH;
-import retrofit.http.Path;
+import retrofit.http.POST;
 import retrofit.http.Query;
 import retrofit.http.QueryMap;
 import rx.Observable;
@@ -66,6 +68,26 @@ public class ServiceManager {
         @GET("/mobile.php?act=findgoodsprompt&mode=test")
         GoodsThinkSearchList searchGoods(@Query("goodsname") String goodsName,@Query("ctype") String type);
 
+        // 我的关注
+        @GET("/mobile.php?act=collection_list&mode=test")
+        Observable<MineAttentionResult> getMineAttentionGoodsList(@Query("user_id") String userId,@Query("ctype") String type);
+        // 取消关注
+        @GET("/mobile.php?act=delete_collection&mode=test")
+        Observable<Result> cancelMineAttentionGoods(@Query("user_id") String userId,@Query("rec_id") String type);
+
+        //添加关注
+        @GET("/mobile.php?act=collect&mode=test")
+        Observable<AddtionAttentionResult> addMineAttentionGoods(@Query("user_id") String userId,@Query("goods_id") String goodsId);
+
+        @GET("/mobile.php?act=tofindthepwd&mode=test")
+        Observable<RetrivePasswordResult> findTheUserPwd(@Query("username") String username);
+
+        @GET("/mobile.php?act=changepwdmsg&mode=test")
+        Observable<CheckCode> changepwdmsg(@Query("user_tel") String tel);
+
+        @FormUrlEncoded
+        @POST("/mobile.php?act=editpassword")
+        Observable<Result> changePwd(@Field("user_id") String userId,@Field("new_pwd") String newPwd);
 
     }
 }

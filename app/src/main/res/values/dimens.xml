@@ -39,5 +39,7 @@
     <dimen name="toolbar_main_title_size">22sp</dimen>
     
     <dimen name="adveter_height">130dp</dimen>
+    <dimen name="font_18_size">18dp</dimen>
+    <dimen name="font_16_size">16dp</dimen>
 
 </resources>

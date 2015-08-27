@@ -87,6 +87,8 @@
     <string name="clear_shopping_car_message">确定清空购物车吗?</string>
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
+    <string name="finish">完成</string>
+
 
     <string name="empty_message">什么也没有</string>
     <string name="btn_empty_retry">在试试</string>
@@ -315,10 +317,37 @@
     <string name="current_month_cost_total">本月服务费用总和:</string>
     <string name="whole_cost_total">所有服务费用总和:</string>
     <string name="warning_register_info">如遇到任何注册问题,请拔打电话:400-006-8040</string>
-    <string name="enter_exit">再按一次退出</string>
+    <string name="enter_exit">再按一次退出轮通惠</string>
     <string name="proxy_register_account">代注册账号</string>
     <string name="proxy_register_finish">代注册完成</string>
     <string name="proxy_register_success">代注册成功</string>
     <string name="please_input_six_count">密码请输入6位以上字符</string>
     <string name="mine_proxy_register">我的代注册</string>
+    <string name="sales_promotion">促销活动:</string>
+    <string name="attention_delete_warnning">删除了,查找会麻烦哦~</string>
+    <string name="fix_order">修改订单</string>
+    <string name="count_name">数量:</string>
+    <string name="no_goods_info">没有商品信息</string>
+    <string name="retrive_password">找回密码</string>
+    <string name="phone_number_error">请输入11位有效电话号码</string>
+    <string name="input_true_check_code">请输入正确验证码</string>
+
+    <string name="reset_password">重设密码</string>
+    <string name="reset_password_confirm">确认密码</string>
+
+    <string name="input_reset_password">请输入新密码(6位以上)</string>
+    <string name="input_reset_password_confirm">请再次输入新密码</string>
+    <string name="confirm_password_error">两次密码输入不一致</string>
+    <string name="empty_title"></string>
+    <string name="short_password_warning">请输入六位字符密码</string>
+    <string name="custom_person_type">客户类型</string>
+    <string name="terminal">终端</string>
+    <string name="wholesaler">批发商</string>
+    <string name="custom_address">客户地址</string>
+    <string name="address_detail">详情地址:</string>
+    <string name="address_select">请选择地址信息</string>
+    <string name="click_select_address">请点击选择地址信息</string>
+
+
+    
    </resources>

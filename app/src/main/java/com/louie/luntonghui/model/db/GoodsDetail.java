@@ -12,6 +12,8 @@ import com.activeandroid.annotation.Table;
  */
 @Table(name = "GoodsDetail")
 public class GoodsDetail extends Model implements Parcelable {
+    public static final String HASPROMOTION = "1";
+    public static final String NONEPROMOTION = "0";
 
     @Column(name = "goods_id")
     public String goodsId;
@@ -37,6 +39,11 @@ public class GoodsDetail extends Model implements Parcelable {
     @Column(name = "goods_desc")
     public String goodsDesc;
 
+    @Column(name = "has_promotion")
+    public String hasPromotion;
+    @Column(name = "promotion_name")
+    public String promotionName;
+
 
     @Override
     public int describeContents() {
@@ -56,6 +63,8 @@ public class GoodsDetail extends Model implements Parcelable {
         dest.writeString(this.marketPrice);
         dest.writeString(this.shopPrice);
         dest.writeString(this.goodsDesc);
+        dest.writeString(this.hasPromotion);
+        dest.writeString(this.promotionName);
     }
 
     public GoodsDetail() {
@@ -73,6 +82,8 @@ public class GoodsDetail extends Model implements Parcelable {
         this.marketPrice = in.readString();
         this.shopPrice = in.readString();
         this.goodsDesc = in.readString();
+        this.hasPromotion = in.readString();
+        this.promotionName = in.readString();
     }
 
     public static final Parcelable.Creator<GoodsDetail> CREATOR = new Parcelable.Creator<GoodsDetail>() {

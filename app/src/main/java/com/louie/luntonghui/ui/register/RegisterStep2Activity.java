@@ -61,7 +61,6 @@ public class RegisterStep2Activity extends BaseNormalActivity {
             phoneNumber = bundle.getString(RegisterStep1Activity.PHONE_NUMBER);
         }
 
-
         init();
         mCountDownTime.start();
     }

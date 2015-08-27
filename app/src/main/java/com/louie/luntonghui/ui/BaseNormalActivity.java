@@ -33,14 +33,15 @@ public class BaseNormalActivity extends AppCompatActivity implements View.OnClic
     public static final String DEFAULT_ADDRESS_SELECT = "1";
     protected ServiceManager.LunTongHuiApi mApi;
     protected String userId;
-
+    protected String userType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
         mApi = RetrofitUtils.createApi(mContext, ServiceManager.LunTongHuiApi.class);
-        userId = DefaultShared.getString(RegisterLogin.USERUID,RegisterLogin.DEFAULT_USER_ID);
+        userId = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
+        userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
     }
 
 
@@ -72,6 +73,12 @@ public class BaseNormalActivity extends AppCompatActivity implements View.OnClic
                 finish();
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RequestManager.cancelAll(this);
     }
 
     @Optional

@@ -1,14 +1,12 @@
 package com.louie.luntonghui.ui.order;
 
 import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.activeandroid.query.Select;
 import com.android.volley.Response;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
@@ -20,7 +18,6 @@ import com.louie.luntonghui.model.result.ProduceOrder;
 import com.louie.luntonghui.model.result.Result;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.util.ConstantURL;
-import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.MyListView;
 import com.umeng.analytics.MobclickAgent;
@@ -36,16 +33,22 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2015/7/17.
  */
-public class DetailOrderActivity extends BaseNormalActivity {
+public class DetailOrderActivity extends BaseNormalActivity implements ProduceOrderAdapter.FixOrderListener{
+    public static final int NOT_ORDER_CONFIRM = 0;
+
     @InjectView(R.id.lv_goodslist)
     MyListView lvGoodslist;
-
     @InjectView(R.id.list_view_order_state)
     MyListView listViewOrderState;
     @InjectView(R.id.cancel_order)
     Button cancelOrder;
     @InjectView(R.id.toolbar_title)
     TextView toolbarTitle;
+
+    @InjectView(R.id.fix_order)
+    TextView fixOrder;
+
+
     ProgressDialog mProgressDialog;
     public String queryUserId;
 
@@ -53,7 +56,8 @@ public class DetailOrderActivity extends BaseNormalActivity {
     private ProduceOrderAdapter mGoodsAdapter;
     public Map<String, String> regions;
     public int queryType  = Order.DEFAULT_QUERY_TYPE;
-
+    public String[] orderStates;
+    public boolean isFixOrder = false;
 
     private LinearLayout linearOrderState, linearOrderSn, linearOrderMoney, linearDownOrderTime,
             linearPayMethod, linearGoodsValue, linearFreight, linearSalesVolume, linearNeedPayValue,
@@ -84,14 +88,14 @@ public class DetailOrderActivity extends BaseNormalActivity {
 
         regions = ((App) getApplication()).idNList;
 
-        mGoodsAdapter = new ProduceOrderAdapter(mContext);
+        mGoodsAdapter = new ProduceOrderAdapter(mContext,this);
         lvGoodslist.setAdapter(mGoodsAdapter);
         mProgressDialog = new ProgressDialog(mContext);
 
         if(queryType == Order.SERVICE_TYPE){
             cancelOrder.setVisibility(View.GONE);
         }
-
+        orderStates = getResources().getStringArray(R.array.order_state_list);
         initView();
 
         queryOrderInfo();
@@ -177,7 +181,9 @@ public class DetailOrderActivity extends BaseNormalActivity {
     }
 
     private void queryOrderInfo() {
-        TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Order>() {
+        getOrderInfo();
+
+        /*TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Order>() {
             @Override
             protected Order doInBackground(Object... params) {
                 Order order = new Select()
@@ -194,14 +200,15 @@ public class DetailOrderActivity extends BaseNormalActivity {
 
 
                 } else {
-                    getOrderInfo();
                 }
             }
-        });
+        });*/
 
     }
 
     private void getOrderInfo() {
+        mProgressDialog.show();
+
         String url = String.format(ConstantURL.GET_ORDER_DETAIL, userId, orderId);
         executeRequest(new GsonRequest(url, OrderDetailResult.class, orderDetailRequest(), errorListener()));
     }
@@ -212,7 +219,13 @@ public class DetailOrderActivity extends BaseNormalActivity {
             public void onResponse(OrderDetailResult orderDetailResult) {
                 mProgressDialog.dismiss();
                 OrderDetailResult.OrderEntity order = orderDetailResult.order;
-                orderStateValue.setText(order.order_status);
+
+                int orderState = Integer.parseInt(order.order_status);
+                if(orderState == NOT_ORDER_CONFIRM){
+                    fixOrder.setVisibility(View.VISIBLE);
+                }
+
+                orderStateValue.setText(orderStates[orderState]);
                 orderSnValue.setText(order.order_sn);
                 orderMoneyValue.setText("￥" + order.order_amount); //..
                 downOrderTimeValue.setText(order.formated_add_time);
@@ -241,21 +254,45 @@ public class DetailOrderActivity extends BaseNormalActivity {
 
                 businessMessage.setText(order.postscript+"");
 
-                List<OrderDetailResult.Goods_listEntity> lists = orderDetailResult.goods_list;
-                List<ProduceOrder.Cart_goodsEntity> cart_goods = new ArrayList<>();
+                List<OrderDetailResult.GoodsListEntity> lists = orderDetailResult.goods_list;
+                List<ProduceOrder.CartGoodsEntity> cart_goods = new ArrayList<>();
                 ProduceOrder produceOrder = new ProduceOrder();
                 for (int i = 0; i < lists.size(); i++) {
-                    ProduceOrder.Cart_goodsEntity car = produceOrder.new Cart_goodsEntity();
+                    ProduceOrder.CartGoodsEntity car = produceOrder.new CartGoodsEntity();
                     car.goods_thumb = lists.get(i).goods_thumb;
                     car.goods_name = lists.get(i).goods_name;
                     car.goods_price = lists.get(i).goods_price;
                     car.goods_number = lists.get(i).goods_number;
+                    car.discount_type = lists.get(i).discount_type;
+                    car.rec_id = orderDetailResult.order.order_id;
+
+                    car.rid = lists.get(i).rid;
+                    car.guige = lists.get(i).guige;
+                    car.danwei = lists.get(i).danwei;
+                    car.goods_id = lists.get(i).goods_id;
+                    car.discount = lists.get(i).discount;
                     cart_goods.add(car);
                 }
-                mGoodsAdapter.setData(cart_goods);
+                mGoodsAdapter.setData(cart_goods,isFixOrder);
             }
         };
     }
+
+    @OnClick(R.id.fix_order)
+    public void onClickFixOrder(View v){
+        isFixOrder = !isFixOrder;
+
+        if(isFixOrder){
+            fixOrder.setText("修改完成");
+        }else{
+            fixOrder.setText("修改订单");
+        }
+
+        mGoodsAdapter.fixOrder(isFixOrder,orderId);
+
+    }
+
+
 
     @OnClick(R.id.cancel_order)
     public void onCancelOrderClick() {
@@ -282,5 +319,10 @@ public class DetailOrderActivity extends BaseNormalActivity {
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    public void reference() {
+        getOrderInfo();
     }
 }

@@ -25,13 +25,14 @@
             android:layout_height="45dp">
 
             <ImageView
-                android:id="@+id/login_clear"
+                android:id="@+id/username_clear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/login_draw_padding"
+                android:onClick="onClickClearUsername"
                 android:background="@drawable/login_clear" />
 
             <EditText
@@ -60,11 +61,13 @@
             android:layout_height="45dp">
 
             <ImageButton
+                android:id="@+id/password_clear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/login_draw_padding"
+                android:onClick="onClickClearPassword"
                 android:background="@drawable/login_clear" />
 
             <EditText
@@ -99,6 +102,7 @@
             android:text="手机快速注册" />
 
         <TextView
+            android:id="@+id/retrive_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -187,7 +191,7 @@
             android:layout_marginBottom="20dp"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="轮通惠: 好、易、快、省"
+            android:text="轮通惠: 安、易、快、省"
             android:textSize="12sp" />
     </RelativeLayout>
 

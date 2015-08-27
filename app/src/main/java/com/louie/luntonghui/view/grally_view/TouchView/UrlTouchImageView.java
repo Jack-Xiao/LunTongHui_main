@@ -26,12 +26,11 @@ import android.widget.ImageView.ScaleType;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.louie.luntonghui.R;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-
-import com.louie.luntonghui.R;
-import com.louie.luntonghui.view.grally_view.TouchView.InputStreamWrapper.InputStreamProgressListener;
 
 public class UrlTouchImageView extends RelativeLayout {
     protected ProgressBar mProgressBar;
@@ -72,9 +71,11 @@ public class UrlTouchImageView extends RelativeLayout {
         this.addView(mProgressBar);
     }
 
-    public void setUrl(String imageUrl)
-    {
+    public void setUrl(String imageUrl) {
         new ImageLoadTask().execute(imageUrl);
+        /*mImageView.setVisibility(VISIBLE);
+        Picasso.with(mContext)
+                .load(imageUrl).into(mImageView);*/
     }
     
     public void setScaleType(ScaleType scaleType) {
@@ -82,8 +83,7 @@ public class UrlTouchImageView extends RelativeLayout {
     }
     
     //No caching load
-    public class ImageLoadTask extends AsyncTask<String, Integer, Bitmap>
-    {
+    public class ImageLoadTask extends AsyncTask<String, Integer, Bitmap> {
         @Override
         protected Bitmap doInBackground(String... strings) {
             String url = strings[0];
@@ -95,8 +95,7 @@ public class UrlTouchImageView extends RelativeLayout {
                 InputStream is = conn.getInputStream();
                 int totalLen = conn.getContentLength();
                 InputStreamWrapper bis = new InputStreamWrapper(is, 8192, totalLen);
-                bis.setProgressListener(new InputStreamProgressListener()
-				{					
+                bis.setProgressListener(new InputStreamWrapper.InputStreamProgressListener(){
 					@Override
 					public void onProgress(float progressValue, long bytesLoaded,
 							long bytesTotal)
@@ -104,7 +103,7 @@ public class UrlTouchImageView extends RelativeLayout {
 						publishProgress((int)(progressValue * 100));
 					}
 				});
-                bm = BitmapFactory.decodeStream(bis);
+                bm = BitmapFactory.decodeStream(bis);  //会内存溢出...
                 bis.close();
                 is.close();
             } catch (Exception e) {
@@ -112,17 +111,15 @@ public class UrlTouchImageView extends RelativeLayout {
             }
             return bm;
         }
-        
+
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-        	if (bitmap == null) 
-        	{
+        	if (bitmap == null) {
         		mImageView.setScaleType(ScaleType.CENTER);
         		bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.no_photo);
         		mImageView.setImageBitmap(bitmap);
         	}
-        	else 
-        	{
+        	else {
         		mImageView.setScaleType(ScaleType.MATRIX);
 	            mImageView.setImageBitmap(bitmap);
         	}

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/toolbar_base"/>
+    <include layout="@layout/toolbar_base_operation"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -181,7 +181,6 @@
                 android:text="@string/cancel_order"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
         </LinearLayout>
 
 
