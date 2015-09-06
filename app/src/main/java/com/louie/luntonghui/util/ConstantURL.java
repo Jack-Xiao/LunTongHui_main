@@ -381,4 +381,7 @@ public class ConstantURL {
             +"mode=test" + "&"
             +"order_id=" + ARGSCONTENT1 + "&"
             +"goods_id=" +  ARGSCONTENT2;
+
+    public static final String CATEGORYGOODS = HOST
+            +"mobile.php?act=listcatgoods&cat_id=";
 }

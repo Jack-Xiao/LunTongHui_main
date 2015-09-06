@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-
 /**
  * Created by Jack on 15/8/8.
  */
@@ -226,12 +225,14 @@ public class ProxyRegisterActivity extends BaseNormalActivity {
     public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+
     }
     @OnClick(R.id.address_detail)
     public void onClickAddressSelect(){

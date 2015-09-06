@@ -1,6 +1,7 @@
 package com.louie.luntonghui.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.activeandroid.query.Update;
@@ -21,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.igexin.sdk.PushManager;
+import com.igexin.sdk.Tag;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
@@ -148,6 +150,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     public String curUpdateUrl;
     private Context mContext;
     private SimpleDateFormat dateFormat;
+    private String provinceId;
+    public String strTags;
 
 
     @Override
@@ -156,20 +160,40 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         mContext = this;
-        //开启推送功能
-        /*PushAgent mPushAgent = PushAgent.getInstance(mContext);
-        mPushAgent.enable();
-        String device_token = UmengRegistrar.getRegistrationId(mContext);*/
 
         userId = DefaultShared.getString(RegisterLogin.USERUID, App.DEFAULT_USER_ID);
         userType = DefaultShared.getString(RegisterLogin.USER_TYPE,RegisterLogin.USER_DEFAULT);
+        //设置别名
+        if(!userId.equals(App.DEFAULT_USER_ID)){
+            provinceId = DefaultShared.getString(App.PROVINCEID,App.DEFAULT_PROVINCEID);
+            if(provinceId.equals(App.DEFAULT_PROVINCEID)){
+                provinceId = "0";
+            }else if(provinceId.equals(App.DEFAULT_LIAO_LING_ID)){
+                provinceId = "1";
+            }
 
-        try {
-           /* mPushAgent.getTagManager().add(userType);
-            mPushAgent.addAlias(userId, "native");*/
+            //JPushInterface.setAliasAndTags(mContext, userId, tags);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            PushManager.getInstance().initialize(this.getApplicationContext());
+
+            String dProvinceId = "d" + provinceId;
+            Tag tag = new Tag();
+            tag.setName(dProvinceId);
+
+            String uType = "u" + userType;
+            Tag tag1 = new Tag();
+            tag1.setName(uType);
+
+            strTags = dProvinceId + "," + uType;
+            DefaultShared.putString(Config.GT_PUSH_TAGS, strTags);
+
+            Tag [] tagss= new Tag[]{tag,tag1};
+            PushManager.getInstance().bindAlias(App.getContext(), "a" +userId);
+            PushManager.getInstance().setTag(App.getContext(), tagss);
+            PushManager.getInstance().turnOnPush(App.getContext());
+            String clientId = PushManager.getInstance().getClientid(App.getContext());
+
+
         }
 
         Bundle bundle = getIntent().getExtras();
@@ -335,8 +359,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                         int total = 0;
                         List<ShoppingCar> data = new ArrayList<ShoppingCar>();
                         if (carList != null && carList.goods_list != null) {
-                            try {
-                                ActiveAndroid.beginTransaction();
+
                                 for (int i = 0; i < carList.goods_list.size(); i++) {
                                     ShoppingCar car = new ShoppingCar();
                                     car.carId = carList.goods_list.get(i).rec_id;
@@ -352,10 +375,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                                     car.save();
                                     data.add(car);
                                 }
-                                ActiveAndroid.setTransactionSuccessful();
-                            } finally {
-                                ActiveAndroid.endTransaction();
-                            }
                         }
                         return total;
                     }
@@ -444,6 +463,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         super.onPause();
         MobclickAgent.onPageEnd("SplashScreen");
         MobclickAgent.onPause(this);
+
     }
 
     private Response.Listener<CurrentBrandGoodsList> getSecondKillGoods() {
@@ -983,5 +1003,11 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         } else if (exitAppTimes == 2) {
             finish();
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 }

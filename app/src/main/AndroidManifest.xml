@@ -1,273 +1,290 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.louie.luntonghui">
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.louie.luntonghui">
 
     <!-- 这个权限用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!-- 这个权限用于访问GPS定位-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!-- 获取运营商信息，用于支持提供运营商信息相关的接口-->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <!-- 用于读取手机当前的状态-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 访问网络，网络定位需要上网-->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!-- SD卡读取权限，用户写入离线定位数据-->
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"></uses-permission>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
     <!--允许应用读取低级别的系统日志文件 -->
-    <uses-permission android:name="android.permission.READ_LOGS"></uses-permission>
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.READ_LOGS"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
     <uses-permission android:name="ANDROID.PERMISSION.WRITE_APN_SETTINGS"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/> <!--//拔打电话权限-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
 
+    //share 分享
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <!-- 蓝牙分享所需的权限 -->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
     <!-- 必选 -->
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
-    <uses-permission android:name="android.permission.BROADCAST_PACKAGE_ADDED" />
-    <uses-permission android:name="android.permission.BROADCAST_PACKAGE_CHANGED" />
-    <uses-permission android:name="android.permission.BROADCAST_PACKAGE_INSTALL" />
-    <uses-permission android:name="android.permission.BROADCAST_PACKAGE_REPLACED" />
-    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />;
+    <uses-permission android:name="android.permission.BROADCAST_PACKAGE_ADDED"/>
+    <uses-permission android:name="android.permission.BROADCAST_PACKAGE_CHANGED"/>
+    <uses-permission android:name="android.permission.BROADCAST_PACKAGE_INSTALL"/>
+    <uses-permission android:name="android.permission.BROADCAST_PACKAGE_REPLACED"/>
+    <uses-permission android:name="android.permission.RESTART_PACKAGES"/>
+
+    <!-- Required -->
+    <uses-permission android:name="com.louie.luntonghui.permission.JPUSH_MESSAGE"/>
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+
+    <!-- Optional. Required for location feature -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <!-- 友盟-->
+
+    <!-- 【必须】 信鸽SDK所需权限 -->
+    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
+    <uses-permission android:name="android.permission.READ_LOGS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <!-- 【可选】 信鸽SDK所需权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BATTERY_STATS"/>
+
+<!-- 个推SDK权限配置开始 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <!-- 支持iBeancon 需要蓝牙权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <!-- 支持个推3.0 电子围栏功能 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- 浮动通知权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <!-- 自定义权限 -->
+    <uses-permission android:name="getui.permission.GetuiService.com.louie.luntonghui"/>
+
+    <permission android:name="getui.permission.GetuiService.com.louie.luntonghui" android:protectionLevel="normal">
+    </permission>
 
 
-    <application
-        android:name=".App"
-        android:allowBackup="true"
-        android:icon="@mipmap/logo_new"
-        android:label="@string/app_name"
-        android:theme="@style/LunTongHui"
-        android:windowSoftInputMode="stateHidden">
+    <application android:allowBackup="true" android:icon="@mipmap/logo_new" android:label="@string/app_name" android:name=".App" android:theme="@style/LunTongHui" android:windowSoftInputMode="stateHidden">
 
 
-    <meta-data android:name="AA_DB_NAME" android:value="luntonghui.db"/>
+        <meta-data android:name="AA_DB_NAME" android:value="luntonghui.db"/>
         <meta-data android:name="AA_DB_VERSION" android:value="17"/>  <!-- options  default to 1-->
 
-
-        <activity
-            android:name=".ui.StartActivity"
-            android:label="@string/app_name"
-            android:configChanges="orientation|keyboardHidden"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity android:configChanges="orientation|keyboardHidden" android:label="@string/app_name" android:name=".ui.StartActivity" android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
 
-        <activity android:name=".ui.MainActivity" android:configChanges="orientation|keyboardHidden"
-            android:windowSoftInputMode="adjustPan"
-            android:launchMode="singleTask"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:launchMode="singleTask" android:name=".ui.MainActivity" android:windowSoftInputMode="adjustPan"/>
 
-        <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">
+        <service android:enabled="true" android:name="com.baidu.location.f" android:process=":remote">
         </service>
 
         <!-- 百度定位 api_key -->
-        <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="wHugv8dUBupRIo7pKBNiSrqo" />
+        <meta-data android:name="com.baidu.lbsapi.API_KEY" android:value="wHugv8dUBupRIo7pKBNiSrqo"/>
 
 
-        <activity android:name=".ui.register.RegisterHome"  android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.register.RegisterStep1Activity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.register.RegisterStep2Activity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.register.RegisterStep3Activity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.register.RegisterLogin" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.mine.MineReceiverAddressActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.mine.MineAdditionAddressActivity" android:configChanges="orientation|keyboardHidden"
-            android:windowSoftInputMode="stateHidden" />
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.register.RegisterHome"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.register.RegisterStep1Activity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.register.RegisterStep2Activity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.register.RegisterStep3Activity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.register.RegisterLogin"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.mine.MineReceiverAddressActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.mine.MineAdditionAddressActivity" android:windowSoftInputMode="stateHidden"/>
 
-        <activity android:name=".ui.mine.MineOrderActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.mine.MineSelectRegionActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.category.GoodsDetailActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.category.GoodsDetailBuyActivity" android:configChanges="orientation|keyboardHidden"
-            android:windowSoftInputMode="stateHidden" />
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.mine.MineOrderActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.mine.MineSelectRegionActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.category.GoodsDetailActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.category.GoodsDetailBuyActivity" android:windowSoftInputMode="stateHidden"/>
 
-        <activity android:name=".ui.category.GoodsDetailBuyInfoActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.car.ProduceOrderActivity" android:configChanges="orientation|keyboardHidden"
-            android:windowSoftInputMode="stateHidden" />
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.category.GoodsDetailBuyInfoActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.car.ProduceOrderActivity" android:windowSoftInputMode="stateHidden"/>
 
-        <activity android:name=".ui.search.SearchActivity" android:configChanges="orientation|keyboardHidden"
-            android:launchMode="singleTask"/>
-        <activity android:name=".ui.mine.SettingActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.order.DetailOrderActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.Home.SecondKillActivity" android:configChanges="orientation|keyboardHidden|navigation|keyboard"
-                    android:launchMode="singleInstance"
-                    android:excludeFromRecents="true"
-                    android:taskAffinity="" />
+        <activity android:configChanges="orientation|keyboardHidden" android:launchMode="singleTask" android:name=".ui.search.SearchActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.mine.SettingActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.order.DetailOrderActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden|navigation|keyboard" android:excludeFromRecents="true" android:launchMode="singleInstance" android:name=".ui.Home.SecondKillActivity" android:taskAffinity=""/>
 
         <receiver android:name=".receiver.OnShotAlarmReceiver" android:process=":remote"/>
         <receiver android:name=".receiver.RepeatingAlarmReceiver" android:process=":remote"/>
         <receiver android:name=".receiver.AlarmReceiver" android:process=":remote"/>
 
-        <activity android:name=".ui.mine.MineService.MineServiceProviderActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.mine.MineService.MineCustomerOrderListActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.mine.MineService.MineCustomerPeopleListActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.mine.MineService.MineServiceCostQueryActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.ImageActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.SpaceImageDetailActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.mine.MineService.MineWorkActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.register.ProxyRegisterActivity" android:configChanges="orientation|keyboardHidden"/>
-        <service android:name=".task.UpdateService" android:exported="false"/>
-        <activity android:name=".ui.mine.MineAttentionActivity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.PictureActivity" android:configChanges="orientation|keyboardHidden"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.mine.MineService.MineServiceProviderActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.mine.MineService.MineCustomerOrderListActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.mine.MineService.MineCustomerPeopleListActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.mine.MineService.MineServiceCostQueryActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.ImageActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.SpaceImageDetailActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.mine.MineService.MineWorkActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.register.ProxyRegisterActivity"/>
+        <service android:exported="false" android:name=".task.UpdateService"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.mine.MineAttentionActivity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.PictureActivity"/>
 
-        <activity android:name=".ui.register.retrivepassword.RetrivePassword1Activity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.register.retrivepassword.RetrivePassword2Activity" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.register.retrivepassword.RetrivePassword3Activity" android:configChanges="orientation|keyboardHidden"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.register.retrivepassword.RetrivePassword1Activity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.register.retrivepassword.RetrivePassword2Activity"/>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".ui.register.retrivepassword.RetrivePassword3Activity"/>
         
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="989bec3cbe78c82d1d5a3c9efd94f9fbeb209df9" />
+        <meta-data android:name="io.fabric.ApiKey" android:value="989bec3cbe78c82d1d5a3c9efd94f9fbeb209df9"/>
 
         //友盟统计分析
-        <meta-data android:value="55c1ea20e0f55ace150019c7" android:name="UMENG_APPKEY"></meta-data>
-        <meta-data android:value="native" android:name="UMENG_CHANNEL"/>
+        <meta-data android:name="UMENG_APPKEY" android:value="55c1ea20e0f55ace150019c7"/>
+        <meta-data android:name="UMENG_CHANNEL" android:value="native"/>
 
-        <meta-data
-            android:name="UMENG_MESSAGE_SECRET"
-            android:value="d5d6bd1bc6343c2343ab0f1ca1127c22" >
+        <meta-data android:name="UMENG_MESSAGE_SECRET" android:value="d5d6bd1bc6343c2343ab0f1ca1127c22">
         </meta-data>
 
-        //shareSDK
-        <!--<activity
-            android:name="com.mob.tools.MobUIShell"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
-            <intent-filter>
-                <data android:scheme="tencent100371282" />
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        //weixi
-        <activity
-            android:name="cn.sharesdk.demo.wxapi.WXEntryActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
-            android:screenOrientation="portrait" />
 
-        &lt;!&ndash; 友盟消息推送 &ndash;&gt;
-        <receiver
-            android:name="com.umeng.message.NotificationProxyBroadcastReceiver"
-            android:exported="false" >
-        </receiver>
-        <receiver
-            android:name="com.umeng.message.SystemReceiver"
-            android:process=":push" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
-                <data android:scheme="package" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.umeng.message.MessageReceiver"
-            android:exported="false"
-            android:process=":push" >
-            <intent-filter>
-                <action android:name="org.agoo.android.intent.action.RECEIVE" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.umeng.message.ElectionReceiver"
-            android:process=":push" >
-            <intent-filter>
-                <action android:name="org.agoo.android.intent.action.ELECTION_RESULT_V4" />
-                <category android:name="umeng" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.umeng.message.RegistrationReceiver"
+       <!-- &lt;!&ndash; 极光推送&ndash;&gt;
+        <service
+            android:name="cn.jpush.android.service.PushService"
+            android:enabled="true"
             android:exported="false" >
             <intent-filter>
-                <action android:name="com.umeng.message.example.intent.action.COMMAND" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="com.umeng.message.UmengMessageBootReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
-        <service
-            android:name="com.umeng.message.UmengService"
-            android:label="PushService"
-            android:exported="true"
-            android:process=":push" >
-            <intent-filter>
-                <action android:name="com.umeng.message.example.intent.action.START" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.umeng.message.example.intent.action.COCKROACH" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="org.agoo.android.intent.action.PING_V4" />
-                <category android:name="umeng" />
-            </intent-filter>
-        </service>
-
-        <service android:name="com.umeng.message.UmengIntentService"
-            android:process=":push" />
-
-        <service
-            android:name="com.umeng.message.UmengMessageIntentReceiverService"
-            android:process=":push"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="org.android.agoo.client.MessageReceiverService" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="org.android.agoo.client.ElectionReceiverService" />
-            </intent-filter>
-        </service>
-
-        <service android:name="com.umeng.message.UmengMessageCallbackHandlerService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.umeng.messge.registercallback.action" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.umeng.message.unregistercallback.action"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.umeng.message.message.handler.action"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.umeng.message.autoupdate.handler.action"/>
+                <action android:name="cn.jpush.android.intent.REGISTER" />
+                <action android:name="cn.jpush.android.intent.REPORT" />
+                <action android:name="cn.jpush.android.intent.PushService" />
+                <action android:name="cn.jpush.android.intent.PUSH_TIME" />
             </intent-filter>
         </service>-->
-    </application>
+
+
+        <!-- Required. For publish channel feature -->
+        <!-- JPUSH_CHANNEL 是为了方便开发者统计APK分发渠道。-->
+        <!-- 例如: -->
+        <!-- 发到 Google Play 的APK可以设置为 google-play; -->
+        <!-- 发到其他市场的 APK 可以设置为 xxx-market。 -->
+
+
+
+        <!--微信分享回调 -->
+       <!-- <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:screenOrientation="portrait" />-->
+
+
+
+        <!-- APPKEY值的配置 -->
+        <meta-data android:name="UMENG_APPKEY" android:value="55c1ea20e0f55ace150019c7">
+        </meta-data>
+        <meta-data android:name="UMENG_MESSAGE_SECRET" android:value="d5d6bd1bc6343c2343ab0f1ca1127c22">
+        </meta-data>
+        <!-- AppKEY配置结束 -->
+
+
+        <!--个推SDK配置开始-->
+        <!-- 个推SDK配置开始 -->
+        <!-- 配置的第三方参数属性 -->
+        <meta-data android:name="PUSH_APPID" android:value="Sh8IIDgY6nA140CPfQOwr4"/>
+        <meta-data android:name="PUSH_APPKEY" android:value="da2AA2Hyrx9vE6OpracJN8"/>
+        <meta-data android:name="PUSH_APPSECRET" android:value="q9bhyils8s7TcWxOXAtye"/>
+
+        <!-- 配置第三方Receiver -->
+        <receiver android:exported="false" android:name=".receiver.GTPushReceiver">
+            <intent-filter>
+                <action android:name="com.igexin.sdk.action.Sh8IIDgY6nA140CPfQOwr4"/>
+            </intent-filter>
+        </receiver>
+
+        <!-- 配置SDK核心服务 -->
+        <service android:exported="true" android:label="NotificationCenter" android:name="com.igexin.sdk.PushService" android:process=":pushservice">
+        </service>
+        <service android:exported="true" android:label="NotificationCenterUser" android:name="com.igexin.sdk.PushServiceUser">
+        </service>
+
+        <receiver android:name="com.igexin.sdk.PushReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="com.igexin.sdk.action.refreshls"/>
+                <!-- 以下三项为可选的action声明，可大大提高service存活率和消息到达速度 -->
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:exported="false" android:name="com.igexin.sdk.PushManagerReceiver">
+            <intent-filter>
+                <action android:name="com.igexin.sdk.action.pushmanager"/>
+            </intent-filter>
+        </receiver>
+
+        <activity android:excludeFromRecents="true" android:exported="false" android:name="com.igexin.sdk.PushActivity" android:process=":pushservice" android:taskAffinity="com.igexin.sdk.PushActivityTask" android:theme="@android:style/Theme.Translucent.NoTitleBar">
+        </activity>
+
+        <service android:name="com.igexin.download.DownloadService" android:process=":pushservice"/>
+
+        <receiver android:name="com.igexin.download.DownloadReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
+        <provider android:authorities="downloads.com.louie.luntonghui" android:exported="true" android:name="com.igexin.download.DownloadProvider" android:process=":pushservice"/>
+
+        <activity android:configChanges="orientation|keyboard|keyboardHidden" android:excludeFromRecents="true" android:exported="false" android:name="com.igexin.getuiext.activity.GetuiExtActivity" android:process=":pushservice" android:taskAffinity="android.task.myServicetask" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <receiver android:exported="false" android:name="com.igexin.getuiext.service.PayloadReceiver">
+            <intent-filter>
+                <action android:name="com.igexin.sdk.action.7fjUl2Z3LH6xYy7NQK4ni4"/>
+                <action android:name="com.igexin.sdk.action.Sh8IIDgY6nA140CPfQOwr4"/>
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.igexin.getuiext.service.GetuiExtService" android:process=":pushservice"/>
+        <!-- 个推SDK配置结束 -->
+
+        <activity android:configChanges="orientation|keyboard|keyboardHidden" android:name=".ui.extra.WebViewActivity"/>
+
+
+</application>
 
 </manifest>

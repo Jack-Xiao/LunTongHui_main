@@ -26,7 +26,6 @@ import com.louie.luntonghui.model.result.HotSearch;
 import com.louie.luntonghui.model.result.OrderList;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.register.RegisterLogin;
-import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.TaskUtils;
@@ -51,6 +50,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+
 /*import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.Stetho;*/
 
@@ -73,6 +73,7 @@ public class App extends Application {
     public static final String DEFAULT_USER_ID = "-1";
     public static final String DEFAULT_CITY = "广州";
     public static final String DEFAULT_PROVINCE = "广东";
+    public static final String DEFAULT_LIAO_LING_ID = "1";
 
 
     public static final String GOODS_TOP_PARENT_ID = "-1";
@@ -104,13 +105,10 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        //Fabric.with(this, new Crashlytics(), new Twitter(authConfig));
-        //Fabric.with(this,new Crashlytics());
 
-
-        ActiveAndroid.initialize(this);
         application = this;
+        ActiveAndroid.initialize(this);
+
         parserXml();
         initDB();
         initOrderList();
@@ -122,6 +120,8 @@ public class App extends Application {
         //mLocationClient.registerLocationListener(mMyLocationListener);
         mGeofenceClient = new GeofenceClient(getApplicationContext());
         mVibrator = (Vibrator) getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
+
+
         initDebug();
     }
 
@@ -132,8 +132,6 @@ public class App extends Application {
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                             .build());
-
-            String deviceInfo = Config.getDeviceInfo(application);
         }
     }
 
@@ -150,14 +148,11 @@ public class App extends Application {
         return new Response.Listener<OrderList>() {
             @Override
             public void onResponse(final OrderList orderList) {
-
                         List<Order> data = new ArrayList<Order>();
                         if (orderList != null && orderList.mysalelist != null) {
-                            try {
                                 new Delete()
                                         .from(Order.class)
                                         .execute();
-                                ActiveAndroid.beginTransaction();
                                 for (int i = 0; i < orderList.mysalelist.size(); i++) {
                                     Order order = new Order();
                                     order.allowToModify = orderList.mysalelist.get(i).allow_to_modify;
@@ -171,10 +166,6 @@ public class App extends Application {
                                     order.save();
                                     data.add(order);
                                 }
-                                ActiveAndroid.setTransactionSuccessful();
-                            } finally {
-                                ActiveAndroid.endTransaction();
-                            }
                         }
             }
         };
@@ -270,17 +261,11 @@ public class App extends Application {
                             new Delete()
                                     .from(HotSearchTable.class)
                                     .execute();
-                            try {
-                                ActiveAndroid.beginTransaction();
                                 for (int i = 0; i < hotSearch.listallcat.size(); i++) {
                                     HotSearchTable table = new HotSearchTable();
                                     table.hotSearchChar = hotSearch.listallcat.get(i).name;
                                     table.save();
                                 }
-                            } finally {
-                                ActiveAndroid.setTransactionSuccessful();
-                                ActiveAndroid.endTransaction();
-                            }
                         }
             }
         };

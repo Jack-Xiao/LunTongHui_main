@@ -45,7 +45,6 @@ import butterknife.OnClick;
  * Created by Administrator on 2015/7/7.
  */
 public class MineFragment1 extends BaseFragment {
-
     @InjectView(R.id.toolbar_set)
     ImageView toolbarSet;
     @InjectView(R.id.toolbar_list)

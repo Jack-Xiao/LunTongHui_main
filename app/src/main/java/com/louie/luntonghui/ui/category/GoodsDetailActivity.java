@@ -45,7 +45,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-
 import static com.louie.luntonghui.ui.register.RegisterLogin.USER_DEFAULT;
 import static com.louie.luntonghui.ui.register.RegisterLogin.USER_TYPE;
 import static com.louie.luntonghui.ui.register.RegisterLogin.USER_WHOLESALER;
@@ -660,12 +659,14 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
     public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+
     }
 
     @Override

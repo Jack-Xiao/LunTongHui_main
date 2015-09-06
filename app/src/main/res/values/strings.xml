@@ -179,6 +179,7 @@
 
     <string name="check_version">检查版本更新</string>
     <string name="mine_setting">我的设置</string>
+    <string name="key_share">一键分享</string>
 
     <string name="our_update">App 升级了  </string>
     <string name="update_content">更新内容:</string>
@@ -347,6 +348,7 @@
     <string name="address_detail">详情地址:</string>
     <string name="address_select">请选择地址信息</string>
     <string name="click_select_address">请点击选择地址信息</string>
+    <string name="activity_detail">活动详细</string>
 
 
     

@@ -83,12 +83,12 @@ public class RegisterStep1Activity extends BaseNormalActivity implements View.On
         });
     }
 
-
     private Pattern mPattern;
     private Matcher mMatcher;
 
     @OnClick(R.id.next_step)
     public void OnClick(View v) {
+
         mPattern = Pattern.compile("^\\d{11}$");
         mMatcher = mPattern.matcher(phoneNumber.getText().toString().trim());
 
@@ -127,6 +127,7 @@ public class RegisterStep1Activity extends BaseNormalActivity implements View.On
             DefaultShared.putLong(REGISTER_TIME, System.currentTimeMillis());
         }
 
+        nextStep.setEnabled(false);
         ToastUtil.showLongToast(this, "已经发送请求，请耐心等待");
 
         executeRequest(new GsonRequest(url, CheckCode.class, responseListener(), errorListener()));
@@ -141,12 +142,12 @@ public class RegisterStep1Activity extends BaseNormalActivity implements View.On
 
     private Response.Listener<CheckCode> responseListener() {
         return new Response.Listener<CheckCode>() {
-
             @Override
             public void onResponse(CheckCode checkCode) {
                 //strCheckCode = checkCode.rsgcheck;
                 //verifitation_code.setText(checkCode.rsgcheck);
                 //
+                nextStep.setEnabled(true);
                 if (checkCode.rsgcode.equals(SUCCESSCODE)) {
                   /*  DefaultShared.putLong(PHONE_NUMBER, Long.parseLong(phoneNumber.getText().toString()));
                     DefaultShared.putString(CHECK_CODE, checkCode.rsgcheck);*/

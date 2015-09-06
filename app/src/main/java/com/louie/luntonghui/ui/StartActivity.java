@@ -75,11 +75,15 @@ public class StartActivity extends BaseNormalActivity{
     public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+        //JPushInterface.onResume(this);
+
     }
     @Override
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+       // JPushInterface.onPause(this);
+
     }
 
 }

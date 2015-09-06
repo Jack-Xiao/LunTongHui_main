@@ -221,12 +221,7 @@ public class RegisterLogin extends BaseNormalActivity {
                             App.getBusInstance().post(new LoginEvent());
                             Bundle bundle = new Bundle();
                             bundle.putInt(RegisterStep3Activity.INIT_TYPE, 2);
-                            try {
 
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
                             IntentUtil.startActivity(RegisterLogin.this, MainActivity.class,bundle);
                             RegisterLogin.this.finish();
                         }

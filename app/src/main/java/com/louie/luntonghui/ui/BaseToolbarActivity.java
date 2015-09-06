@@ -92,6 +92,7 @@ public abstract class BaseToolbarActivity  extends AppCompatActivity{
         }
         return super.onOptionsItemSelected(item);
     }
+
     protected void setAppBarAlpha(float alpha){
         mAppBar.setAlpha(alpha);
     }

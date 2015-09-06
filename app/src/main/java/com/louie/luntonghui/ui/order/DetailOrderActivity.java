@@ -29,7 +29,6 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-
 /**
  * Created by Administrator on 2015/7/17.
  */
@@ -314,11 +313,13 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
     public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+
     }
     @Override
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+
     }
 
     @Override

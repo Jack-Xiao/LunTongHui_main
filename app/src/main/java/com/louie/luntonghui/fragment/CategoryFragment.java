@@ -273,6 +273,7 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
         } else {
             tempArg = "&is_show=01";
         }
+
         url = url + tempArg;
         RequestManager.addRequest(new GsonRequest(url, GoodsList.class,
                 getGoodsList(), errorListener()), this);

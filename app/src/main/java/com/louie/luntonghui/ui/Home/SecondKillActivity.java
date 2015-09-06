@@ -57,7 +57,6 @@ import java.util.TimerTask;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-
 /**
  * Created by Administrator on 2015/7/24.
  */

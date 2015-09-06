@@ -1,1 +1,0 @@
-ALter TABLE Goods ADD COLUMN is_second_kill TEXT;

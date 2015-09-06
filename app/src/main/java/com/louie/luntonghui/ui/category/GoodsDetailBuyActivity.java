@@ -419,6 +419,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         super.onPause();
         //productViewpager.stopAutoScroll();
         MobclickAgent.onPause(this);
+
     }
 
     @Override
@@ -426,6 +427,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         super.onResume();
         //productViewpager.startAutoScroll();
         MobclickAgent.onResume(this);
+
     }
 
     private ArrayList<View> goodsImages;
@@ -662,7 +664,6 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         bundle.putStringArray(IMAGES, imgList);
         //IntentUtil.startActivity(GoodsDetailBuyActivity.this, SpaceImageDetailActivity.class,bundle);
         IntentUtil.startActivity(GoodsDetailBuyActivity.this, ImageActivity.class, bundle);
-
     }
 
     @OnClick(R.id.car_list)

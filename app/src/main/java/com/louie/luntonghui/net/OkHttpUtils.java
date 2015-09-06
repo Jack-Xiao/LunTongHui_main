@@ -2,6 +2,8 @@ package com.louie.luntonghui.net;
 
 import android.content.Context;
 
+import com.facebook.stetho.okhttp.StethoInterceptor;
+import com.louie.luntonghui.BuildConfig;
 import com.louie.luntonghui.util.Config;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
@@ -25,7 +27,7 @@ public class OkHttpUtils {
                     sigleton.setConnectTimeout(Config.HTTP_CONNECT_TIMEOUT, TimeUnit.MILLISECONDS);
                     sigleton.setReadTimeout(Config.HTTP_READ_TIMEOUT, TimeUnit.MILLISECONDS);
 
-                    //if(BuildConfig.DEBUG)sigleton.networkInterceptors().add(new StethoInterceptor());
+                    if(BuildConfig.DEBUG)sigleton.networkInterceptors().add(new StethoInterceptor());
                 }
             }
         }

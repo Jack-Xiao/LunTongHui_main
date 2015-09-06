@@ -3,15 +3,28 @@ package com.louie.luntonghui.util;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.os.Environment;
 import android.text.TextUtils;
 
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.ui.register.RegisterStep1Activity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2015/6/18.
@@ -39,6 +52,7 @@ public class Config {
     public static final String REQUEST_SUCCESSCODE = "0";
 
     public static final String LAST_SING_IN_TIME = "last_sing_in_time";
+    public static final long DEFAULT_SING_IN_TIME = -1;
 
     public static final int SEND_SIGN_IN = 0;
     public static final int SEND_QUERY_INTEGRAL = 1;
@@ -80,6 +94,9 @@ public class Config {
     public static final String onlyDateFormatter = "yyyy-MM-dd";
     public static final String oneDateFormatter = "yyyy/MM/dd";
     public static final String  newApkName = "new_轮通惠.apk";
+
+    public static final String GT_PUSH_TAGS = "gt_push_tags";
+    public static final String DEFAULT_PUSH_TAGS = "u0";
 
 
     public static int getCurrentVersion() {
@@ -295,5 +312,71 @@ public class Config {
         cal.set(Calendar.DAY_OF_MONTH, 1);
         result = format.format(cal.getTime());
         return result;
+    }
+
+    public static String getSDPath() {
+        String dirPath = "/luntonghui/image";
+        String fileName = "app.png";
+        String outputPath = "";
+        if (Environment.getExternalStorageState()
+                .equals(Environment.MEDIA_MOUNTED)) {
+            File sdcardDir = Environment.getExternalStorageDirectory();
+            String path = sdcardDir.getPath() + dirPath;
+            outputPath = path + "/" + fileName;
+
+            File pathFile = new File(path);
+            if (!pathFile.exists()) {
+                pathFile.mkdirs();
+                copyFile(outputPath);
+            }
+        }
+        return outputPath;
+    }
+
+    public static void copyFile(String outputPath) {
+        AssetManager mAssetManager = App.getContext().getAssets();
+        InputStream source = null;
+            try {
+                source = mAssetManager.open("logo_new.jpg");
+                File destinationFile = new File(outputPath);
+
+                destinationFile.getParentFile().mkdirs();
+                OutputStream destination = new FileOutputStream(destinationFile);
+                byte[] buffer = new byte[1024];
+                int nread;
+
+                while ((nread = source.read(buffer)) != -1) {
+                    if (nread == 0) {
+                        nread = source.read();
+                        if (nread < 0)
+                            break;
+                        destination.write(nread);
+                        continue;
+                    }
+                    destination.write(buffer, 0, nread);
+                }
+                destination.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    public static Map<String,String> getMapForJson(String jsonStr){
+        JSONObject jsonObject;
+        try{
+            jsonObject = new JSONObject(jsonStr);
+            Iterator<String> keyIter = jsonObject.keys();
+            String key;
+            String value;
+            Map<String,String> valueMap = new HashMap<String,String>();
+            while (keyIter.hasNext()){
+                key = keyIter.next();
+                value = jsonObject.get(key).toString();
+                valueMap.put(key,value);
+            }
+            return valueMap;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
