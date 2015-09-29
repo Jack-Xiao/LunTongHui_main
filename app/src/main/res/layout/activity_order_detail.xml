@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <include layout="@layout/toolbar_base_operation"/>
@@ -33,6 +34,60 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/enough_total_reduce"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp">
+
+                <TextView
+                    style="@style/car_buy_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:drawableLeft="@drawable/goods_reduce"
+                    android:drawablePadding="13dp"
+                    android:text="@string/enough_total_reduce" />
+
+                <TextView
+                    android:id="@+id/enough_total_reduce_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    tools:text="满10000减1000" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/enough_total_deliver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp">
+
+                <TextView
+                    style="@style/car_buy_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:drawableLeft="@drawable/goods_gift_blue"
+                    android:drawablePadding="13dp"
+                    android:text="@string/enough_total_deliver" />
+
+                <TextView
+                    android:id="@+id/enough_total_deliver_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    tools:text="@+id/送一台婴儿车" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:orientation="vertical"

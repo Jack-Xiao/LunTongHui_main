@@ -37,7 +37,8 @@ public class RegisterHome extends BaseNormalActivity {
         IntentUtil.startActivity(RegisterHome.this,RegisterLogin.class);
      }
     public void registerOnClick(View view){
-        IntentUtil.startActivity(RegisterHome.this, RegisterStep1Activity.class);
+        //IntentUtil.startActivity(RegisterHome.this, RegisterStep1Activity.class);
+        IntentUtil.startActivity(RegisterHome.this, RegisterNewActivity.class);
      }
 
     @Override

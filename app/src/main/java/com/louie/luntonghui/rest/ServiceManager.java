@@ -89,5 +89,7 @@ public class ServiceManager {
         @POST("/mobile.php?act=editpassword")
         Observable<Result> changePwd(@Field("user_id") String userId,@Field("new_pwd") String newPwd);
 
+        @GET("/mobile.php?act=changepwd&mode=test")
+        Observable<Result> changeNewPassword(@Query("user_id") String userId,@Query("old_pwd") String oldPwd,@Query("new_pwd") String newPwd);
     }
 }

@@ -247,6 +247,11 @@ public class OrderDetailResult {
         public String add_time;
         public String order_sn;
         public String allow_update_address;
+
+        public String act_type; // 1 = 减   2 = 赠   3 减和赠
+        public String details;
+        public String gift;
+
     }
 
 

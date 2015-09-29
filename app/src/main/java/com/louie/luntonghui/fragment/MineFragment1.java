@@ -29,6 +29,7 @@ import com.louie.luntonghui.ui.mine.MineReceiverAddressActivity;
 import com.louie.luntonghui.ui.mine.MineService.MineServiceProviderActivity;
 import com.louie.luntonghui.ui.mine.MineService.MineWorkActivity;
 import com.louie.luntonghui.ui.mine.SettingActivity;
+import com.louie.luntonghui.ui.mine.account_manager.MineCouponActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
@@ -172,7 +173,9 @@ public class MineFragment1 extends BaseFragment {
                 if (user == null) return;
                 if (username == null) return;
                 username.setText("用户名:" + user.username);
-                phoneNumber.setText("手机号:" + user.mobilePhone);
+                String orgMobilePhone = user.mobilePhone;
+                String codeMobilePhone = orgMobilePhone.substring(0,3) + "****" + orgMobilePhone.substring(7,orgMobilePhone.length());
+                phoneNumber.setText("手机号:" + codeMobilePhone);
                 customType.setText("类型:" + mCustomType);
                 luntongMoney.setText(user.integral);
                 //statusValue.setText(user.integral);
@@ -344,5 +347,10 @@ public class MineFragment1 extends BaseFragment {
     @OnClick(R.id.mine_work)
     public void onClickMineClient() {
         IntentUtil.startActivity(getActivity(), MineWorkActivity.class);
+    }
+
+    @OnClick(R.id.user_image)
+    public void onClickUserImage(){
+        IntentUtil.startActivity(getActivity(), MineCouponActivity.class);
     }
 }

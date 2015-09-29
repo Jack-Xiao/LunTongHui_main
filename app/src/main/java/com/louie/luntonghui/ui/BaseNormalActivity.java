@@ -26,7 +26,7 @@ import butterknife.Optional;
  */
 public class BaseNormalActivity extends AppCompatActivity implements View.OnClickListener {
     public Context mContext;
-    public static final String SUCCESSCODE="000";
+    public static final String  SUCCESSCODE="000";
 
     public static final String SUCCESSCODE1 ="001";
 
@@ -53,6 +53,7 @@ public class BaseNormalActivity extends AppCompatActivity implements View.OnClic
                     ToastUtil.showShortToast(mContext,R.string.network_connect_fail);
                     return;
                 }
+
                 switch (error.networkResponse.statusCode){
                     case HttpStatus.SC_NO_CONTENT:
                 }

@@ -1,7 +1,5 @@
 package com.louie.luntonghui.data;
 
-import android.util.Log;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
@@ -74,7 +72,6 @@ public class GsonRequest<T> extends Request<T> {
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         } catch (JsonSyntaxException e) {
-            Log.d("-----------------",e.getMessage());
             return Response.error(new ParseError(e));
         }
     }

@@ -64,7 +64,6 @@ public class RegisterStep1Activity extends BaseNormalActivity implements View.On
     }
 
     private void initRegisterTime() {
-
         if (Config.needClearRegisterTime()) {
             DefaultShared.putInt(REGISTER_COUNT, INITTIME);
         }
@@ -180,6 +179,7 @@ public class RegisterStep1Activity extends BaseNormalActivity implements View.On
         super.onResume();
         MobclickAgent.onResume(this);
     }
+
     @Override
     public void onPause() {
         super.onPause();

@@ -57,6 +57,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.Optional;
 import cn.lightsky.infiniteindicator.InfiniteIndicatorLayout;
 import cn.lightsky.infiniteindicator.slideview.BaseSliderView;
 import cn.lightsky.infiniteindicator.slideview.DefaultSliderView;
@@ -119,10 +120,15 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
     TextView salesPromotionValue;
     @InjectView(R.id.line_sales_promotion)
     LinearLayout lineSalesPromotion;
+
+    @Optional
     @InjectView(R.id.minus)
     ImageButton minus;
+
+    @Optional
     @InjectView(R.id.plus)
     ImageButton plus;
+
     @InjectView(R.id.car_list)
     ImageView carList;
 
@@ -255,9 +261,9 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
 
     private void adjustAttentionGoods() {
         if (!attentionGoodsMap.keySet().contains(mGoodsId)) {
-            attention.setImageResource(R.drawable.product_cancel_attention);
+            attention.setImageResource(R.drawable.attention_goods_none);
         } else {
-            attention.setImageResource(R.drawable.product_attention);
+            attention.setImageResource(R.drawable.attention_goods_has);
         }
     }
 
@@ -435,6 +441,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
 
     private int result = 1;
 
+    @Optional
     @OnClick(R.id.plus)
     public void onPlusClick(View v) {
         try {
@@ -446,6 +453,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         notifyPriceChanged();
     }
 
+    @Optional
     @OnClick(R.id.minus)
     public void onMinusClick(View v) {
         try {

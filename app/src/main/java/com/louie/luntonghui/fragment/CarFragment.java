@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,7 +23,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -44,6 +44,7 @@ import com.louie.luntonghui.ui.car.ProduceOrderActivity;
 import com.louie.luntonghui.ui.mine.MineAdditionAddressActivity;
 import com.louie.luntonghui.ui.mine.MineAttentionActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
+import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
@@ -108,9 +109,9 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
     @InjectView(R.id.buy_again)
     TextView buyAgain;
 
-    @Optional
+    /*@Optional
     @InjectView(R.id.progress)
-    ProgressBar progress;
+    ProgressBar progress;*/
 
     @Optional
     @InjectView(R.id.img_empty_car)
@@ -119,6 +120,9 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
     @Optional
     @InjectView(R.id.tv_empty_Car)
     TextView tvEmptyCar;
+
+    @InjectView(R.id.logo_anim)
+    ImageView logoAnim;
 
     private CarFragmentAdapter mAdapter;
     private Context mContext;
@@ -134,6 +138,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
 
     public OnReferenCartListener mCartListener;
     private String dbOperFial ="";
+    private AnimationDrawable animationDrawable;
 
 
     @Override
@@ -197,7 +202,6 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
 
         @Override
         public void onNext(Result result) {
-            Log.d("observer", "onNext..");
             if (result.rsgcode.equals(ConstantURL.SUCCESSCODE)) {
                 mAdapter.clearData();
                 mAdapter.notifyDataSetChanged();
@@ -227,7 +231,8 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
         emptyView = contentView.findViewById(R.id.empty_view);
 
         mPlaying = (TextView) contentView.findViewById(R.id.playing);
-        progress = (ProgressBar) contentView.findViewById(R.id.progress);
+        //progress = (ProgressBar) contentView.findViewById(R.id.progress);
+        animationDrawable = (AnimationDrawable)logoAnim.getBackground();
         //createApi(ServiceManager.LunTongHuiApi.class).getCarList(uid, new CarListCallback(this));
 
         mAdapter = new CarFragmentAdapter(mContext, this);
@@ -260,7 +265,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
 
         //mApi.getCarList(userId, new CarListCallback(this));
 
-        progress.setVisibility(View.VISIBLE);
+        //progress.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
 
 
@@ -274,6 +279,11 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
     }
 
     public void getCarList(){
+        if(animationDrawable!=null && !animationDrawable.isRunning()){
+            if(logoAnim !=null)logoAnim.setVisibility(View.VISIBLE);
+            animationDrawable.start();
+        }
+        mRecyclerView.setVisibility(View.GONE);
         String url = String.format(ConstantURL.GET_CAR_LIST, userId);
         RequestManager.addRequest(new GsonRequest(url, CarList.class, getCarListListener(), errorListener()), this);
     }
@@ -286,7 +296,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
                     @Override
                     protected void onPreExecute() {
                         super.onPreExecute();
-                        if(progress !=null) progress.setVisibility(View.VISIBLE);
+                        //if(progress !=null) progress.setVisibility(View.VISIBLE);
                     }
 
                     @Override
@@ -329,9 +339,13 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
 
                     @Override
                     protected void onPostExecute(List<ShoppingCar> list) {
-                        if (progress != null) progress.setVisibility(View.GONE);
+                        //if (progress != null) progress.setVisibility(View.GONE);
+                        if(animationDrawable!=null && animationDrawable.isRunning()){
+                            if(logoAnim!=null)logoAnim.setVisibility(View.GONE);
+                            if(animationDrawable!=null)animationDrawable.stop();
+                        }
+                        if(mRecyclerView!=null) mRecyclerView.setVisibility(View.VISIBLE);
                         postValue(list);
-
                         int total=0;
                         for(int i =0;i<list.size();i++){
                             if(!list.get(i).rId.equals("0")) continue;
@@ -342,7 +356,18 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
 
                         if(mPlaying!=null)mPlaying.setText("去结算(" + carList.total.real_goods_count + ")");
                         if(goodsTotoal!=null)goodsTotoal.setText("￥" + carList.total.goods_price);
-                        if(list.size() !=0)mAdapter.setData(list);
+                        if(list.size() !=0){
+                            List<ShoppingCar> goodsList = new ArrayList<ShoppingCar>();
+                            List<ShoppingCar> goodsGift = new ArrayList<ShoppingCar>();
+                            for(int i =0;i<list.size();i++){
+                                if(list.get(i).rId.equals("0")){
+                                    goodsList.add(list.get(i));
+                                }else{
+                                    goodsGift.add(list.get(i));
+                                }
+                            }
+                            mAdapter.setData(goodsList, goodsGift);
+                        }
                     }
                 });
             }
@@ -363,7 +388,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
         }
     }
 
-    private void fillCarList(final CarList carList) {
+   /* private void fillCarList(final CarList carList) {
 
         TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<ShoppingCar>>() {
             @Override
@@ -374,13 +399,13 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
             @Override
             protected List<ShoppingCar> doInBackground(Object... params) {
                 goodsIdList = new ArrayList<>();
-                /*Log.d("goodsIdList,", goodsIdList.size() + "  ...1");
+                *//*Log.d("goodsIdList,", goodsIdList.size() + "  ...1");
                 List<ShoppingCar> carLists= new Select()
                         .from(ShoppingCar.class)
                         .execute();
                 for(int i =0;i<carLists.size();i++){
                     goodsIdList.add(carLists.get(i).goodsId);
-                }*/
+                }*//*
                 //Log.d("goodsIdList,", goodsIdList.size() + "   ...2");
                 new Delete()
                         .from(ShoppingCar.class)
@@ -429,7 +454,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
                 mAdapter.setData(list);
             }
         });
-    }
+    }*/
 
 
     class CheckChaneListener implements CompoundButton.OnCheckedChangeListener {
@@ -441,7 +466,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
                 TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
                     @Override
                     protected void onPreExecute() {
-                        progress.setVisibility(View.VISIBLE);
+                        //progress.setVisibility(View.VISIBLE);
                     }
 
                     @Override
@@ -561,8 +586,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
         return new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ToastUtil.showLongToast(mContext, error.getMessage());
-                /*Log.d("error  ....", error.getMessage());*/
+                ToastUtil.showLongToast(mContext, "请检查网络,错误代码 - " + Config.CAR_ERROR_CODE);
             }
         };
     }
@@ -570,9 +594,21 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
     private View.OnClickListener playClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mProgressDialog.show();
-            String url = String.format(ConstantURL.ADDRESSLIST, userId);
-            executeRequest(new GsonRequest(url, AddressList.class, getAddressList(), errorListener()));
+            List<ShoppingCar> list = new Select()
+                    .from(ShoppingCar.class)
+                    .execute();
+
+            if(list.size() == 0){
+                ToastUtil.showShortToast(mContext,"购物车内没有商品!");
+                return;
+            }
+
+            IntentUtil.startActivity(getActivity(), ProduceOrderActivity.class);
+
+
+            /*String url = String.format(ConstantURL.ADDRESSLIST, userId);
+            executeRequest(new GsonRequest(url, AddressList.class, getAddressList(), errorListener()));*/
+
 
             /*TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Integer>() {
                 @Override

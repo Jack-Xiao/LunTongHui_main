@@ -11,6 +11,7 @@ import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.util.ClientUtil;
 import com.louie.luntonghui.util.Config;
+import com.louie.luntonghui.util.DataCleanManager;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.ToastUtil;
 
@@ -52,6 +53,8 @@ public class UpdateVersionTask extends AsyncTask<Object, Integer, Boolean> {
         materialDialog.setView(contentView)
                 .setCanceledOnTouchOutside(false)
                 .setTitle(R.string.updating);
+
+        DataCleanManager.cleanInternalCache(context);
 
         /*mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.setIndeterminate(false);

@@ -82,7 +82,6 @@ public class RegisterStep3Activity extends BaseNormalActivity {
     private String mac;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -309,12 +308,6 @@ public class RegisterStep3Activity extends BaseNormalActivity {
     private Pattern mPattern;
     private Matcher mMatcher;
 
-
-    @Override
-    protected void onDestroy() {
-        App.getBusInstance().unregister(this);
-        super.onDestroy();
-    }
     @Override
     public void onResume() {
         super.onResume();

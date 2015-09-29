@@ -3,13 +3,11 @@ package com.louie.luntonghui.ui;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.util.ConstantURL;
@@ -51,8 +49,9 @@ public abstract class SecondLevelBaseActivity extends AppCompatActivity {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                if(error !=null)
                 ToastUtil.showLongToast(SecondLevelBaseActivity.this,error.getMessage());
-                Log.d("error  ....",error.getMessage());
+
             }
         };
     }

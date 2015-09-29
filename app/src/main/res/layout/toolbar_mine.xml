@@ -5,7 +5,7 @@
     android:layout_height="@dimen/toolbar_height"
     style="@style/toolbar_style"
 
-    android:background="@drawable/navigation_bar">
+    android:background="@drawable/navigation_bar_mine">
 
     <ImageView
         android:layout_marginLeft="20dp"

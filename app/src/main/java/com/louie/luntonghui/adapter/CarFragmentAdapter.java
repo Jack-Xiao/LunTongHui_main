@@ -6,7 +6,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.activeandroid.query.Delete;
@@ -75,6 +75,7 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
     private List<ShoppingCar> nativeCarList;
     private int mPostion;
     private ProgressDialog mProgressDialog;
+    private List<ShoppingCar> nativeGiftList;
 
     public CarFragmentAdapter(Context context, ReferenceList refListen) {
         this.mContext = context;
@@ -96,13 +97,18 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
         return new ViewHolder(contentView);
     }
 
-    public void setData(List<ShoppingCar> list) {
+    public void setData(List<ShoppingCar> list,List<ShoppingCar> giftList) {
         if (nativeCarList == null) {
             nativeCarList = new ArrayList<>();
-
+        }
+        if(nativeGiftList == null){
+            nativeGiftList = new ArrayList<>();
         }
         nativeCarList.clear();
         nativeCarList.addAll(list);
+
+        nativeGiftList.clear();
+        nativeGiftList.addAll(giftList);
         notifyDataSetChanged();
     }
 
@@ -114,6 +120,11 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final int result = 1;
+        String rid = nativeCarList.get(position).rId;
+        if (!rid.equals(ShoppingCar.NOTGIVEAWAY)){
+            holder.whole.setVisibility(View.GONE);
+            return;
+        }
 
         holder.goodsName.setText(nativeCarList.get(position).goodsName);
         final String goodsName = nativeCarList.get(position).goodsName;
@@ -150,52 +161,10 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
             }
         });
 
-
-
-
-
-     /*   holder.btnMinus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int result = 1;
-                try {
-                    result = Integer.parseInt(holder.strContent.getText().toString());
-                } catch (Exception e) {
-                    result = 1;
-                }
-
-
-                if (result > 1) {
-                    result--;
-                    notifyNumberChanged(holder, result, position,holder.checked.isChecked());
-                } else {
-                    return;
-                }
-            }
-        });*/
-
-        /*holder.btnPlus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int result = 1;
-                try {
-                    result = Integer.parseInt(holder.strContent.getText().toString());
-                } catch (Exception e) {
-                    result = 1;
-                }
-                result++;
-                notifyNumberChanged(holder, result, position,holder.checked.isChecked());
-            }
-        });
-        //holder.strContent.setOnClickListener(new OnClickListener());
-        holder.strContent.setTag(position);
-        final String content = nativeCarList.get(position).goodsNumber;
-        holder.strContent.setText(content);*/
-
         final String content = nativeCarList.get(position).goodsNumber;
         holder.strContent.setText(content);
 
-        String rid = nativeCarList.get(position).rId;
+
         if (rid.equals(ShoppingCar.NOTGIVEAWAY)) {
             holder.imgDelete.setImageResource(R.drawable.cart_delete_icon);
             holder.imgDelete.setVisibility(View.VISIBLE);
@@ -204,14 +173,29 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
             holder.btnPlus.setVisibility(View.VISIBLE);
             holder.btnMinus.setVisibility(View.VISIBLE);
             holder.goodsPrice.setVisibility(View.VISIBLE);
+
+            holder.whole.setVisibility(View.VISIBLE);
+            holder.goodsGift.setVisibility(View.GONE);
+            holder.breakLine.setVisibility(View.GONE);
+
+            holder.goodsPrice.setVisibility(View.VISIBLE);
+            holder.imgDelete.setImageResource(R.drawable.cart_delete_icon);
+            holder.strContent.setEnabled(true);
+            holder.strContent.setBackgroundResource(R.drawable.base_frame);
+            String rec_id  = nativeCarList.get(position).carId;
+
+            for(int i =0; i <nativeGiftList.size();i++){
+                if(rec_id.equals(nativeGiftList.get(i).rId)){
+                    String goodsGiftName = nativeGiftList.get(i).goodsName;
+                    String goodsGiftNumber = nativeGiftList.get(i).goodsNumber;
+
+                    holder.goodsGift.setVisibility(View.VISIBLE);
+                    holder.breakLine.setVisibility(View.VISIBLE);
+                    holder.goodsGiftName.setText(goodsGiftName);
+                    holder.goodsGiftCountValue.setText(goodsGiftNumber);
+                }
+            }
             //holder.strContent.setBackgroundColor(mContext.getResources().getColor(R.color.white));
-        } else {
-            holder.imgDelete.setImageResource(R.drawable.giveaway);
-            holder.strContent.setBackgroundResource(R.color.background_main_grey);
-            holder.imgDelete.setEnabled(false);
-            holder.goodsPrice.setVisibility(View.GONE);
-            holder.btnMinus.setVisibility(View.GONE);
-            holder.btnPlus.setVisibility(View.GONE);
         }
 
         holder.linAdjustCount.setEnabled(rid.equals(ShoppingCar.NOTGIVEAWAY));
@@ -281,7 +265,6 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
         if (discountType != 0) {
             for (int i = birary.length() - 1; i >= 0; i--) {
                 if (i == birary.length() - 1) {
-                    Log.d("length ", birary.substring(birary.length() - 1) + "-1");
                     if (birary.substring(birary.length() - 1).equals("1"))
                         holder.discount.setVisibility(View.VISIBLE);
                     if (!nativeCarList.get(position).discount.equals("0")) {
@@ -292,12 +275,10 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
                         holder.goodsPrice.setText("价格:￥" + curPrince);
                     }
                 } else if (i == birary.length() - 2) {
-                    Log.d("length ", birary.substring(birary.length() - 2, birary.length() - 1) + "-2");
                     if (birary.substring(birary.length() - 2, birary.length() - 1).equals("1")) {
                         holder.present.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    Log.d("length ", birary.substring(i, i + 1) + "-3");
                     if (birary.substring(i, i + 1).equals("1")) {
                         holder.prim.setVisibility(View.VISIBLE);
                         break;
@@ -305,7 +286,21 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
                 }
             }
         }
+
         holder.mineCount.setText("数量/" + nativeCarList.get(position).unit);
+
+        /*if(!nativeCarList.get(position).rId.equals("0")){
+            holder.whole.setVisibility(View.GONE);
+            *//*viewHolder.goodsPrice.setVisibility(View.GONE);
+            //viewHolder.delImage.setImageResource(R.drawable.giveaway);
+            viewHolder.delImage.setImageResource(R.drawable.goods_gift_red);
+            viewHolder.goodsImg.setImageDrawable(null);
+
+            viewHolder.goodsNumber.setEnabled(false);
+            viewHolder.goodsNumber.setBackgroundResource(R.color.background_main_grey);*//*
+        }else{
+
+        }*/
     }
     //adjustGoods(goodsName,goodsPrice,strUnit,strGuige,holder,position);
 
@@ -520,8 +515,8 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
             @Override
             public void onErrorResponse(VolleyError error) {
                 mProgressDialog.dismiss();
+                if(error !=null)
                 ToastUtil.showLongToast(mContext, error.getMessage());
-                Log.d("error  ....", error.getMessage());
             }
         };
     }
@@ -611,6 +606,19 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
 
         @InjectView(R.id.car_mine_count)
         TextView mineCount;
+
+        @InjectView(R.id.goods_gift_number_value)
+        TextView goodsGiftCountValue;
+        @InjectView(R.id.goods_gift_name)
+        TextView goodsGiftName;
+        @InjectView(R.id.break_line)
+        View breakLine;
+        @InjectView(R.id.goods_gift_info)
+        RelativeLayout goodsGift;
+        @InjectView(R.id.whole)
+        LinearLayout whole;
+
+
 
         public ImageLoader.ImageContainer imageRequest;
 

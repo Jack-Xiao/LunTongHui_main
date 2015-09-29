@@ -106,6 +106,12 @@ public class ProduceOrder {
         public String market_price;
         public String pay_fee;
         public String ratio;
+
+        public String act_type; // 1 = 减   2 = 赠   3 减和赠
+        public String details;
+        public String gift;
+        public String prompt;
+        public String discounts;
     }
 
     public static class ConsigneeEntity {

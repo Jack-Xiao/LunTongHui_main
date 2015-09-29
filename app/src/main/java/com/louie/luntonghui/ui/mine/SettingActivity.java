@@ -26,6 +26,7 @@ import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.BaseAlertDialogUtil;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
+import com.louie.luntonghui.util.DataCleanManager;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.ToastUtil;
@@ -52,6 +53,10 @@ public class SettingActivity extends BaseNormalActivity implements MyAlertDialog
     TextView checkVersion;
     @InjectView(R.id.current_version_name)
     TextView currentVersionName;
+
+    @InjectView(R.id.cache_value)
+    TextView cacheValue;
+
     private Context mContext;
     private int curVersionNumber;
     private String curUpdateUrl;
@@ -67,9 +72,22 @@ public class SettingActivity extends BaseNormalActivity implements MyAlertDialog
         mContext = this;
         curVersionNumber = Config.getCurrentVersion();
         curVersionName = Config.getCurrentName();
-        currentVersionName.setText("v"+curVersionName);
+        currentVersionName.setText("v" + curVersionName);
         App.getBusInstance().register(this);
         mProgressDialog = new ProgressDialog(mContext);
+
+        initCacheValue();
+    }
+
+    private void initCacheValue() {
+        String cacheSize ;
+        try {
+            cacheSize =DataCleanManager.getCacheSize(SettingActivity.this);
+        } catch (Exception e) {
+            cacheSize = "4008 K";
+            e.printStackTrace();
+        }
+        cacheValue.setText(cacheSize);
     }
 
     @OnClick(R.id.check_version)
@@ -178,8 +196,8 @@ public class SettingActivity extends BaseNormalActivity implements MyAlertDialog
         // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
         oks.setTitle(getString(R.string.share));
 
-        // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
-        //oks.setTitleUrl("http://sharesdk.cn");
+        // titleUrl是标题的网络链接，仅在人人网和QQ空间使用  QQ
+        oks.setTitleUrl("http://a.app.qq.com/o/simple.jsp?pkgname=com.louie.luntonghui");
 
 
         // text是分享文本，所有平台都需要这个字段
@@ -192,7 +210,7 @@ public class SettingActivity extends BaseNormalActivity implements MyAlertDialog
         }
 
         //oks.setImageUrl();
-
+        oks.setImageUrl("http://ww2.sinaimg.cn/large/7d499e44gw1ewccno0xtsj20sg0sgjuy.jpg");
         // url仅在微信（包括好友和朋友圈）中使用
         oks.setUrl("http://a.app.qq.com/o/simple.jsp?pkgname=com.louie.luntonghui");
 
@@ -207,5 +225,14 @@ public class SettingActivity extends BaseNormalActivity implements MyAlertDialog
         // 启动分享GUI
         oks.show(this);
 
+    }
+
+    @OnClick(R.id.clean_cache)
+    public void onClickCleanCache(){
+        mProgressDialog.show();
+        DataCleanManager.cleanInternalCache(this);
+        //cacheValue.setText("0 K");
+        initCacheValue();
+        mProgressDialog.dismiss();
     }
 }

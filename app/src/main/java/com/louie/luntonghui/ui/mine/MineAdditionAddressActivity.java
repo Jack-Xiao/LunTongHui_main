@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,14 +25,14 @@ import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.SaveAndModifyAddressEvent;
 import com.louie.luntonghui.model.db.Address;
-import com.louie.luntonghui.model.result.Result;
+import com.louie.luntonghui.model.result.AddAddressResult;
 import com.louie.luntonghui.ui.SecondLevelBaseActivity;
+import com.louie.luntonghui.ui.car.ProduceOrderActivity;
 import com.louie.luntonghui.ui.register.ProxyRegisterActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.EncoderURL;
-import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.widget.OnWheelChangedListener;
 import com.louie.luntonghui.view.widget.WheelView;
@@ -135,6 +134,10 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
     @InjectView(R.id.progres)
     ProgressBar progress;
     private boolean isProxy = false;
+    private boolean isAddition = false;
+    private String sourcePhone;
+    private String sourceConsign;
+    private String sourcePlace;
 
 
     @Override
@@ -159,6 +162,7 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
         Bundle bundle = getIntent().getExtras();
 
         proxyBundle = getIntent().getBundleExtra(ProxyRegisterActivity.PROXY);
+
 
         if(proxyBundle !=null){
             consigneeValue.setText(proxyBundle.getString(ProxyRegisterActivity.CONSIGNEE));
@@ -213,6 +217,7 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
         });*/
         //设为默认地址
         defalutSelect.setChecked(true);
+        isAddition = getIntent().getBooleanExtra(ProduceOrderActivity.ADDRESS_ADD,false);
         initWheelView();
     }
 
@@ -251,11 +256,16 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
             return ;
         }
 
+
         strMobileValue = EncoderURL.encode(mobileValue.getText().toString().trim());
         if(String.valueOf(strMobileValue).equals("")){
             ToastUtil.showShortToast(mContext,R.string.mobile_not_empty);
             return;
         }
+        sourceConsign = consigneeValue.getText().toString();
+        sourcePhone = EncoderURL.encode(mobileValue.getText().toString().trim());
+        sourcePlace = EncoderURL.encode(streeValue.getText().toString());
+
 
         //strPlace = cityPlaceValue.getText().toString().replace(" ", "");
         strPlace = EncoderURL.encode(streeValue.getText().toString().replace(" ", ""));
@@ -296,70 +306,41 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
                                 strPlace,strConsignee,strMobileValue,
                                 provinceId,cityId,districtId,intSelect);
             }
-            executeRequest(new GsonRequest(url, Result.class, addOrModifyAddress(), errorListener()));
+
+            progress.setVisibility(View.VISIBLE);
+            scrollView.setVisibility(View.GONE);
+            executeRequest(new GsonRequest(url, AddAddressResult.class, addOrModifyAddress(), errorListener()));
         }
     }
 
 
-    private Response.Listener<Result> addOrModifyAddress() {
-        return new Response.Listener<Result>() {
+    private Response.Listener<AddAddressResult> addOrModifyAddress() {
+        return new Response.Listener<AddAddressResult>() {
 
             @Override
-            public void onResponse(Result result) {
+            public void onResponse(AddAddressResult result) {
+                progress.setVisibility(View.GONE);
+                scrollView.setVisibility(View.VISIBLE);
                 if(result.rsgcode.equals(SUCCESSCODE)){
-                    TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
 
-                        @Override
-                        protected void onPreExecute() {
-                            progress.setVisibility(View.VISIBLE);
-                            scrollView.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        protected Object doInBackground(Object... params) {
-                            /*if(isModify){
-                                new Update(Address.class)
-                                        .set("consignee = ?," +
-                                                "mobile = ?," +
-                                                "default_select = ?," +
-                                                "address = ?," +
-                                                "province = ?," +
-                                                "city = ?," +
-                                                "district = ?",
-                                                     strConsignee,
-                                                    strMobileValue,
-                                                    defalutSelect.isChecked() ? "1" : "0",
-                                                    strPlace,
-                                                    provinceId,
-                                                    cityId,
-                                                    districtId)
-                                        .where("address_id = ? and uid = ?", addressId, userId)
-                                        .execute();
-
-                            }else{
-                                Address address = new Address();
-                                address.uid = userId;
-                                address.address = strPlace;
-                                address.consignee = strConsignee;
-                                address.phone = strMobileValue;
-                                address.province = provinceId;
-                                address.city = cityId;
-                                address.district = districtId;
-                                address.defaultSelect = defalutSelect.isChecked() ? "1" : "0";
-                                address.save();
-                            }*/
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Object o) {
-                            progress.setVisibility(View.GONE);
-                            scrollView.setVisibility(View.VISIBLE);
-                        }
-                    });
+                    if(isAddition){
+                        Intent intent = new Intent();
+                        intent.putExtra(PROVINCE_ID,provinceId);
+                        intent.putExtra(CITY_ID,cityId);
+                        intent.putExtra(STREE_ID,districtId);
+                        intent.putExtra(DETAIL_ADDRESS,streeValue.getText().toString().replace(" ", ""));
+                        intent.putExtra(PROVINCE,curProvinceName);
+                        intent.putExtra(CITY,curCityName);
+                        intent.putExtra(STREE,curDistrict);
+                        intent.putExtra(MineReceiverAddressActivity.PHONE_NUMBER,sourcePhone);
+                        intent.putExtra(MineReceiverAddressActivity.CONSIGNER,sourceConsign);
+                        intent.putExtra(MineReceiverAddressActivity.ADDRESS_ID,result.address_id);
+                        setResult(RESULT_OK, intent);
+                    }
                 }else{
                     ToastUtil.showLongToast(MineAdditionAddressActivity.this, result.rsgmsg);
                 }
+
                 App.getBusInstance().post(saveAndModifyAddressEvent());
                 MineAdditionAddressActivity.this.finish();
             }

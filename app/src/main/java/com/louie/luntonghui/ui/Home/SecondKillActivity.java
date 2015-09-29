@@ -354,6 +354,7 @@ public class SecondKillActivity extends BaseNormalActivity implements SecondKill
                         // swipeContainer.setRefreshing(false);
                         //if (swipeContainer != null) swipeContainer.setRefreshing(false);
                         //wholeContent.setVisibility(View.VISIBLE);
+                        if(progress!=null) progress.setVisibility(View.GONE);
                         if (list != null && list.size() > 0) {
                             lineRushGoods.setVisibility(View.VISIBLE);
                             emptyRushGoods.setVisibility(View.GONE);

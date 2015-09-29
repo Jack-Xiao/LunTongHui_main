@@ -5,17 +5,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
@@ -31,6 +33,7 @@ import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.OrderConfirm;
 import com.louie.luntonghui.model.result.ProduceOrder;
 import com.louie.luntonghui.ui.BaseNormalActivity;
+import com.louie.luntonghui.ui.mine.MineAdditionAddressActivity;
 import com.louie.luntonghui.ui.mine.MineReceiverAddressActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.BaseAlertDialogUtil;
@@ -72,10 +75,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
     TextView phoneNumber;
     @InjectView(R.id.region_detail)
     TextView regionDetail;
-    @InjectView(R.id.radio_cash_deliver)
-    RadioButton radioCashDeliver;
-    @InjectView(R.id.radio_bank_deliver)
-    RadioButton radioBankDeliver;
+
     @InjectView(R.id.listView)
     MyListView listView;
 
@@ -98,17 +98,45 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
     TextView goodsTotal;
     @InjectView(R.id.radio)
     TextView radio;
-    @InjectView(R.id.toggle)
-    SlideSwitch mToggle;
+   /* @InjectView(R.id.toggle)
+    SlideSwitch mToggle;*/
     @InjectView(R.id.luntong_exchange_state)
     LinearLayout exchangeState;
     @InjectView(R.id.scrollView)
     ScrollView scrollView;
     @InjectView(R.id.total_price)
     RelativeLayout totalPrice;
-    private int addressId;
+
+    @InjectView(R.id.input_address_present)
+    TextView addressPresent;
+
+    @InjectView(R.id.address_select_more)
+    ImageView addressSelectMore;
+
+    @InjectView(R.id.prompt)
+    TextView giftPrompt;
+
+    @InjectView(R.id.enough_total_deliver)
+    RelativeLayout enoughTotalDeliver;
+
+    @InjectView(R.id.enough_total_reduce)
+    RelativeLayout enoughTotalReduce;
+
+    @InjectView(R.id.enough_total_reduce_value)
+    TextView enoughTotalReduceValue;
+
+    @InjectView(R.id.enough_total_deliver_value)
+    TextView enoughTotalDeliverValue;
+    @InjectView(R.id.coupon_value)
+    TextView couponValue;
+
+    public static final int DEFAULT_ADDRESS_ID = 0;
+    private int addressId = DEFAULT_ADDRESS_ID;
     private static final int REQUESTCODE = 0x1;
+    private static final int REQUEST_ADD = 0x2;
     public static final String ADDRESS_SELECT = "address_select";
+    public static final String ADDRESS_ADD = "address_add";
+    public static final boolean isAddressAdd = true;
     public static final boolean isAddressSelect = true;
 
     private String userId;
@@ -119,6 +147,15 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
     public static final int LUNTOEXCHANGE = 100;
     public double totalOrgValue;
     public static final String CACHPLAY = "2";
+
+    public static final String ENOUGH_TOTAL_REDUCE = "1";
+    public static final String ENOUGH_TOTAL_DELIVER = "2";
+    public static final String ENOUGH_TOTAL_ALL = "3";
+    private int useTotalLunTongMoney;
+    private Toast toast;
+
+    private View view;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +170,13 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         toolbarTitle.setText("购物车");
         //最大字符数
         userFeedback.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
+
+        view = getLayoutInflater().inflate(R.layout.commit_order,null);
+        toast = Toast.makeText(mContext, "", Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.setView(view);
+
+
         initGetInfo();
         initNet();
     }
@@ -153,11 +197,6 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                 .execute();
         StringBuilder ids = new StringBuilder("");
 
-        if(list.size() == 0){
-            ToastUtil.showShortToast(mContext,"购物车内没有商品!");
-            return;
-        }
-
         for (int i = 0; i < list.size(); i++) {
             if(!list.get(i).rId.equals("0")) continue;
             ids.append(list.get(i).carId + "," + list.get(i).goodsNumber + ":");
@@ -174,6 +213,9 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUESTCODE && resultCode == RESULT_OK){
+
+            initAddress();
+
             String provinceId = data.getStringExtra(MineReceiverAddressActivity.PROVINCE_ID);
             String cityId = data.getStringExtra(MineReceiverAddressActivity.CITY_ID);
             String districtId = data.getStringExtra(MineReceiverAddressActivity.DISTRICT_ID);
@@ -192,15 +234,41 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
             username.setText(consigner);
             phoneNumber.setText(strPhoneNumber);
             regionDetail.setText(province + city + district + addressDetail);
+        }else if(requestCode == REQUEST_ADD && resultCode == RESULT_OK){
+            initAddress();
+            String provinceId = data.getStringExtra(MineAdditionAddressActivity.PROVINCE_ID);
+            String cityId = data.getStringExtra(MineAdditionAddressActivity.CITY_ID);
+            String districtId = data.getStringExtra(MineAdditionAddressActivity.STREE_ID);
+
+            String strAddressId = data.getStringExtra(MineReceiverAddressActivity.ADDRESS_ID);
+            String consigner = data.getStringExtra(MineReceiverAddressActivity.CONSIGNER);
+
+            String detailAddress = data.getStringExtra(MineAdditionAddressActivity.DETAIL_ADDRESS);
+            String strPhoneNumber = data.getStringExtra(MineReceiverAddressActivity.PHONE_NUMBER);
+
+
+            addressId = Integer.parseInt(strAddressId);
+            String province = regions.get(provinceId) + "省";
+            String city = regions.get(cityId) + "市";
+            String district = regions.get(districtId);
+            String addressDetail = detailAddress ;
+
+            username.setText(consigner);
+            phoneNumber.setText(strPhoneNumber);
+            regionDetail.setText(province + city + district + addressDetail);
         }
     }
 
     private void initGetInfo() {
         useLuntongMoneyCount.setText("0");
-        luntongMoneyValue.setText("-￥:0.00");
-        exchangeLuntongbiValue.setText("0.0元");
-        mToggle.setState(true);
-        mToggle.setSlideListener(this);
+        luntongMoneyValue.setText("-￥0.00");
+        //exchangeLuntongbiValue.setText("0.0元");
+        exchangeLuntongbiValue.setText("");
+        couponValue.setText("-￥0.00");
+
+        /*mToggle.setState(true);
+        mToggle.setSlideListener(this);*/
+
        /* useLuntongMoneyCount.setBackgroundColor(getResources().getColor(R.color.useful_toggle_off));
         useLuntongMoneyCount.setEnabled(false);*/
 
@@ -251,7 +319,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                 //double curUseLunTongValue = (double) (Math.round(value / LUNTOEXCHANGE)/lunToMoney);
                 double curUseLunTongValue = tempValue / lunToMoney;
 
-                exchangeLuntongbiValue.setText(curUseLunTongValue + "元");
+                exchangeLuntongbiValue.setText("抵￥"+curUseLunTongValue + "元");
                 luntongMoneyValue.setText("-￥" + curUseLunTongValue);
 
                 double totals = totalOrgValue - curUseLunTongValue;
@@ -260,6 +328,14 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                 useLuntongMoneyCount.setSelection(useLuntongMoneyCount.getText().length());
             }
         });
+    }
+
+    public void initAddress(){
+        addressPresent.setVisibility(View.GONE);
+        username.setVisibility(View.VISIBLE);
+        phoneNumber.setVisibility(View.VISIBLE);
+        regionDetail.setVisibility(View.VISIBLE);
+        addressSelectMore.setVisibility(View.VISIBLE);
     }
 
     private Response.Listener<ProduceOrder> responseListener() {
@@ -293,22 +369,32 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                 scrollView.setVisibility(View.VISIBLE);
                 totalPrice.setVisibility(View.VISIBLE);
 
-                addressId = Integer.parseInt(produceOrder.consignee.get(0).address_id);
-                String province = regions.get(produceOrder.consignee.get(0).province) + "省";
-                String city = regions.get(produceOrder.consignee.get(0).city) + "市";
-                String district = regions.get(produceOrder.consignee.get(0).district);
-                String addressDetail = produceOrder.consignee.get(0).address;
+                if(produceOrder.consignee.size() > 0) {
+                    initAddress();
+                    addressPresent.setVisibility(View.GONE);
+                    addressId = Integer.parseInt(produceOrder.consignee.get(0).address_id);
+                    String province = regions.get(produceOrder.consignee.get(0).province) + "省";
+                    String city = regions.get(produceOrder.consignee.get(0).city) + "市";
+                    String district = regions.get(produceOrder.consignee.get(0).district);
+                    String addressDetail = produceOrder.consignee.get(0).address;
 
-                Log.d("province..", province + city + district + addressDetail);
+                    username.setText(produceOrder.consignee.get(0).consignee);
+                    phoneNumber.setText(produceOrder.consignee.get(0).mobile);
+                    regionDetail.setText(province + city + district + addressDetail);
+                }else{
+                    addressPresent.setVisibility(View.VISIBLE);
+                    username.setVisibility(View.GONE);
+                    phoneNumber.setVisibility(View.GONE);
+                    regionDetail.setVisibility(View.GONE);
+                    addressSelectMore.setVisibility(View.GONE);
+                }
 
-                username.setText(produceOrder.consignee.get(0).consignee);
-                phoneNumber.setText(produceOrder.consignee.get(0).mobile);
-                regionDetail.setText(province + city + district + addressDetail);
-                mAdapter.setData(produceOrder.cart_goods,false);
+                mAdapter.setData(produceOrder.cart_goods, false);
 
                 goodsValueValue.setText("￥" + produceOrder.total.goods_price + "");
                 freightValue.setText("￥" + produceOrder.total.shipping_fee);
                 goodsTotal.setText("￥" + produceOrder.total.goods_price);
+                couponValue.setText("-￥"+ produceOrder.total.discounts);
                 totalOrgValue = produceOrder.total.goods_price;
 
                 String strRadio = produceOrder.total.ratio;
@@ -324,20 +410,75 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                     grounp = matcher.group(1);
                 }
                 maxLuntongMoney = Integer.parseInt(grounp);
+
+                enoughTotalDeliver.setVisibility(View.GONE);
+                enoughTotalReduce.setVisibility(View.GONE);
+                giftPrompt.setVisibility(View.GONE);
+
+                switch (produceOrder.total.act_type) {
+                    //减
+                    case ENOUGH_TOTAL_REDUCE:
+                        enoughTotalReduce.setVisibility(View.VISIBLE);
+                        enoughTotalReduceValue.setText(produceOrder.total.details);
+                        break;
+                    //赠
+                    case ENOUGH_TOTAL_DELIVER:
+                        enoughTotalDeliver.setVisibility(View.VISIBLE);
+                        enoughTotalDeliverValue.setText(produceOrder.total.gift);
+                        break;
+                    case ENOUGH_TOTAL_ALL:
+                        enoughTotalDeliver.setVisibility(View.VISIBLE);
+                        enoughTotalReduce.setVisibility(View.VISIBLE);
+                        enoughTotalReduceValue.setText(produceOrder.total.details);
+                        enoughTotalDeliverValue.setText(produceOrder.total.gift);
+                        break;
+                }
+
+                if(!TextUtils.isEmpty(produceOrder.total.prompt)){
+                    giftPrompt.setVisibility(View.VISIBLE);
+                    giftPrompt.setText(produceOrder.total.prompt);
+                }else{
+                    giftPrompt.setVisibility(View.GONE);
+                }
             }
         };
     }
 
-
+    private boolean fillAddress = false;
     @OnClick(R.id.submit_order)
     public void onClickSubmitOrder() {
+
+        if(TextUtils.isEmpty(useLuntongMoneyCount.getText() + ""))
+            useLuntongMoneyCount.setText("0");
+
+        double tempValue = Double.parseDouble(useLuntongMoneyCount.getText() + "");
+
+        //double curUseLunTongValue = (double) (Math.round(value / LUNTOEXCHANGE)/lunToMoney);
+        double curUseLunTongValue = tempValue / lunToMoney;
+
+        if(totalOrgValue < curUseLunTongValue ){
+            ToastUtil.showShortToast(mContext,R.string.luntongbi_more_warnning);
+            return;
+        }
+
+        fillAddress = false;
+        if(addressId == DEFAULT_ADDRESS_ID ){
+            fillAddress = true;
+            BaseAlertDialogUtil.getInstance()
+                    .setMessage(R.string.warnning_fill_address)
+                    .setCanceledOnTouchOutside(true)
+                    .setNegativeContent(R.string.cancel)
+                    .setPositiveContent(R.string.goto_addition);
+            BaseAlertDialogUtil.getInstance().show(mContext, ProduceOrderActivity.this);
+
+            return;
+        }
         BaseMainAlertDialogUtil.getInstance()
                 .setCanceledOnTouchOutside(true)
                 .setNegativeContent(R.string.cancel)
                 .setPositiveContent(R.string.sure);
 
         BaseMainAlertDialogUtil.getInstance().show(mContext, ProduceOrderActivity.this);
-
     }
 
     private Response.Listener<OrderConfirm> confirmOrderListener(){
@@ -359,7 +500,8 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
 
                         @Override
                         protected void onPostExecute(Object o) {
-                            ToastUtil.showLongToast(ProduceOrderActivity.this, R.string.order_confirm_success);
+                            //ToastUtil.showLongToast(ProduceOrderActivity.this, R.string.order_confirm_success);
+                            toast.show();
                             App.getBusInstance().post(new OrderConfirmEvent());
                             finish();
                         }
@@ -411,6 +553,11 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
 
     @Override
     public void confirm() {
+        if(fillAddress){
+
+            addressPresent();
+            return;
+        }
         finish();
     }
 
@@ -439,6 +586,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         String url = String.format(ConstantURL.CONFIRM_ORDER,uid,addressId,payId,strUserFeedback,integral,display);
         executeRequest(new GsonRequest(url, OrderConfirm.class, confirmOrderListener(), errorListener()));
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -460,10 +608,13 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         Intent intent = new Intent();
         intent.putExtra(ADDRESS_SELECT,isAddressSelect);
         intent.setClass(ProduceOrderActivity.this, MineReceiverAddressActivity.class);
-
         startActivityForResult(intent, REQUESTCODE);
-
     }
-
-
+    @OnClick(R.id.input_address_present)
+    public void addressPresent(){
+        Intent intent = new Intent();
+        intent.putExtra(ADDRESS_ADD,isAddressAdd);
+        intent.setClass(ProduceOrderActivity.this, MineAdditionAddressActivity.class);
+        startActivityForResult(intent,REQUEST_ADD);
+    }
 }

@@ -7,15 +7,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.activeandroid.query.Update;
 import com.android.volley.Response;
@@ -33,6 +31,7 @@ import com.louie.luntonghui.ui.category.GoodsDetailActivity;
 import com.louie.luntonghui.ui.mine.MineAttentionActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.ui.search.SearchActivity;
+import com.louie.luntonghui.ui.web.AdvertisementWebActivity;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
@@ -65,12 +64,7 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
     RecyclerView mRecyclerView;
     @InjectView(R.id.icon)
     ImageView icon;
-    @InjectView(R.id.navigation_search)
-    TextView navigationSearch;
-    @InjectView(R.id.navigation_search_edit)
-    EditText navigationSearchEdit;
-    @InjectView(R.id.search)
-    TextView search;
+
     @InjectView(R.id.ai_tangze)
     LinearLayout aiTangze;
     @InjectView(R.id.ai_jiluer)
@@ -95,6 +89,9 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
     @InjectView(R.id.qiandao_text)
     TextView qiandaoText;
 
+    @InjectView(R.id.region)
+    TextView tvRegion;
+
     private List<AdvertisementInfo> imageIdList;
     private List<Integer> recommendPicList;
     private HomeRecyclerViewAdapter mAdapter;
@@ -103,6 +100,7 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
     private Context mContext;
     private String[] activtyArea;
     private ProgressDialog mProgressDialog;
+    public final String WEB_URL = "web_url";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,6 +124,7 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
 
         activtyArea = getResources().getStringArray(R.array.activity_area_list);
         mProgressDialog = new ProgressDialog(mContext);
+
     }
 
 
@@ -137,7 +136,7 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
     @Override
     public void onResume() {
         super.onResume();
-        //
+
 
     }
 
@@ -157,12 +156,18 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
 
         initAdver();
         //initAdver();
-        search.setVisibility(View.GONE);
-        navigationSearchEdit.setVisibility(View.GONE);
+
         //testAnimCircleIndicator(); //广告页
         //initRecommend(); //今天剁手价
         //loadRecyclerView(); //产品列表
+        initRegion();
         return contentView;
+    }
+
+    private void initRegion() {
+        String region = DefaultShared.getString(App.PROVINCE,App.DEFAULT_PROVINCE);
+        if(TextUtils.isEmpty(region)) region = App.DEFAULT_PROVINCE;
+        tvRegion.setText(region);
     }
 
     private void initIntegral() {
@@ -201,30 +206,34 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
 
             @Override
             public void onResponse(final HomeAdver homeAdver) {
-                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<String>>() {
+                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<HomeAdver.ListallcatEntity>>() {
                     @Override
-                    protected List<String> doInBackground(Object... params) {
-                        List<String> advList = new ArrayList<String>();
-                        if (homeAdver.listallcat != null) {
+                    protected List<HomeAdver.ListallcatEntity> doInBackground(Object... params) {
+                        List<HomeAdver.ListallcatEntity> advList = new ArrayList<HomeAdver.ListallcatEntity>();
+                        if (homeAdver !=null && homeAdver.listallcat != null) {
                             for (int i = 0; i < homeAdver.listallcat.size(); i++) {
-                                advList.add(homeAdver.listallcat.get(i).ad_code);
+                                advList.add(homeAdver.listallcat.get(i));
                             }
                         }
                         return advList;
                     }
 
                     @Override
-                    protected void onPostExecute(List<String> list) {
+                    protected void onPostExecute(List<HomeAdver.ListallcatEntity> list) {
                         try {
                             //mAnimCircleIndicator.removeAllSliders();
                             for (int i = 0; i < list.size(); i++) {
                                 DefaultSliderView textSliderView = new DefaultSliderView(mContext);
-                                Log.d("imag..", list.get(i) + "...");
                                 textSliderView
-                                        .image(list.get(i))
-                                        .setScaleType(BaseSliderView.ScaleType.Fit);
+                                        .image(list.get(i).ad_code)
+                                        .setScaleType(BaseSliderView.ScaleType.Fit)
+                                        .setOnSliderClickListener(HomeFragment.this);
                                         /*.showImageResForEmpty(R.drawable.default_image_in_no_source)
                                         .showImageResForError(R.drawable.default_image_in_no_source);*/
+                                //textSliderView.getUrl()
+                                Bundle bundle = textSliderView.getBundle();
+                                bundle.putString(WEB_URL,list.get(i).ad_link);
+
                                 mAnimCircleIndicator.addSlider(textSliderView);
                             }
                             mAnimCircleIndicator.setIndicatorPosition(InfiniteIndicatorLayout.
@@ -261,10 +270,14 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
 
     @Override
     public void onSliderClick(BaseSliderView slider) {
-        Toast.makeText(getActivity(), slider.getBundle().get("extra") + "", Toast.LENGTH_SHORT).show();
+        Bundle bundle = slider.getBundle();
+
+        String url = bundle.getString(WEB_URL);
+        bundle.putString(AdvertisementWebActivity.URL, url);
+        IntentUtil.startActivity(getActivity(),AdvertisementWebActivity.class,bundle);
     }
 
-    @OnClick(R.id.navigation_search)
+    @OnClick({R.id.search,R.id.search_text})
     public void OnSearch() {
         //mSearchListener.beginSearch();
         /*getActivity().getSupportFragmentManager().beginTransaction()

@@ -1,6 +1,7 @@
 package com.louie.luntonghui.ui.mine;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -10,7 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
@@ -55,14 +56,18 @@ public class MineReceiverAddressActivity extends SecondLevelBaseActivity {
     /*    @InjectView(R.id.empty_txt)
         TextView mEmptyText;*/
     private String mUrl;
-    @InjectView(R.id.progress)
-    ProgressBar progress;
+    /*@InjectView(R.id.progress)
+    ProgressBar progress;*/
+
+    @InjectView(R.id.logo_anim)
+    ImageView logoAnim;
 
     private MineReceiverAddressAdapter mAdapter;
     private List<Address> data;
     private long startTime;
     private long endTime;
     private boolean isAddressSelect = false;
+    private AnimationDrawable animationDrawable;
 
 
     @Override
@@ -71,6 +76,8 @@ public class MineReceiverAddressActivity extends SecondLevelBaseActivity {
         ButterKnife.inject(this);
         uid = DefaultShared.getString(USERUID, "0");
         App.getBusInstance().register(this);
+
+        animationDrawable = (AnimationDrawable)logoAnim.getBackground();
 
         isAddressSelect = getIntent().getBooleanExtra(ProduceOrderActivity.ADDRESS_SELECT,isAddressSelect);
 
@@ -142,12 +149,14 @@ public class MineReceiverAddressActivity extends SecondLevelBaseActivity {
             @Override
             public void onResponse(final AddressList addressList) {
 
-
                 TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<Address>>() {
 
                     @Override
                     protected void onPreExecute() {
-                        progress.setVisibility(View.VISIBLE);
+                        if(animationDrawable!=null && !animationDrawable.isRunning()){
+                            if(logoAnim !=null)logoAnim.setVisibility(View.VISIBLE);
+                            animationDrawable.start();
+                        }
                     }
 
                     @Override
@@ -186,7 +195,12 @@ public class MineReceiverAddressActivity extends SecondLevelBaseActivity {
                     @Override
                     protected void onPostExecute(List<Address> lists) {
                         //super.onPostExecute(o);
-                        progress.setVisibility(View.GONE);
+                        //progress.setVisibility(View.GONE);
+                        if(animationDrawable!=null && animationDrawable.isRunning()){
+                            if(logoAnim!=null)logoAnim.setVisibility(View.GONE);
+                            if(animationDrawable!=null)animationDrawable.stop();
+                        }
+
                         mAdapter.setData(lists);
                         //mRecyclerView.not
                         //notifyDataSetChanged

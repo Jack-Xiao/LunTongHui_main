@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/toolbar_height"
+    style="@style/toolbar_style"
+    android:background="@drawable/navigation_bar"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/logo" />
+
+    <RelativeLayout
+        android:drawablePadding="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:paddingLeft="7dp"
+        android:paddingRight="7dp"
+
+        android:background="@drawable/navigation_search"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/search"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/search_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"/>
+        <ImageView
+            android:id="@+id/qr_code"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/qr_code"/>
+        <TextView
+            android:id="@+id/search_text"
+            android:gravity="center_vertical"
+            android:layout_toLeftOf="@id/qr_code"
+            android:layout_toRightOf="@id/search"
+            android:layout_centerVertical="true"
+            android:hint="搜索商品"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+    <!--<TextView
+        android:layout_marginLeft="5dp"
+        android:id="@+id/navigation_search"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:hint="搜索"
+        android:padding="5dp"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:drawableLeft="@drawable/search_icon"
+        android:layout_height="match_parent"
+        android:background="@drawable/navigation_search"
+        android:layout_marginRight="20dp"
+        />-->
+
+
+   <!-- <EditText
+        android:textColor="@color/useful_grey"
+        android:visibility="gone"
+        android:id="@+id/navigation_search_edit"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:hint="搜索"
+        android:padding="5dp"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:drawableLeft="@drawable/search_icon"
+        android:layout_height="match_parent"
+        android:background="@drawable/navigation_search" />-->
+
+    <TextView
+        android:id="@+id/region"
+        tools:text="广东"
+        android:textColor="@color/white"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

@@ -25,7 +25,6 @@ public class WebViewActivity extends BaseToolbarActivity {
     private String url;
     private WebView browser;
     private ProgressBar progressBar;
-    public static final String HTTP_PREFIX = "http://";
     public static final int MAX = 100;
     @Override
     protected int toolbarTitle() {
@@ -46,10 +45,6 @@ public class WebViewActivity extends BaseToolbarActivity {
 
         Bundle bundle = getIntent().getExtras();
         url = bundle.getString(URL);
-
-        if(!url.startsWith("http://")){
-            url = HTTP_PREFIX + url;
-        }
 
         WebSettings settings = browser.getSettings();
         settings.setJavaScriptEnabled(true);

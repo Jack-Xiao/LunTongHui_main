@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Vibrator;
-import android.util.Log;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
@@ -121,7 +120,6 @@ public class App extends Application {
         mGeofenceClient = new GeofenceClient(getApplicationContext());
         mVibrator = (Vibrator) getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
 
-
         initDebug();
     }
 
@@ -173,36 +171,9 @@ public class App extends Application {
 
 
     public void initDB() {
-        //String userId = DefaultShared.getString(USERUID, DEFAULT_USER_ID);
-        /* String cityId = DefaultShared.getString(CITYID, DEFAULT_CITYID);
-        String userType = DefaultShared.getString(RegisterLogin.USER_TYPE,RegisterLogin.USER_DEFAULT);
-        String url = String.format(ConstantURL.GOODS_LIST, cityId,userType);
-        String tempArg = "";
-        if (DefaultShared.getString(USER_TYPE, USER_DEFAULT).equals(USER_WHOLESALER)) {
-            tempArg = "";
-        } else {
-            tempArg = "&is_show=01";
-        }
-        url = url + tempArg;
-
-        goodsInCaridsList = new ArrayList<>();*/
-
-
-/*
-        if (!userId.equals(DEFAULT_USER_ID)) {
-            //RequestManager.addRequest
-            String getCarList = String.format(ConstantURL.GET_CAR_LIST, userId);
-            RequestManager.addRequest(new GsonRequest(
-                    getCarList, CarList.class, getCarList(), errorListener()), this);
-
-        }*/
 
         RequestManager.addRequest(new GsonRequest(ConstantURL.HOT_SEARCH, HotSearch.class,
                 getHotSearchList(), errorListener()), this);
-/*
-        RequestManager.addRequest(new GsonRequest(url, GoodsList.class,
-                getGoodsList(), errorListener()), this);*/
-
     }
 
     public Response.Listener<CarList> getCarList() {
@@ -287,7 +258,6 @@ public class App extends Application {
         return new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //ToastUtil.showLongToast(App.this, error.getMessage());
                 ToastUtil.showLongToast(application, R.string.network_connect_fail);
             }
         };
@@ -295,10 +265,6 @@ public class App extends Application {
 
 
     private void parserXml() {
-        //读取 asset 文件
-        /*AssetManager aset = getAssets();
-        aset.open("ecs_region1.xml");*/
-
         TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... params) {
@@ -349,8 +315,7 @@ public class App extends Application {
 
                 cityName = location.getCity().replace("市", "");
                 provinceName = location.getProvince().replace("省", "");
-                location.getProvince();
-                //sb.append(location.getDirection() + "");  可能为null
+
             } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                 sb.append("\naddr : ");
                 sb.append(location.getAddrStr());
@@ -360,8 +325,7 @@ public class App extends Application {
                 sb.append("\noperationers : ");
                 sb.append(location.getOperators() + "");
             }
-            Log.d("current city", cityName + "");
-            Log.d("current city", provinceName + "");
+
             DefaultShared.putString(CITY, cityName);
             DefaultShared.putString(PROVINCE, provinceName);
             if (nameidList != null && nameidList.containsKey(cityName)) {
@@ -370,8 +334,7 @@ public class App extends Application {
             if (nameidList != null && nameidList.containsKey(provinceName)) {
                 DefaultShared.putString(PROVINCEID, nameidList.get(provinceName));
             }
-            //mLocationClient.registerLocationListener(mMyLocationListener);
-            //mLocationClient.unRegisterLocationListener(mMyLocationListener);
+
         }
     }
 

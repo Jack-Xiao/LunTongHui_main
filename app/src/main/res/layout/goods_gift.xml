@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/goods_gift_info"
+    android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="20dp"
+    android:background="@color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:layout_centerVertical="true"
+        android:id="@+id/goods_gift_img"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/goods_gift_blue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/goods_gift_info_count"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/count_name"/>
+
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:text="10"
+            android:id="@+id/goods_gift_number_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:singleLine="true"
+        tools:text="测试测试测试2323232"
+        android:layout_centerVertical="true"
+        android:id="@+id/goods_gift_name"
+        android:layout_toLeftOf="@id/goods_gift_info_count"
+        android:layout_toRightOf="@id/goods_gift_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

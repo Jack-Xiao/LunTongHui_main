@@ -6,7 +6,7 @@ import android.widget.Button;
 
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.ui.register.RegisterLogin;
-import com.louie.luntonghui.ui.register.RegisterStep1Activity;
+import com.louie.luntonghui.ui.register.RegisterNewActivity;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
@@ -68,7 +68,8 @@ public class StartActivity extends BaseNormalActivity{
     public void register(){
         register.setTextColor(getResources().getColor(R.color.useful_grey));
         register.setBackgroundResource(R.drawable.start_login);
-        IntentUtil.startActivity(StartActivity.this, RegisterStep1Activity.class);
+        //IntentUtil.startActivity(StartActivity.this, RegisterStep1Activity.class);
+        IntentUtil.startActivity(StartActivity.this, RegisterNewActivity.class);
         //finish();
     }
     @Override

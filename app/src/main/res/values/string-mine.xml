@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
     <string name="coupon">优惠卷</string>
     <string name="account_balance">账户余额</string>
     <string name="integral">积分</string>

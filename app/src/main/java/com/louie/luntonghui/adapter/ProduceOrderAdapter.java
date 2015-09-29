@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -39,7 +41,7 @@ import me.drakeet.materialdialog.MaterialDialog;
  * Created by Administrator on 2015/7/8.
  */
 public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogUtil.BaseAlertDialogListener {
-    public List<ProduceOrder.CartGoodsEntity> data;
+    //public List<ProduceOrder.CartGoodsEntity> data;
     private LayoutInflater inflater;
     private Context mContext;
     private boolean isFixOrder;
@@ -47,12 +49,15 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
     private int mPosition;
     private String mOrderId;
     private String userId;
+    private List<ProduceOrder.CartGoodsEntity> goodsList;
+    private List<ProduceOrder.CartGoodsEntity> giftList;
 
 
     @Override
     public void confirm() {
-        String orderId = data.get(mPosition).rec_id;
-        String goodsId = data.get(mPosition).goods_id;
+        String orderId = goodsList.get(mPosition).rec_id;
+        String goodsId = goodsList.get(mPosition).goods_id;
+
         String delUrl = String.format(ConstantURL.DELORDERGOODS,orderId,goodsId);
         RequestManager.addRequest(new GsonRequest(delUrl,
                 Result.class, delOrderGoodsRequest(), errorListener()), this);
@@ -70,22 +75,35 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
     }
 
     public void setData(List<ProduceOrder.CartGoodsEntity> cart_goods,boolean isFixOrder){
-        if(data == null ){
-            data = new ArrayList<>();
+        if(goodsList == null){
+            goodsList = new ArrayList<>();
         }
+        if(giftList == null){
+            giftList = new ArrayList<>();
+        }
+
         this.isFixOrder = isFixOrder;
-        data.clear();
-        data.addAll(cart_goods);
+
+        goodsList.clear();//清空之前的adapter 数据
+
+        for(int i =0;i<cart_goods.size();i++){
+            if(cart_goods.get(i).rid .equals("0")){
+                goodsList.add(cart_goods.get(i));
+            }else{
+                giftList.add(cart_goods.get(i));
+            }
+        }
+
         notifyDataSetChanged();
     }
     @Override
     public int getCount() {
-        return data == null? 0 : data.size();
+        return goodsList == null? 0 : goodsList.size();
     }
 
     @Override
     public ProduceOrder.CartGoodsEntity getItem(int position) {
-        return data.get(position);
+        return goodsList.get(position);
     }
 
     @Override
@@ -97,7 +115,7 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
         if(convertView == null){
-            convertView = inflater.inflate(R.layout.car_produce_order_item,null);
+            convertView = inflater.inflate(R.layout.car_produce_order_item_add_gift,null);
             viewHolder = new ViewHolder();
             viewHolder.goodsImg = (ImageView)convertView.findViewById(R.id.goods_img);
             viewHolder.goodsName =(TextView)convertView.findViewById(R.id.goods_name);
@@ -108,6 +126,13 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
             viewHolder.present = (TextView)convertView.findViewById(R.id.present);
             viewHolder.prim = (TextView)convertView.findViewById(R.id.prim);
 
+            viewHolder.goodsGiftName = (TextView)convertView.findViewById(R.id.goods_gift_name);
+            viewHolder.goodsGiftCountValue = (TextView)convertView.findViewById(R.id.goods_gift_number_value);
+
+            viewHolder.whole = (LinearLayout)convertView.findViewById(R.id.whole);
+            viewHolder.breakLine = convertView.findViewById(R.id.break_line);
+            viewHolder.goodsGift = (RelativeLayout)convertView.findViewById(R.id.goods_gift_info);
+
             convertView.setTag(viewHolder);
         }else{
             viewHolder = (ViewHolder)convertView.getTag();
@@ -116,14 +141,14 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
         if(viewHolder.imageRequest !=null){
             viewHolder.imageRequest.cancelRequest();
         }
-        viewHolder.imageRequest = ImageCacheManager.loadImage(data.get(position).goods_thumb
+        viewHolder.imageRequest = ImageCacheManager.loadImage(goodsList.get(position).goods_thumb
             ,ImageCacheManager.getImageListener(viewHolder.goodsImg));
         
-        viewHolder.goodsName.setText(data.get(position).goods_name);
-        viewHolder.goodsPrice.setText("价格:￥" + data.get(position).goods_price +"/" + data.get(position).danwei);
-        viewHolder.goodsNumber.setText(data.get(position).goods_number);
+        viewHolder.goodsName.setText(goodsList.get(position).goods_name);
+        viewHolder.goodsPrice.setText("价格:￥" + goodsList.get(position).goods_price +"/" + goodsList.get(position).danwei);
+        viewHolder.goodsNumber.setText(goodsList.get(position).goods_number);
 
-        Integer discountType = Integer.parseInt(data.get(position).discount_type);
+        Integer discountType = Integer.parseInt(goodsList.get(position).discount_type);
         String birary = Integer.toBinaryString(discountType);
 
         viewHolder.prim.setVisibility(View.GONE);
@@ -135,11 +160,11 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
                 if(i == birary.length() -1){
                     if(birary.substring(birary.length()-1).equals("1"))
                         viewHolder.discount.setVisibility(View.VISIBLE);
-                    if (!data.get(position).discount.equals("0")) {
-                        double discount = Double.parseDouble(data.get(position).discount);
-                        double curGoodsShopPrice = Double.parseDouble(data.get(position).goods_price);
+                    if (!goodsList.get(position).discount.equals("0")) {
+                        double discount = Double.parseDouble(goodsList.get(position).discount);
+                        double curGoodsShopPrice = Double.parseDouble(goodsList.get(position).goods_price);
                         double curPrince = curGoodsShopPrice * discount / 10;
-                        viewHolder.goodsPrice.setText("价格:￥" + curPrince +"/" + data.get(position).danwei);
+                        viewHolder.goodsPrice.setText("价格:￥" + curPrince +"/" + goodsList.get(position).danwei);
                     }
                 }else if(i == birary.length() -2){
                     if(birary.substring(birary.length()-2,birary.length() -1).equals("1"))
@@ -173,16 +198,37 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
         Log.d("rec_id_rid:",data.get(position).rid);
         Log.d("rec_id:",position + "");*/
 
-        if(!data.get(position).rid.equals("0")){
-            viewHolder.goodsPrice.setVisibility(View.GONE);
-            viewHolder.delImage.setImageResource(R.drawable.giveaway);
+        if(!goodsList.get(position).rid.equals("0")){
+            viewHolder.whole.setVisibility(View.GONE);
+            /*viewHolder.goodsPrice.setVisibility(View.GONE);
+            //viewHolder.delImage.setImageResource(R.drawable.giveaway);
+            viewHolder.delImage.setImageResource(R.drawable.goods_gift_red);
+            viewHolder.goodsImg.setImageDrawable(null);
+
             viewHolder.goodsNumber.setEnabled(false);
-            viewHolder.goodsNumber.setBackgroundResource(R.color.background_main_grey);
+            viewHolder.goodsNumber.setBackgroundResource(R.color.background_main_grey);*/
         }else{
+            viewHolder.whole.setVisibility(View.VISIBLE);
+            viewHolder.goodsGift.setVisibility(View.GONE);
+            viewHolder.breakLine.setVisibility(View.GONE);
+
             viewHolder.goodsPrice.setVisibility(View.VISIBLE);
             viewHolder.delImage.setImageResource(R.drawable.cart_delete_icon);
             viewHolder.goodsNumber.setEnabled(true);
             viewHolder.goodsNumber.setBackgroundResource(R.drawable.base_frame);
+            String rec_id  = goodsList.get(position).rec_id;
+
+            for(int i =0; i <giftList.size();i++){
+                if(rec_id.equals(giftList.get(i).rid)){
+                    String goodsGiftName = giftList.get(i).goods_name;
+                    String goodsGiftNumber = giftList.get(i).goods_number;
+
+                    viewHolder.goodsGift.setVisibility(View.VISIBLE);
+                    viewHolder.breakLine.setVisibility(View.VISIBLE);
+                    viewHolder.goodsGiftName.setText(goodsGiftName);
+                    viewHolder.goodsGiftCountValue.setText(goodsGiftNumber);
+                }
+            }
         }
 
         return convertView;
@@ -236,7 +282,7 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
         @Override
         public void onClick(View v) {
             int position = (Integer)v.getTag();
-            ProduceOrder.CartGoodsEntity order = data.get(position);
+            ProduceOrder.CartGoodsEntity order = goodsList.get(position);
             String goodsName = order.goods_name;
             String goodsPrice = order.goods_price;
             String strUnit = order.danwei;
@@ -357,6 +403,8 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
             public void onResponse(ProduceOrderResult produceOrderResult) {
                 if(produceOrderResult.rsgcode.equals(ConstantURL.SUCCESSCODE)){
                     mListener.reference();
+                }else{
+                    ToastUtil.showShortToast(mContext,produceOrderResult.rsgmsg);
                 }
             }
         };
@@ -375,10 +423,15 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
         TextView goodsNumber;
         ImageView delImage;
 
+
         TextView present;
         TextView discount;
         TextView prim;
-
+        TextView goodsGiftCountValue;
+        TextView goodsGiftName;
+        View breakLine;
+        RelativeLayout goodsGift;
+        LinearLayout whole;
         public ImageLoader.ImageContainer imageRequest;
     }
 }

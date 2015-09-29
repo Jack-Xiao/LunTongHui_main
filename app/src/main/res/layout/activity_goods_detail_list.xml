@@ -149,7 +149,7 @@
         android:layout_marginBottom="60dp"
         android:layout_marginRight="80dp"
         app:floatingActionButtonColor="@color/material_green_A200"
-        app:floatingActionButtonSize="normal" />
+        app:floatingActionButtonSize="mini" />
 
     <!---->
     <!--app:elevation="20dp"-->

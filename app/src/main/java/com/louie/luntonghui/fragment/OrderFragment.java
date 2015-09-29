@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.android.volley.Response;
@@ -303,11 +302,10 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
                     @Override
                     protected List<Order> doInBackground(Object... params) {
                         List<Order> data = new ArrayList<Order>();
-                        try {
                             new Delete()
                                     .from(Order.class)
                                     .execute();
-                            ActiveAndroid.beginTransaction();
+
                             for (int i = 0; i < orderList.mysalelist.size(); i++) {
                                 Order order = new Order();
                                 order.allowToModify = orderList.mysalelist.get(i).allow_to_modify;
@@ -321,10 +319,7 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
                                 order.save();
                                 data.add(order);
                             }
-                            ActiveAndroid.setTransactionSuccessful();
-                        } finally {
-                            ActiveAndroid.endTransaction();
-                        }
+
                         return data;
                     }
 

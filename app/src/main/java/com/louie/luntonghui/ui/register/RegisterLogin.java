@@ -18,7 +18,6 @@ import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.Login;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.ui.MainActivity;
-import com.louie.luntonghui.ui.register.retrivepassword.RetrivePassword1Activity;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
@@ -253,13 +252,14 @@ public class RegisterLogin extends BaseNormalActivity {
 
     @OnClick(R.id.phone_quite_register)
     public void OnQuiteRegister() {
-        IntentUtil.startActivityFromMain(RegisterLogin.this, RegisterStep1Activity.class);
+        //IntentUtil.startActivityFromMain(RegisterLogin.this, RegisterStep1Activity.class);
+        IntentUtil.startActivityFromMain(RegisterLogin.this,RegisterNewActivity.class);
         finish();
     }
 
     @OnClick(R.id.retrive_password)
     public void onClickRetrivePassword(){
-        IntentUtil.startActivity(RegisterLogin.this, RetrivePassword1Activity.class);
+        IntentUtil.startActivity(RegisterLogin.this, RegisterPasswordHomeActivity.class);
     }
 
     public void onClickClearUsername(){

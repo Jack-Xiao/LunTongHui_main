@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -17,6 +18,7 @@ import com.louie.luntonghui.model.result.OrderDetailResult;
 import com.louie.luntonghui.model.result.ProduceOrder;
 import com.louie.luntonghui.model.result.Result;
 import com.louie.luntonghui.ui.BaseNormalActivity;
+import com.louie.luntonghui.ui.car.ProduceOrderActivity;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.MyListView;
@@ -46,6 +48,18 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
 
     @InjectView(R.id.fix_order)
     TextView fixOrder;
+
+    @InjectView(R.id.enough_total_deliver)
+    RelativeLayout enoughTotalDeliver;
+
+    @InjectView(R.id.enough_total_reduce)
+    RelativeLayout enoughTotalReduce;
+
+    @InjectView(R.id.enough_total_reduce_value)
+    TextView enoughTotalReduceValue;
+
+    @InjectView(R.id.enough_total_deliver_value)
+    TextView enoughTotalDeliverValue;
 
 
     ProgressDialog mProgressDialog;
@@ -263,7 +277,8 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
                     car.goods_price = lists.get(i).goods_price;
                     car.goods_number = lists.get(i).goods_number;
                     car.discount_type = lists.get(i).discount_type;
-                    car.rec_id = orderDetailResult.order.order_id;
+                    //car.rec_id = orderDetailResult.order.order_id;
+                    car.rec_id = lists.get(i).rec_id;
 
                     car.rid = lists.get(i).rid;
                     car.guige = lists.get(i).guige;
@@ -272,7 +287,29 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
                     car.discount = lists.get(i).discount;
                     cart_goods.add(car);
                 }
-                mGoodsAdapter.setData(cart_goods,isFixOrder);
+                mGoodsAdapter.setData(cart_goods, isFixOrder);
+
+                enoughTotalDeliver.setVisibility(View.GONE);
+                enoughTotalReduce.setVisibility(View.GONE);
+
+                switch (orderDetailResult.order.act_type) {
+                    //减
+                    case ProduceOrderActivity.ENOUGH_TOTAL_REDUCE:
+                        enoughTotalReduce.setVisibility(View.VISIBLE);
+                        enoughTotalReduceValue.setText(order.details);
+                        break;
+                    //赠
+                    case ProduceOrderActivity.ENOUGH_TOTAL_DELIVER:
+                        enoughTotalDeliver.setVisibility(View.VISIBLE);
+                        enoughTotalDeliverValue.setText(order.gift);
+                        break;
+                    case ProduceOrderActivity.ENOUGH_TOTAL_ALL:
+                        enoughTotalDeliver.setVisibility(View.VISIBLE);
+                        enoughTotalReduce.setVisibility(View.VISIBLE);
+                        enoughTotalReduceValue.setText(order.details);
+                        enoughTotalDeliverValue.setText(order.gift);
+                        break;
+                }
             }
         };
     }

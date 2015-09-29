@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/whole"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="20dp">
+
+    <LinearLayout
+        android:paddingBottom="5dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/cart_delete_icon" />
+
+        <ImageView
+            android:id="@+id/goods_img"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/base_frame"
+            tools:src="@drawable/produce_demo" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/goods_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                tools:text="26X19546464555645646545656" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/goods_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="价格:1000.00" />
+
+                <TextView
+                    android:id="@+id/discount"
+                    style="@style/present_discount_style"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:text="折" />
+
+                <TextView
+                    android:id="@+id/present"
+                    style="@style/present_discount_style"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:text="赠" />
+
+                <TextView
+                    android:id="@+id/prim"
+                    style="@style/present_discount_style"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:text="优" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/count_name" />
+
+                <TextView
+                    android:id="@+id/goods_number"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/base_frame"
+                    android:enabled="false"
+                    android:gravity="center"
+                    tools:text="1000" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/break_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_breakline"/>
+
+    <include layout="@layout/goods_gift"/>
+</LinearLayout>

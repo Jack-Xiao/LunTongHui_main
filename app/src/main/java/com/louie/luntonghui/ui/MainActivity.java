@@ -54,6 +54,7 @@ import com.louie.luntonghui.task.UpdateVersionTask;
 import com.louie.luntonghui.ui.register.RegisterHome;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.ui.register.RegisterStep3Activity;
+import com.louie.luntonghui.ui.web.AdvertisementWebActivity;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
@@ -85,7 +86,7 @@ import static com.louie.luntonghui.ui.register.RegisterLogin.NOTLOGIN;
 public class MainActivity extends BaseActivity implements OnClickListener, HomeFragment.SearchListener,
         GoodsDetailFragment.SearchGoodsListener, MyAlertDialogUtil.AlertDialogListener,
         HomeFragment.FastQueryListener, MineFragment1.OrderTypeListener, ComeBackListener,
-        CarFragment.OnReferenCartListener, CategoryFragment.UpdateListener {
+        CarFragment.OnReferenCartListener, CategoryFragment.UpdateListener{
 
     public static final String BDLOCATIONCORR = "gcj02";
     public static final int BDLOCATIONSPAN = 5000;
@@ -190,9 +191,10 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
             Tag [] tagss= new Tag[]{tag,tag1};
             PushManager.getInstance().bindAlias(App.getContext(), "a" +userId);
             PushManager.getInstance().setTag(App.getContext(), tagss);
+
             PushManager.getInstance().turnOnPush(App.getContext());
             String clientId = PushManager.getInstance().getClientid(App.getContext());
-
+            String test = "a" + clientId;
 
         }
 
@@ -255,7 +257,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         listFragment.add(new OrderFragment());
 
 
-        checkVersion();
+        //checkVersion();
 
         initNavigation();
         initConfig();
@@ -359,7 +361,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                         int total = 0;
                         List<ShoppingCar> data = new ArrayList<ShoppingCar>();
                         if (carList != null && carList.goods_list != null) {
-
                                 for (int i = 0; i < carList.goods_list.size(); i++) {
                                     ShoppingCar car = new ShoppingCar();
                                     car.carId = carList.goods_list.get(i).rec_id;
@@ -398,7 +399,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         RequestManager.addRequest(new GsonRequest(url, VersionUpdate.class,
                 updateApp(), errorListener()), this);
     }
-
 
     protected com.android.volley.Response.ErrorListener errorListener() {
         return new com.android.volley.Response.ErrorListener() {
@@ -445,9 +445,14 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         refreshCarListCount(null);
         MobclickAgent.onPageStart("SplashScreen");
         MobclickAgent.onResume(this);
+
         String lastSECONDKILLDate = DefaultShared.getString(Config.SECOND_KILL, Config.DEFAULT_SECOND_KILL);
         Date curDate = new Date(System.currentTimeMillis());//获取当前时间
 
+        int chooseIndex= getIntent().getIntExtra(AdvertisementWebActivity.WEB_CHOOSE_SURFACE,AdvertisementWebActivity.WEB_CHOOSE_DEFAULT_SURFACE);
+        if(chooseIndex != AdvertisementWebActivity.WEB_CHOOSE_DEFAULT_SURFACE){
+            onTabChange(chooseIndex);
+        }
 
         /*String str = dateFormat.format(curDate);
         if (!lastSECONDKILLDate.equals(str)) {
@@ -463,7 +468,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         super.onPause();
         MobclickAgent.onPageEnd("SplashScreen");
         MobclickAgent.onPause(this);
-
     }
 
     private Response.Listener<CurrentBrandGoodsList> getSecondKillGoods() {
@@ -1010,4 +1014,5 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         super.onNewIntent(intent);
         setIntent(intent);
     }
+
 }

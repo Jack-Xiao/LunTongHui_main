@@ -31,7 +31,7 @@
         android:drawablePadding="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:drawableLeft="@drawable/search_icon"
+        android:drawableLeft="@drawable/search_home"
         android:layout_height="match_parent"
         android:background="@drawable/navigation_search" />
 

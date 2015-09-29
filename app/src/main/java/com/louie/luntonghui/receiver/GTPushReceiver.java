@@ -7,12 +7,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 
 import com.igexin.sdk.PushConsts;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
-import com.louie.luntonghui.ui.Home.NewGoodsActivity;
 import com.louie.luntonghui.ui.Home.SecondKillActivity;
 import com.louie.luntonghui.ui.MainActivity;
 import com.louie.luntonghui.ui.category.GoodsDetailActivity;
@@ -25,6 +25,7 @@ import com.louie.luntonghui.util.DefaultShared;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Jack on 15/9/2.
@@ -45,20 +46,22 @@ public class GTPushReceiver extends BroadcastReceiver {
     public static final String GOODS_ID = "goods_id";
     public static final String CAT_ID = "cat_id";
     public static final String TAG_LIST = "tag_list";
-    private String serviceTags;
+    private String serverTags;
     private String nativeTags;
 
     public static final String GOODS_URL = "goods_url";
     private NotificationManager nm;
     private PendingIntent pd;
     private Context mContext;
-    public static final int DEFAULT_ID = 1;
+    public int DEFAULT_ID;
 
     public static final String TICKER_TEXT = "ticktext";
     public static final String TITLE = "title";
     private String tickerText;
     private String strContent;
     private String strTitle;
+    private boolean curContains;
+    private NotificationCompat.Builder mBuilder;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -71,20 +74,28 @@ public class GTPushReceiver extends BroadcastReceiver {
             case PushConsts.GET_MSG_DATA:
                 byte[] payload = bundle.getByteArray("payload");
                 if(payload !=null){
+                    mBuilder = new NotificationCompat.Builder(mContext);
+                    DEFAULT_ID =UUID.randomUUID().hashCode();
+
                     String data = new String(payload);
                     valueMap = Config.getMapForJson(data);
-                    serviceTags = valueMap.get(TAG_LIST);
-                    if(!TextUtils.isEmpty(serviceTags)){
-                        nativeTags = DefaultShared.getString(Config.GT_PUSH_TAGS,Config.DEFAULT_PUSH_TAGS);
-                        String [] natList = nativeTags.split(",");
-                        String [] serList = serviceTags.split(",");
+                    serverTags = valueMap.get(TAG_LIST);
 
-                        List<String> list1 = Arrays.asList(natList);
+                    if(!TextUtils.isEmpty(serverTags)){
+                        nativeTags = DefaultShared.getString(Config.GT_PUSH_TAGS, Config.DEFAULT_PUSH_TAGS);
+                        List<String> nativeList = Arrays.asList(nativeTags.split(","));
 
-                        for(int i =0;i<serviceTags.length() -1 ;i++){
-                            if(!list1.contains(serList[i].toString())){
-                                return;
+                        String [] serList = serverTags.split("&&");
+                        for(int i =0;i < serList.length;i++){
+                            String [] currentArrayTag = serList[i].split("\\|\\|");
+                            curContains = false;
+                            for(int j=0;j<currentArrayTag.length;j++){
+                                if(nativeList.contains(currentArrayTag[j])){
+                                    curContains = true;
+                                    break;
+                                }
                             }
+                            if(!curContains) return;
                         }
                     }
 
@@ -115,23 +126,33 @@ public class GTPushReceiver extends BroadcastReceiver {
         String url = valueMap.get(ACTION);
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
-        bundle.putString(WebViewActivity.URL,url);
+        bundle.putString(WebViewActivity.URL, url);
 
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtras(bundle);
-        intent.setClass(mContext, WebViewActivity.class);
+        intent.putExtra("url", url);
+        intent.setClass(App.getContext(), WebViewActivity.class);
+
         openActivity(intent);
     }
 
     public void openActivity(Intent intent){
-        Notification n = new Notification();
-        n.icon = R.drawable.push;
-        n.defaults = Notification.DEFAULT_SOUND;
-        n.flags = Notification.FLAG_AUTO_CANCEL;
-        n.tickerText = tickerText;
-        pd = PendingIntent.getActivity(App.getContext(),0,intent,0);
+        pd = PendingIntent.getActivity(App.getContext(),0,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        n.setLatestEventInfo(App.getContext(),strTitle,strContent,pd);
-        nm.notify(DEFAULT_ID, n);
+        mBuilder.setContentTitle(strTitle)
+                .setContentIntent(pd)
+                .setTicker(tickerText)
+                .setContentText(strContent)
+                .setWhen(System.currentTimeMillis())
+                .setPriority(Notification.PRIORITY_DEFAULT)
+                .setOngoing(false)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setSmallIcon(R.drawable.push);
+
+        Notification notify = mBuilder.build();
+        notify.flags = Notification.FLAG_AUTO_CANCEL;
+        nm.notify(0, notify);
     }
 
     private void openApp() {
@@ -142,62 +163,41 @@ public class GTPushReceiver extends BroadcastReceiver {
 
     private void openSurface() {
         String actionValue = valueMap.get(ACTION);
-        String content = valueMap.get(CONTENT);
 
-        Notification n = new Notification();
-        n.icon = R.drawable.push;
-        n.defaults = Notification.DEFAULT_SOUND;
-        n.tickerText = tickerText;
-        n.flags = Notification.FLAG_AUTO_CANCEL;
-
-        Intent intent;
+        Intent intent = new Intent();
         String goodsId;
         String catId;
 
         switch (actionValue){
             case ACTION_SECOND_KILL:
-                intent = new Intent(App.getContext(), SecondKillActivity.class);
-                pd = PendingIntent.getActivity(App.getContext(),0,intent,0);
-
-                n.setLatestEventInfo(App.getContext(),strTitle,strContent,pd);
-                nm.notify(DEFAULT_ID, n);
-
+                intent.setClass(App.getContext(), SecondKillActivity.class);
                 break;
             case ACTION_PRODUCE:    // 单独一个商品展示详细
                 goodsId = valueMap.get(GOODS_ID);
                 Bundle bundle = new Bundle();
-                bundle.putString(GoodsDetailActivity.GOODSDETAILID,goodsId);
-                intent = new Intent(mContext, GoodsDetailBuyActivity.class);
+                bundle.putString(GoodsDetailActivity.GOODSDETAILID, goodsId);
+                intent.setClass(mContext, GoodsDetailBuyActivity.class);
                 intent.putExtras(bundle);
 
-                pd = PendingIntent.getActivity(App.getContext(),0,intent,0);
-
-                n.setLatestEventInfo(App.getContext(),strTitle, strContent, pd);
-                nm.notify(DEFAULT_ID,n);
                 break;
             case ACTION_CATE:   // 商品分类展示
                 catId = valueMap.get(CAT_ID);
                 String url = ConstantURL.CATEGORYGOODS + catId;
                 Bundle bundle1 = new Bundle();
-                bundle1.putString(GoodsDetailActivity.GOODSDETAILID,catId);
-                bundle1.putString(GoodsDetailActivity.GOODSDETAILURL,url);
-                intent = new Intent(mContext,GoodsDetailActivity.class);
+                bundle1.putString(GoodsDetailActivity.GOODSDETAILID, catId);
+                bundle1.putString(GoodsDetailActivity.GOODSDETAILURL, url);
+                intent.setClass(mContext, GoodsDetailActivity.class);
                 intent.putExtras(bundle1);
-
-                pd = PendingIntent.getActivity(App.getContext(),0,intent,0);
-                n.setLatestEventInfo(App.getContext(), strTitle, strContent, pd);
-                nm.notify(DEFAULT_ID,n);
 
                 break;
 
             case ACTION_NEW_GOODS:
-                intent = new Intent(mContext, NewGoodsActivity.class);
-                pd = PendingIntent.getActivity(mContext,0,intent,0);
-
-                n.setLatestEventInfo(mContext,strTitle,strContent,pd);
-                nm.notify(DEFAULT_ID,n);
+                intent.setClass(mContext, GoodsDetailActivity.class);
+                Bundle bundle2 = new Bundle();
+                bundle2.putInt(GoodsDetailActivity.NEW_GOODS,GoodsDetailActivity.IS_NEW_GOODS);
+                intent.putExtras(bundle2);
                 break;
         }
-
+        openActivity(intent);
     }
 }

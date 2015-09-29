@@ -98,6 +98,15 @@ public class Config {
     public static final String GT_PUSH_TAGS = "gt_push_tags";
     public static final String DEFAULT_PUSH_TAGS = "u0";
 
+    public static final String CAR_ERROR_CODE = "400";
+
+    public static final int MAIN_HOME_SEQUENCE = 0;
+    public static final int MAIN_CATEGORY_SEQUENCE = 1;
+    public static final int MAIN_PERSON_SEQUENCE = 2;
+    public static final int MAIN_CART_SEQUENCE = 3;
+    public static final int MAIN_ORDER_SEQUENCE = 4;
+
+
 
     public static int getCurrentVersion() {
         int curVersionNumber = 0;

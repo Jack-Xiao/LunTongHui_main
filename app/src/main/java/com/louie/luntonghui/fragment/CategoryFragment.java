@@ -1,8 +1,8 @@
 package com.louie.luntonghui.fragment;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,7 +14,9 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -62,6 +64,16 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
     ListView goodsDetail;
     @InjectView(R.id.cancel)
     TextView cancel;
+
+    @InjectView(R.id.logo_anim)
+    ImageView logoAnim;
+
+    @InjectView(R.id.list_whole)
+    LinearLayout listWhole;
+
+    @InjectView(R.id.logo_anim_whole)
+    RelativeLayout logoWhole;
+
     private ServiceManager.LunTongHuiApi mApi;
     private ArrayAdapter mListAdapter;
 
@@ -80,17 +92,20 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
     private CategoryHomeAdapter mHomeAdapter;
     private boolean fastQuery = false;
     private String queryContent;
-    private ProgressDialog progressDialog;
+    //private ProgressDialog progressDialog;
     private int notNeedUpdate = 0;
     public static final String PROVIUS_SELECTED_ITEM = "provious_selected_item";
     private int currentItem =0;
     private boolean firstRun = false;
 
+    private AnimationDrawable animationDrawable;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
-        progressDialog = new ProgressDialog(mContext);
+        //progressDialog = new ProgressDialog(mContext);
        /* mApi = createApi(ServiceManager.LunTongHuiApi.class);
         mApi.getGoodsList(new CategoryFragmentCallback(CategoryFragment.this));*/
 
@@ -125,10 +140,6 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
             @Override
             public void onResponse(final GoodsList goodsList) {
                 TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<String>>() {
-                    @Override
-                    protected void onPreExecute() {
-                        progressDialog.show();
-                    }
 
                     @Override
                     protected List<String> doInBackground(Object... params) {
@@ -151,12 +162,18 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
                     @Override
                     protected void onPostExecute(List<String> categoryList) {
                         //super.onPostExecute(o);
-                        progressDialog.dismiss();
+                        if(animationDrawable!=null && animationDrawable.isRunning()){
+                            if(logoAnim !=null)logoAnim.setVisibility(View.GONE);
+                            if(logoWhole !=null)logoWhole.setVisibility(View.GONE);
+                            if(animationDrawable!=null)animationDrawable.stop();
+                        }
+
+                        if(listWhole!=null)listWhole.setVisibility(View.VISIBLE);
+
                         try {
                             mHomeAdapter = new CategoryHomeAdapter(mContext, R.layout.simple_list_item, categoryList);
-                            mGoodList.setAdapter(mHomeAdapter);
+                            if(mGoodList !=null) mGoodList.setAdapter(mHomeAdapter);
 
-                            Log.d("initcategory_ item", INITCATEGORYITEM + "");
                             if (INITCATEGORYITEM > categoryList.size()) INITCATEGORYITEM = 0;
 
                             onItemClick(null, null, INITCATEGORYITEM, 0);
@@ -164,7 +181,6 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                     }
                 });
             }
@@ -206,11 +222,11 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                     // scrollPos记录当前可见的List顶端的一行的位置
                     scrollPos = mGoodDetail.getFirstVisiblePosition();
-                    if (mDetailAdapter!= null) {
+                    if (mDetailAdapter != null) {
                         View v = mGoodDetail.getChildAt(0);
-                        scrollTop=( v ==null)?0:v.getTop();
+                        scrollTop = (v == null) ? 0 : v.getTop();
                         DefaultShared.putInt(SCROLL_LOCATION, scrollTop);
-                        DefaultShared.putInt(SCROLL_RPOS_LOCATION,scrollPos);
+                        DefaultShared.putInt(SCROLL_RPOS_LOCATION, scrollPos);
                     }
                 }
             }
@@ -219,10 +235,19 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
             }
         });
+        animationDrawable = (AnimationDrawable)logoAnim.getBackground();
+
+        listWhole.setVisibility(View.GONE);
+        if(animationDrawable!=null && !animationDrawable.isRunning()){
+            logoWhole.setVisibility(View.VISIBLE);
+            logoAnim.setVisibility(View.VISIBLE);
+            animationDrawable.start();
+        }
         parserArgument();
 
         return contentView;
     }
+
     private int scrollPos;
     private int scrollTop;
 
@@ -252,9 +277,6 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
             if(queryContent !=null){
                 fastQuery = true;
             }
-        }else{
-
-            Log.d("initcategory_ item" ,INITCATEGORYITEM +"");
         }
     }
 
