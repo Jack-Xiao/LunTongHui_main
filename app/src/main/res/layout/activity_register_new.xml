@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:saveEnabled="false"
-            android:maxLength="11"
+            android:maxLength="13"
             android:inputType="number"
             android:hint="请输入您的手机号码"
             tools:text="请输入您的手机号码"/>

@@ -45,6 +45,12 @@ public class MineWorkActivity extends BaseNormalActivity {
 
     }
 
+    @OnClick(R.id.mine_service_order)
+    public void onClickServiceOrder(){
+
+        IntentUtil.startActivity(MineWorkActivity.this,MineWorkCustomerOrderListActivity.class);
+    }
+
     @OnClick(R.id.mine_proxy_register)
     public void onClickProxyRegister(){
         IntentUtil.startActivity(MineWorkActivity.this, ProxyRegisterActivity.class);

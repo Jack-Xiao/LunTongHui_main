@@ -55,7 +55,7 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
 
     @Override
     public void confirm() {
-        String orderId = goodsList.get(mPosition).rec_id;
+        String orderId = goodsList.get(mPosition).orderid;
         String goodsId = goodsList.get(mPosition).goods_id;
 
         String delUrl = String.format(ConstantURL.DELORDERGOODS,orderId,goodsId);

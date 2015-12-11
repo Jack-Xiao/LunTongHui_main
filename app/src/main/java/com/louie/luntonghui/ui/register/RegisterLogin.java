@@ -242,7 +242,8 @@ public class RegisterLogin extends BaseNormalActivity {
                             DefaultShared.putString(USER_TYPE, login.type);
                             DefaultShared.putString(USERUID, login.userid);
                             DefaultShared.putLong(Config.LAST_SING_IN_TIME, Config.CLEAR_SIGN_IN);
-                            DefaultShared.putString(User.IS_EMPLOYEE,login.personnel);
+                            DefaultShared.putString(User.IS_EMPLOYEE, login.personnel);
+
                             App.getBusInstance().post(new LoginEvent());
                             Bundle bundle = new Bundle();
                             bundle.putInt(RegisterStep3Activity.INIT_TYPE, 2);

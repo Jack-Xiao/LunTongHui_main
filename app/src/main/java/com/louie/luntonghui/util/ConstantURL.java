@@ -7,9 +7,12 @@ public class ConstantURL {
 
     public static final String SUCCESSCODE = "000";
 
-    public static final String HOST = "http://120.25.224.250/api/"; //测试 Ip
-    //ublic static final String HOST = "http://192.168.0.254/ecs/api/"; //测试 Ip
-    //public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
+    //public static final String HOST = "http://120.25.224.250/api/"; //测试 Ip
+    //public static final String HOST = "http://192.168.0.254/ecs/api/"; //测试 Ip
+      public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
+    //public static final String HOST = "http://120.25.201.114/api_new/"; //另一台正式机
+
+    //public static final String HOST = "http://img.zgltong.com/api_new/"; //另一台正式机
 
     public static final String MODE = "mode=test";
 
@@ -154,7 +157,8 @@ public class ConstantURL {
         + "mobile.php?act=listallcats" +"&"
         + "city=" + ARGSCONTENT1 + "&"
         + "ctype=" + ARGSCONTENT2 + "&"
-        + "version=" + ARGSCONTENT3;
+        + "version=" + ARGSCONTENT3+ "&"
+        + "user_id="+ARGSCONTENT4;
 
 
     //http://120.25.224.250/api/mobile.php?act=goodsdesc&goods_id=463&mode=test&city=2
@@ -163,7 +167,8 @@ public class ConstantURL {
             "goods_id=" + ARGSCONTENT1 + "&" +
             "mode=test" +"&" +
             "city=" + ARGSCONTENT2 + "&" +
-            "ctype=" + ARGSCONTENT3;
+            "ctype=" + ARGSCONTENT3 + "&" +
+            "user_id="+ARGSCONTENT4;
 
     //## 删除购物车商品 ########http://120.25.224.250/api/mobile.php?act=delbuycart&rec_id=91&mode=test
     public static final String CAR_GOODS_DEL = HOST
@@ -223,7 +228,8 @@ public class ConstantURL {
             +"mode=test" + "&"
             +"goodsname=" + ARGSCONTENT1 + "&"
             +"ctype=" + ARGSCONTENT2 + "&"
-            +"display=" + ARGSCONTENT3;
+            +"display=" + ARGSCONTENT3 + "&"
+            + "user_id="+ARGSCONTENT4;
 
     //商品搜索
     //http://120.25.224.250/api/mobile.php?act=findgoods&mode=test&user_id=143&
@@ -233,15 +239,16 @@ public class ConstantURL {
             +"user_id=" + ARGSCONTENT1 + "&"
             +"goodsname=" +ARGSCONTENT2 + "&"
             +"ctype=" + ARGSCONTENT3 + "&"
-            +"display=" + ARGSCONTENT4;
+            +"display=" + ARGSCONTENT3;
 
 
     //首页商品轮播广告
     public static final String GOODS_HOME_ADVER = HOST +
             "mobile.php?act=carouselnew&mode=test" + "&"
-            +"ctype=" + ARGSCONTENT1 + "&"
+            +"user_id=" + ARGSCONTENT1 + "&"
             +"city=" + ARGSCONTENT2 +"&"
             +"display=" + ARGSCONTENT3;
+
     //版本更新
     public static final String CHECKVERSION = HOST +
             "mobile.php?act=appversion&mode=test" + "&"
@@ -278,14 +285,18 @@ public class ConstantURL {
     public static final String SECOND_KILL_GOODS = HOST +
             "mobile.php?act=classify_goods_new&mode=test" +"&"
             +"mode=test" +"&"
-            +"ctype=" + ARGSCONTENT1;
+            +"ctype=" + ARGSCONTENT1 + "&"
+            + "user_id="+ARGSCONTENT2;
+
+
     //产品秒杀广告
     //http://120.25.224.250/api/mobile.php?act=productspike&mode=test&ctype=0&display=0&city=1
     public static final String SECOND_KILL_ADVERT = HOST +
             "mobile.php?act=productspike&mode=test" + "&"
             +"ctype=" +ARGSCONTENT1 + "&"
             +"display=" + ARGSCONTENT2 + "&"
-            +"city=" +ARGSCONTENT3;
+            +"city=" +ARGSCONTENT3+"&"
+            + "user_id="+ARGSCONTENT4;
 
     //我的客户服务列表  今天 1, 昨天  2.
     //http://120.25.224.250/api/mobile.php?act=subordinateorder&user_id=2&mode=test&date_field=1
@@ -302,6 +313,7 @@ public class ConstantURL {
             +"date_field=" +ARGSCONTENT2 + "&"
             +"page=" +ARGSCONTENT3 + "&"
             +"page_size=" +ARGSCONTENT4;
+
     //服务商下级会员列表
     public static final String MINE_SERVICE_PEOPLE_LIST = HOST +
             "mobile.php?act=suppliersubordinate&mode=test" +"&"
@@ -319,7 +331,8 @@ public class ConstantURL {
             +"display=" + ARGSCONTENT1 + "&"
             +"ctype=" + ARGSCONTENT2 + "&"
             +"page=" + ARGSCONTENT3 + "&"
-            +"page_size=" + ARGSCONTENT4;
+            +"page_size=" + ARGSCONTENT4+"&"
+            + "user_id="+ARGSCONTENT5;
 
     //http://120.25.224.250/api/mobile.php?act=get_users&user_id=146&mode=test
     public static final String GETUSER = HOST
@@ -367,6 +380,7 @@ public class ConstantURL {
             +"user_id=" + ARGSCONTENT1 + "&"
             +"ctype=" + ARGSCONTENT2;
 
+
     //修改订单商品数量
     public static final String FIXORDERNUMBER = HOST
             +"mobile.php?act=changeordernew" +"&"
@@ -384,4 +398,98 @@ public class ConstantURL {
 
     public static final String CATEGORYGOODS = HOST
             +"mobile.php?act=listcatgoods&cat_id=";
+
+    public static final String HOME_ADV_TEST = HOST
+            +"mobile.php?act=new_index";
+
+    public static final String HOME_ADV_ARRAY = HOST
+            +"mobile.php?act=new_index&mode=test"+"&"
+            +"display=" + ARGSCONTENT1 + "&"
+            +"user_id="+ ARGSCONTENT2;
+
+    public static final String WXAPI_GET_CODE =
+            "https://api.weixin.qq.com/sns/oauth2/access_token?" +
+            "appid=" + ARGSCONTENT1 + "&" +
+            "secret=" + ARGSCONTENT2 + "&" +
+            "code=" + ARGSCONTENT3+ "&"+
+            "grant_type=authorization_code";
+
+
+    public static final String WX_OPENID_CHECK = HOST
+            +"mobile.php?act=loginusr" + "&"
+            +"openid="+ ARGSCONTENT1 + "&"
+            +"mac="+ARGSCONTENT2;
+
+    public static final String QQ_OPENID_CHECK = HOST
+            +"mobile.php?act=loginusr" + "&"
+            +"openid="+ ARGSCONTENT1 + "&"
+            +"mac="+ARGSCONTENT2 + "&"
+            +"type="+ARGSCONTENT3;
+
+    //微信绑定openId本地账号
+    public static final String WX_OPENID_BIND_ACCOUNT = HOST
+            +"mobile.php?act=bind_by_openid";
+
+    public static final String WX_OPENID_REGISTER = HOST
+            +"mobile.php?act=reg_by_openid" + "&"
+            +"openid=" + ARGSCONTENT1 + "&"
+            +"mac="+ARGSCONTENT2 + "&"
+            +"phone=" + ARGSCONTENT3 + "&"
+            +"username=" + ARGSCONTENT4;
+
+    //根据微信openId获取用户个人信息
+    public static final String WX_USER_INFO =
+            "https://api.weixin.qq.com/sns/userinfo?" +
+                    "access_token=" + ARGSCONTENT1 + "&" +
+                    "openid=" + ARGSCONTENT2;
+
+    //生成预支付订单
+    public static final String WX_BEFOREHAND_PAY =
+            "https://api.mch.weixin.qq.com/pay/unifiedorder";
+
+    public static final String TOGETHER_GROUP_LINK = HOST +
+            "mobile.php?act=new_teambuying&mode=test" + "&" +
+                    "user_id=" + ARGSCONTENT1;
+
+    //首页特价
+    public static final String SPECIAL_PRICE = HOST
+            +"mobile.php?act=special_zone" + "&"
+            +"user_id=" + ARGSCONTENT1;
+
+    //首页品牌街
+    public static final String BRAND_STREET = HOST
+            +"mobile.php?act=brand_street";
+
+    //我的团
+    public static final String MINE_TUAN = HOST
+            +"mobile.php?act=my_teambuying&mode=test" + "&"
+            +"user_id=" + ARGSCONTENT1;
+    //商品详情
+    public static final String GOOD_DETAIL = HOST
+             +"mobile.php?act=listcatgoods" + "&"
+             +"mode=test" + "&"
+             +"cat_id=" + ARGSCONTENT1 + "&"
+             +"city=" + ARGSCONTENT2 + "&"
+             +"ctype=" + ARGSCONTENT3 + "&"
+             +"user_id=" + ARGSCONTENT4;
+
+    //我的客户订单--工作人员
+    public static final String MINE_WORK_CUSTOMER_ORDER = HOST
+            +"mobile.php?act=order_of_salesmen_users" + "&"
+            +"mode=test" + "&"
+            +"user_id=" + ARGSCONTENT1 + "&"
+            +"date_field=" + ARGSCONTENT2 + "&"
+            +"page=" + ARGSCONTENT3 + "&"
+            +"page_size=" + ARGSCONTENT4;
+
+
+    public static final String MINE_WORK_CUSTOMER_ORDER_DAY = HOST
+            +"mobile.php?act=order_of_salesmen_users" + "&"
+            +"mode=test" + "&"
+            +"user_id=" + ARGSCONTENT1 + "&"
+            +"date_field=" + ARGSCONTENT2;
+
+    public static final String ABOUT_US = HOST
+            +"mobile.php?act=about";
+
 }

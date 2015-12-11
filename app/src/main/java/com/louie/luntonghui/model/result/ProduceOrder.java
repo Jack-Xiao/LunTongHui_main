@@ -6,6 +6,8 @@ import java.util.List;
  * Created by Administrator on 2015/7/8.
  */
 public class ProduceOrder {
+    public static final String CAN_USE_INTEGRAL = "1";
+    public static final String CAN_NOT_INTEGRAL = "0";
     /**
      * shipping_list : []
      * total : {"bonus_formated":"0.00","gysmoney":20,"shipping_insure":0,"goods_price":242,"bonus":0,"discount":121,"goods_price_formated":"242.00","market_price_formated":"498.06","surplus_formated":"0.00","card_fee":0,"tax_formated":"0.00","payable":242,"integral":0,"amount_formated":"121.00","save_rate":"51%","gift_amount":0,"cod_fee":0,"pack_fee":0,"amount":121,"discount_formated":"121.00","surplus":0,"will_get_integral":242,"will_get_bonus":"0.00","integral_money":0,"tax":0,"integral_formated":"0.00","shipping_insure_formated":"0.00","pay_fee_formated":"0.00","formated_market_price":"498.06","card_fee_formated":"0.00","formated_goods_price":"242.00","saving_formated":"256.06","shipping_fee":0,"saving":256.06,"formated_saving":"256.06","pack_fee_formated":"0.00","real_goods_count":2,"shipping_fee_formated":"0.00","availableintegral":24200,"market_price":498.06,"pay_fee":0,"ratio":"可用的轮通币为7457,可抵74.57元"}
@@ -112,6 +114,8 @@ public class ProduceOrder {
         public String gift;
         public String prompt;
         public String discounts;
+
+        public String integral_control; // 限制使用积分，1 = 不显示。 0 = 显示
     }
 
     public static class ConsigneeEntity {
@@ -224,6 +228,8 @@ public class ProduceOrder {
         public String goods_thumb;
         public String market_price;
         public String guige;
+
+        public String orderid;
     } /**
 
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.louie.luntonghui">
+    package="com.louie.luntonghui"
+    >
 
     <!-- 这个权限用于进行网络定位-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -113,6 +114,7 @@
         android:icon="@mipmap/logo_new"
         android:label="@string/app_name"
         android:theme="@style/LunTongHui"
+        android:installLocation="preferExternal"
         android:windowSoftInputMode="stateHidden">
 
 
@@ -175,6 +177,7 @@
         <activity
             android:name=".ui.register.RegisterLogin"
             android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.mine.MineReceiverAddressActivity"
@@ -184,7 +187,6 @@
             android:name=".ui.mine.MineAdditionAddressActivity"
             android:configChanges="orientation|keyboardHidden"
             android:windowSoftInputMode="stateHidden"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
         <activity
@@ -495,6 +497,11 @@
             android:taskAffinity="android.task.myServicetask"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
+        <activity android:name=".ui.mine.FeedbackActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"/>
+
+
         <receiver
             android:name="com.igexin.getuiext.service.PayloadReceiver"
             android:exported="false">
@@ -513,6 +520,63 @@
             android:name=".ui.extra.WebViewActivity"
             android:configChanges="orientation|keyboard|keyboardHidden" />
 
-    </application>
+        <service
+            android:name="com.umeng.update.net.DownloadingService"
+            android:process=":DownloadingService" >
+        </service>
+        <activity
+            android:name="com.umeng.update.UpdateDialogActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+        
+        <activity android:name="com.umeng.fb.ConversationActivity"/>
+        <activity android:name=".ui.register.wx.WxLoginActivity"/>
+        <activity android:name=".ui.register.wx.WxUniteActivity"/>
+        <activity android:name=".ui.register.wx.FillInfoActivity"/>
 
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:noHistory="true"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="tencent1104755935" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.tencent.connect.common.AssistActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+
+        <activity android:name=".ui.Home.TogetherGroupActivity"/>
+        <activity android:name=".wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop"/>
+
+        <activity android:name=".ui.Home.WebTogetherGroupActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".ui.Home.TogetherGroupActivit1"/>
+
+        <activity android:name=".ui.Home.WebActivity"/>
+
+        <activity
+            android:name="com.alipay.sdk.app.H5PayActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="adjustResize|stateHidden">
+        </activity>
+
+        <activity android:name=".ui.mine.MineService.MineWorkCustomerOrderListActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"/>
+
+        <!--<activity
+            android:name="com.alipay.sdk.auth.AuthActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind" />-->
+    </application>
 </manifest>

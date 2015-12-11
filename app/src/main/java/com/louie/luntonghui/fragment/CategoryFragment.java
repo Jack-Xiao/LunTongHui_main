@@ -152,7 +152,7 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
                         //App.mGoods_list = goodsLists;
                         for (int i = 0; i < goodsLists.size(); i++) {
                             categoryList.add(goodsList.goods_list.get(i).name);
-                            if (fastQuery && queryContent.equals(goodsList.goods_list.get(i).name)) {
+                            if (fastQuery && queryContent.equals(goodsList.goods_list.get(i).id)) {
                                 INITCATEGORYITEM = i;
                             }
                         }
@@ -267,7 +267,6 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
         firstRun = true;
         INITCATEGORYITEM = DefaultShared.getInt(Config.LAST_SELECT_CATEGORY_ITEM, currentItem);
         initValue();
-
     }
 
     private void parserArgument() {
@@ -282,12 +281,11 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
 
     private void initValue() {
         categoryList = new ArrayList<>();
-        //goodsLists = App.mGoods_list;
 
         String cityId = DefaultShared.getString(CITYID, DEFAULT_CITYID);
         String userType = DefaultShared.getString(USER_TYPE, USER_DEFAULT);
         String version = Config.getCurrentVersion() + "";
-        String url = String.format(ConstantURL.GOODS_LIST, cityId, userType, version);
+        String url = String.format(ConstantURL.GOODS_LIST, cityId, userType, version,userId);
 
         String tempArg = "";
         if (DefaultShared.getString(USER_TYPE, USER_DEFAULT).equals(USER_WHOLESALER)) {
@@ -329,6 +327,7 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
         mDetailAdapter = new GoodsDetailAdapter(getActivity(), goods_list1);
         mHomeAdapter.setBackground(position);
         mGoodDetail.setAdapter(mDetailAdapter);
+
         if(firstRun){
             scrollTop = DefaultShared.getInt(SCROLL_LOCATION, INIT_SCROLL);
             scrollPos = DefaultShared.getInt(SCROLL_RPOS_LOCATION,INIT_SCROLL);
@@ -337,6 +336,7 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
 
         DefaultShared.putInt(Config.LAST_SELECT_CATEGORY_ITEM, currentItem);
         firstRun = false;
+        mGoodList.smoothScrollToPositionFromTop(position, 0);
     }
 
     @Override

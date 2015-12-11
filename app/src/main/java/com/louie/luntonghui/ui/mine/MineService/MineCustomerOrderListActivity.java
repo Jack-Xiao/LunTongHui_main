@@ -2,7 +2,6 @@ package com.louie.luntonghui.ui.mine.MineService;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -11,7 +10,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
 import com.android.volley.Response;
 import com.louie.luntonghui.R;
@@ -36,7 +34,6 @@ import butterknife.OnClick;
  * Created by Jack on 15/7/30.
  */
 public class MineCustomerOrderListActivity extends BaseNormalActivity {
-
     @InjectView(R.id.toolbar_navigation)
     ImageView toolbarNavigation;
     @InjectView(R.id.toolbar_title)
@@ -54,7 +51,7 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
     private MineCustomerOrderListActivity mContext;
     private MineCustomerOrderListAdapter mAdapter;
     private View footView;
-    private static final int loadingDataCount = 40;
+    public static final int loadingDataCount = 40;
     private int currentNeedLoadPosition = 40;
     private int index;
     public int totalCount;
@@ -70,7 +67,7 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
 
         mAdapter = new MineCustomerOrderListAdapter(mContext);
 
-        footView = LayoutInflater.from(mContext).inflate(R.layout.footer, null);
+        footView = LayoutInflater.from(mContext).inflate(R.layout.view_footer, null);
         listView.setAdapter(mAdapter);
 
         onClickTodayOrder();
@@ -83,9 +80,8 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
                     int last = view.getLastVisiblePosition();
                     //ToastUtil.showShortToast(mContext, "正在加载..");
 
-                    Log.d("currentNeedLo,,", last + "...state : . . .");
                     //if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-                    if ( last == totalCount -1 ) {
+                    if (last == totalCount -1) {
                         ToastUtil.showShortToast(mContext, R.string.loading_the_end);
                         return;
                     }
@@ -96,6 +92,7 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
 
                         if (adapterCnt == last) {
                             //if(last>= adapterCnt && footView.getVisibility() == View.VISIBLE){
+                            listView.addFooterView(footView);
                             loadData();
                         }
                     }
@@ -105,7 +102,7 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 //currentNeedLoadPosition = totalItemCount - 1;
-                Log.d("currentNeedLo,,", totalItemCount + "  ");
+                //Log.d("currentNeedLo,,", totalItemCount + "  ");
                 //if(currentNeedLoadPosition ==  )
             }
         });
@@ -125,22 +122,19 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
                     @Override
                     protected void onPreExecute() {
                        // footView.setVisibility(View.VISIBLE);
+                        super.onPreExecute();
                         progress.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     protected List<MineServiceOrderTable> doInBackground(Object... params) {
                         List<MineServiceOrderTable>  list = new ArrayList<MineServiceOrderTable>();
-                        //List<MineServiceOrderTable> list1= new ArrayList<MineServiceOrderTable>();
                         if (mineServiceOrderListResult != null && mineServiceOrderListResult.mysalelist
                                 != null && mineServiceOrderListResult.mysalelist.size() > 0) {
 
                             try {
-                                ActiveAndroid.beginTransaction();
-
                                 MineServiceOrderListResult.MysalelistEntity result;
                                 for (int i = 0; i < mineServiceOrderListResult.mysalelist.size(); i++) {
-                                    Log.d("current size ", mineServiceOrderListResult.mysalelist.size() + "--> " + i);
                                     result = mineServiceOrderListResult.mysalelist.get(i);
                                     MineServiceOrderTable order = new MineServiceOrderTable();
                                     order.allowToModify = result.allow_to_modify;
@@ -159,9 +153,8 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
                                     order.save();
                                     list.add(order);
                                 }
-                                ActiveAndroid.setTransactionSuccessful();
                             } finally {
-                                ActiveAndroid.endTransaction();
+
                             }
                         }
                         return list;
@@ -169,6 +162,8 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
 
                     @Override
                     protected void onPostExecute(List<MineServiceOrderTable> list) {
+                        super.onPostExecute(list);
+                        //listView.removeFooterView(footView);
                         footView.setVisibility(View.GONE);
                         progress.setVisibility(View.GONE);
                         if (list != null && list.size() > 0) {
@@ -203,7 +198,6 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
         index = 3;
         resetNatFontColor(index);
         queryData(index);
-
     }
 
     private void queryData(int index) {
@@ -231,7 +225,6 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
                     }
                     @Override
                     protected List<MineServiceOrderTable> doInBackground(Object... params) {
-
                         list = new ArrayList<>();
                         new Delete()
                                 .from(MineServiceOrderTable.class)
@@ -239,8 +232,6 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
                         if (mineServiceOrderListResult != null && mineServiceOrderListResult.mysalelist
                                 != null && mineServiceOrderListResult.mysalelist.size() > 0) {
                             try {
-                                ActiveAndroid.beginTransaction();
-
                                 MineServiceOrderListResult.MysalelistEntity result;
                                 for (int i = 0; i < mineServiceOrderListResult.mysalelist.size(); i++) {
                                     result = mineServiceOrderListResult.mysalelist.get(i);
@@ -261,9 +252,7 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
                                     order.save();
                                     list.add(order);
                                 }
-                                ActiveAndroid.setTransactionSuccessful();
                             } finally {
-                                ActiveAndroid.endTransaction();
                             }
                         }
                         return list;
@@ -279,11 +268,8 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
                         mAdapter.setData(list);
                     }
                 });
-
             }
         };
-
-
     }
 
     public void resetNatFontColor(int index) {
@@ -301,6 +287,7 @@ public class MineCustomerOrderListActivity extends BaseNormalActivity {
             customerTotalOrder.setTextColor(getResources().getColor(R.color.order_font_choose));
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();

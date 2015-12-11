@@ -173,5 +173,4 @@ public class LoopPagerAdapterWrapper extends PagerAdapter {
             this.object = object;
         }
     }
-
 }

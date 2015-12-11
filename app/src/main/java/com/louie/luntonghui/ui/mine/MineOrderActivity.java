@@ -13,7 +13,6 @@ public class MineOrderActivity extends SecondLevelBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override

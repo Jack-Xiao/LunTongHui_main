@@ -36,7 +36,6 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
         if(childView instanceof ImageView || childView instanceof Button){
             return false;
         }
-        int test = childView.getId();
         if(childView !=null && mListener !=null && mGestureDector.onTouchEvent(e)){
             mListener.OnItemClick(childView,rv.getChildAdapterPosition(childView));
             return true;

@@ -26,7 +26,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.android.volley.VolleyError;
@@ -121,6 +120,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
     @InjectView(R.id.tv_empty_Car)
     TextView tvEmptyCar;
 
+    @Optional
     @InjectView(R.id.logo_anim)
     ImageView logoAnim;
 
@@ -283,7 +283,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
             if(logoAnim !=null)logoAnim.setVisibility(View.VISIBLE);
             animationDrawable.start();
         }
-        mRecyclerView.setVisibility(View.GONE);
+        if(mRecyclerView !=null)mRecyclerView.setVisibility(View.GONE);
         String url = String.format(ConstantURL.GET_CAR_LIST, userId);
         RequestManager.addRequest(new GsonRequest(url, CarList.class, getCarListListener(), errorListener()), this);
     }
@@ -308,7 +308,6 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
                         List<ShoppingCar> data = new ArrayList<ShoppingCar>();
                         if(carList !=null && carList.goods_list !=null) {
                             try {
-                                ActiveAndroid.beginTransaction();
                                 for (int i = 0; i < carList.goods_list.size(); i++) {
                                     ShoppingCar car = new ShoppingCar();
                                     car.carId = carList.goods_list.get(i).rec_id;
@@ -327,11 +326,9 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
                                     isInsertSuccess = true;
                                     data.add(car);
                                 }
-                                ActiveAndroid.setTransactionSuccessful();
                             }catch(Exception e){
                                 dbOperFial = e.getStackTrace().toString();
                             }finally {
-                                ActiveAndroid.endTransaction();
                             }
                         }
                         return data;

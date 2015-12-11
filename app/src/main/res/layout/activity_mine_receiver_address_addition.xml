@@ -33,6 +33,7 @@
                 android:paddingTop="10dp">
 
                 <TextView
+                    android:textSize="14sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/address_consignee" />
@@ -53,6 +54,7 @@
                 android:paddingTop="10dp">
 
                 <TextView
+                    android:textSize="14sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -82,6 +84,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:textSize="14sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/city_place" />
@@ -153,6 +156,7 @@
                 android:paddingTop="10dp">
 
                 <TextView
+                    android:textSize="14sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/street_place" />

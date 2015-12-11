@@ -274,7 +274,7 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
         int size=new Select()
                 .from(Address.class)
                 .execute().size();
-        if(size == 0 && intSelect==0){
+        if(size == 0 && intSelect == 0){
             ToastUtil.showShortToast(mContext,R.string.select_default_address);
             return;
         }

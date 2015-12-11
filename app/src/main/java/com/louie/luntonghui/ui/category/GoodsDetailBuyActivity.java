@@ -3,6 +3,7 @@ package com.louie.luntonghui.ui.category;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -28,7 +29,6 @@ import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.ShowCarListEvent;
 import com.louie.luntonghui.model.db.AttentionGoods;
-import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.GoodsDetail;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.AddGoodsResult;
@@ -137,7 +137,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
     private String goodsId;
 
     private GoodsDetail mGoods;
-    private List<DetailItem.ListallcatEntity.Bought_goodsEntity> goodsBoughtList;
+    private List<DetailItem.ListallcatEntity.BoughtGoodsEntity> goodsBoughtList;
     //private ShowGoodsAdapter mAdapter;
     private ImageView[] indicator_imgs;
     private ImageView goodsPicture;
@@ -178,7 +178,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         String goodsId = bundle.getString(GOODSDETAILID);
         String userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
         mGoodsId = goodsId;
-        String url = String.format(ConstantURL.GOODS_DETAIL_ITEM, goodsId, cityId, userType);
+        String url = String.format(ConstantURL.GOODS_DETAIL_ITEM, goodsId, cityId, userType,userId);
 
         initView();
         initBadgeView();
@@ -318,18 +318,11 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                             currentGoodsDetail = goods;
 
                             String goodsId = goods.goodsId;
-                            List<Goods> list = new Select()
+                           /* List<Goods> list = new Select()
                                     .from(Goods.class)
                                     .where("goods_id=?", goodsId)
-                                    .execute();
+                                    .execute();*/
 
-                            /*if (list != null) {
-                                if (list.size() > 0 && list.get(0).goodsAttention != null && list.get(0).goodsAttention.equals(Goods.GOODS_ATTENTION)) {
-                                    attention.setImageResource(R.drawable.product_attention);
-                                } else {
-                                    attention.setImageResource(R.drawable.product_cancel_attention);
-                                }
-                            }*/
 
                             mCar = new Select()
                                     .from(ShoppingCar.class)
@@ -344,9 +337,9 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                             mGoods = goods;
                             goodsName.setText(goods.goodsName);
                             goodsStandardValue.setText(goods.guiGe);
-                            marketpPrice.setText("￥" + goods.marketPrice + "/个");
+                            marketpPrice.setText("￥" + goods.marketPrice + "/" + goods.danwei);
                             marketpPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                            shopPrice.setText("￥" + goods.shopPrice + "/个");
+                            shopPrice.setText("￥" + goods.shopPrice + "/" + goods.danwei);
                             if (goods.hasPromotion.equals(GoodsDetail.HASPROMOTION)) {
                                 lineSalesPromotion.setVisibility(View.VISIBLE);
                                 salesPromotionValue.setText(goods.promotionName);
@@ -383,7 +376,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                                 goods.goodsDesc = listallcat.get(i).goods_desc;
                                 goods.hasPromotion = listallcat.get(i).discounta;
                                 goods.promotionName = listallcat.get(i).discount_name;
-
+                                goods.danwei = listallcat.get(i).danwei;
                                 goods.save();
                                 goodses.add(goods);
 
@@ -476,7 +469,6 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
     public void onAttentation(View vi) {
 
         toast = Toast.makeText(mContext, "", Toast.LENGTH_SHORT);
-
 
         toast.setGravity(Gravity.CENTER, 0, 0);
         if (attentionGoodsMap.keySet().contains(mGoodsId)) {
@@ -681,5 +673,20 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         startActivity(intent);
         App.getBusInstance().post(new ShowCarListEvent());
         finish();
+    }
+
+    @OnClick(R.id.tel_phone)
+    public void onTelPhone(){
+        try {
+            String servicePhone = getResources().getString(R.string.service_phone);
+
+            servicePhone = servicePhone.replace("-", "");
+            Uri uri = Uri.parse("tel:" + servicePhone);
+            Intent call = new Intent(Intent.ACTION_CALL, uri);
+            startActivity(call);
+        } catch (Exception e) {
+            //存在双卡的问题 等待android 5.1 修复.
+            //ToastUtil.showShortToast(mContext,);
+        }
     }
 }

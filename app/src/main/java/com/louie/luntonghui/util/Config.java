@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import com.louie.luntonghui.App;
+import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.ui.register.RegisterStep1Activity;
 
 import org.json.JSONException;
@@ -105,6 +106,23 @@ public class Config {
     public static final int MAIN_PERSON_SEQUENCE = 2;
     public static final int MAIN_CART_SEQUENCE = 3;
     public static final int MAIN_ORDER_SEQUENCE = 4;
+
+    public static final String WX_APPID = "wx1a571eb93ba085a4";
+    public static final String WX_SECRET = "dfd4840625cab3b15abdd1f9553b7418";
+
+    public static final String QQ_APPID = "1104755935";
+    public static final String QQ_KEY = "JUBd6HfqhpShIMsJ";
+    //微信支付商户号
+    public static final String WX_MCH_ID = "1286241901";
+    //api 密钥
+    public static final String WX_API_KEY = "bskp473do64ngs303co2pnqlovej9nj5";
+
+    //aliPID
+    public static final String ALI_PID = "2088711808465682";
+    //ali key
+    public static final String ALI_KEY = "vdjtux4pzdfunovqppt8nd4cxiao55nh";
+
+    public static final String FACTORY_ID = "378";
 
 
 
@@ -380,7 +398,7 @@ public class Config {
             while (keyIter.hasNext()){
                 key = keyIter.next();
                 value = jsonObject.get(key).toString();
-                valueMap.put(key,value);
+                valueMap.put(key, value);
             }
             return valueMap;
         } catch (JSONException e) {
@@ -388,4 +406,10 @@ public class Config {
         }
         return null;
     }
+
+    public static String getUserId(){
+        String userId = DefaultShared.getString(RegisterLogin.USERUID,RegisterLogin.DEFAULT_USER_ID);
+        return userId;
+    }
+
 }

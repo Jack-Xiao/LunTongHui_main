@@ -130,6 +130,9 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
     @InjectView(R.id.coupon_value)
     TextView couponValue;
 
+    @InjectView(R.id.integral_control_relative)
+    RelativeLayout integralControl;
+
     public static final int DEFAULT_ADDRESS_ID = 0;
     private int addressId = DEFAULT_ADDRESS_ID;
     private static final int REQUESTCODE = 0x1;
@@ -171,7 +174,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         //最大字符数
         userFeedback.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
 
-        view = getLayoutInflater().inflate(R.layout.commit_order,null);
+        view = getLayoutInflater().inflate(R.layout.commit_order, null);
         toast = Toast.makeText(mContext, "", Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.setView(view);
@@ -235,6 +238,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
             phoneNumber.setText(strPhoneNumber);
             regionDetail.setText(province + city + district + addressDetail);
         }else if(requestCode == REQUEST_ADD && resultCode == RESULT_OK){
+            fillAddress = false;
             initAddress();
             String provinceId = data.getStringExtra(MineAdditionAddressActivity.PROVINCE_ID);
             String cityId = data.getStringExtra(MineAdditionAddressActivity.CITY_ID);
@@ -387,6 +391,12 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                     phoneNumber.setVisibility(View.GONE);
                     regionDetail.setVisibility(View.GONE);
                     addressSelectMore.setVisibility(View.GONE);
+                }
+
+                if(produceOrder.total.integral_control.equals(ProduceOrder.CAN_NOT_INTEGRAL)){
+                    integralControl.setVisibility(View.VISIBLE);
+                }else{
+                    integralControl.setVisibility(View.GONE);
                 }
 
                 mAdapter.setData(produceOrder.cart_goods, false);

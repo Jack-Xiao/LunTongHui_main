@@ -24,6 +24,8 @@ import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.DailySignIn;
 import com.louie.luntonghui.net.RequestManager;
+import com.louie.luntonghui.ui.Home.WebActivity;
+import com.louie.luntonghui.ui.mine.FeedbackActivity;
 import com.louie.luntonghui.ui.mine.MineAttentionActivity;
 import com.louie.luntonghui.ui.mine.MineReceiverAddressActivity;
 import com.louie.luntonghui.ui.mine.MineService.MineServiceProviderActivity;
@@ -37,10 +39,16 @@ import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
+import com.umeng.fb.FeedbackAgent;
+import com.umeng.fb.model.UserInfo;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 /**
  * Created by Administrator on 2015/7/7.
@@ -48,18 +56,25 @@ import butterknife.OnClick;
 public class MineFragment1 extends BaseFragment {
     @InjectView(R.id.toolbar_set)
     ImageView toolbarSet;
+
     @InjectView(R.id.toolbar_list)
     ImageView toolbarList;
     /*    @InjectView(R.id.user_image)
         CircleImageView userImage;*/
     @InjectView(R.id.username)
     TextView username;
+
+    @Optional
     @InjectView(R.id.phone_number)
     TextView phoneNumber;
+
     @InjectView(R.id.custom_type)
     TextView customType;
+
     @InjectView(R.id.luntong_money)
     TextView luntongMoney;
+
+    @Optional
     @InjectView(R.id.status_name)
     TextView statusName;
     @InjectView(R.id.status_value)
@@ -77,23 +92,35 @@ public class MineFragment1 extends BaseFragment {
     TextView mineHasCancel;
     @InjectView(R.id.mine_whole_order)
     TextView mineWholeOrder;
+
     @InjectView(R.id.mine_attention)
     RelativeLayout mineAttention;
+
     @InjectView(R.id.mine_address_manager)
     RelativeLayout mineAddressManager;
     @InjectView(R.id.mine_service_info)
     RelativeLayout mineServiceInfo;
+
     @InjectView(R.id.signin_songlungtobi)
     TextView signinSonglungtobi;
-    @InjectView(R.id.signin_value)
-    TextView signinValue;
+
+    @Optional
     @InjectView(R.id.lin_sign_in)
     FrameLayout linSignIn;
+
     @InjectView(R.id.service_phone_number)
     TextView servicePhoneNumber;
+
     @InjectView(R.id.mine_work)
     RelativeLayout mineWork;
+
     private Context mContext;
+
+    @InjectView(R.id.mine_user_main_image)
+    RelativeLayout mineUserMainImage;
+
+    @InjectView(R.id.mine_new_service)
+    RelativeLayout mRelativeMineNewService;
 
     private String mUid;
     private String mCustomType;
@@ -105,6 +132,7 @@ public class MineFragment1 extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String[] customType = getResources().getStringArray(R.array.custom_type);
+
         mUid = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
         userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.DEFAULT_USER_ID);
         if (!userType.equals(RegisterLogin.DEFAULT_USER_ID)){
@@ -120,7 +148,7 @@ public class MineFragment1 extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View contentView = inflater.inflate(R.layout.fragment_mine, null);
+        View contentView = inflater.inflate(R.layout.fragment_mine_new, null);
 
         ButterKnife.inject(this, contentView);
         mContext = getActivity();
@@ -130,9 +158,12 @@ public class MineFragment1 extends BaseFragment {
         queryData();
         if (userType.equals(RegisterLogin.USER_SERVICE)) {
             toolbarList.setVisibility(View.VISIBLE);
+            mRelativeMineNewService.setVisibility(View.VISIBLE);
         } else {
+            mRelativeMineNewService.setVisibility(View.GONE);
             toolbarList.setVisibility(View.GONE);
         }
+
         if(employeeType.equals(User.ISEMPLOYEE)){
             mineWork.setVisibility(View.VISIBLE);
         }else{
@@ -150,11 +181,20 @@ public class MineFragment1 extends BaseFragment {
         //signInSendMoney.setEnabled(!isSingIn);
     }
 
-    @OnClick(R.id.signin_value)
-    public void onSignValue() {
+    @OnClick(R.id.mine_feedback)
+    public void onClickFeedback(){
+        FeedbackAgent agent = new FeedbackAgent(mContext);
+        UserInfo info = agent.getUserInfo();
+        if(info == null) info = new UserInfo();
+        Map<String,String> contact = info.getContact();
+        if(contact == null)
+            contact = new HashMap<>();
 
+        //String contact_info = con
+        //agent.startFeedbackActivity();
+        //getActivity().startActivity();
+        IntentUtil.startActivity(getActivity(), FeedbackActivity.class);
     }
-
 
     private void queryData() {
         TaskUtils.executeAsyncTask(new AsyncTask<Void, Void, User>() {
@@ -172,11 +212,11 @@ public class MineFragment1 extends BaseFragment {
             protected void onPostExecute(User user) {
                 if (user == null) return;
                 if (username == null) return;
-                username.setText("用户名:" + user.username);
+                username.setText(user.username);
                 String orgMobilePhone = user.mobilePhone;
-                String codeMobilePhone = orgMobilePhone.substring(0,3) + "****" + orgMobilePhone.substring(7,orgMobilePhone.length());
-                phoneNumber.setText("手机号:" + codeMobilePhone);
-                customType.setText("类型:" + mCustomType);
+                String codeMobilePhone = orgMobilePhone.substring(0, 3) + "****" + orgMobilePhone.substring(7, orgMobilePhone.length());
+                //phoneNumber.setText("手机号:" + codeMobilePhone);
+                customType.setText(mCustomType);
                 luntongMoney.setText(user.integral);
                 //statusValue.setText(user.integral);
                 statusValue.setText(0 + "");
@@ -220,9 +260,20 @@ public class MineFragment1 extends BaseFragment {
         IntentUtil.startActivity(getActivity(), SettingActivity.class);
     }
 
-    @OnClick(R.id.signin_value)
+    /*@OnClick(R.id.signin_value)
     public void onSignIn() {
         //ToastUtil.showShortToast(getActivity(),);
+        boolean isSingIn = Config.isSignIn();
+        if (isSingIn) return;
+        mProgressDialog.show();
+        String userId = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
+        String url = String.format(ConstantURL.DAILY_SIGN_IN, userId, Config.SEND_SIGN_IN);
+        RequestManager.addRequest(new GsonRequest(url, DailySignIn.class, singInRespose(),
+                errorListener()), this);
+    }*/
+
+    @OnClick(R.id.signin_songlungtobi)
+    public void onSignIn(){
         boolean isSingIn = Config.isSignIn();
         if (isSingIn) return;
         mProgressDialog.show();
@@ -233,9 +284,16 @@ public class MineFragment1 extends BaseFragment {
     }
 
     public void signIn() {
-        signinValue.setBackgroundResource(R.drawable.not_sign_in);
-        signinSonglungtobi.setText(R.string.has_signin);
-        signinSonglungtobi.setBackgroundResource(R.drawable.has_signin_background);
+        //signinValue.setBackgroundResource(R.drawable.not_sign_in);
+        signinSonglungtobi.setText("已签到");
+
+        //signinSonglungtobi.setVisibility(View.GONE);
+        //LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                   // ViewGroup.LayoutParams.MATCH_PARENT,0,1);
+        //layoutParams.setMargins(0,30,0,0);
+        //mineUserMainImage.setLayoutParams(layoutParams);
+        //signinSonglungtobi.setText(R.string.has_signin);
+        //signinSonglungtobi.setBackgroundResource(R.drawable.has_signin_background);
     }
 
 
@@ -299,7 +357,7 @@ public class MineFragment1 extends BaseFragment {
         }
     }
 
-    @OnClick(R.id.toolbar_list)
+    @OnClick({R.id.toolbar_list,R.id.mine_new_service})
     public void onClickMineCustomerList() {
         IntentUtil.startActivity(getActivity(), MineServiceProviderActivity.class);
     }
@@ -352,5 +410,13 @@ public class MineFragment1 extends BaseFragment {
     @OnClick(R.id.user_image)
     public void onClickUserImage(){
         IntentUtil.startActivity(getActivity(), MineCouponActivity.class);
+    }
+
+    @OnClick(R.id.mine_group)
+    public void onClickGroup(){
+        String url = String.format(ConstantURL.MINE_TUAN,userId);
+        Bundle bundle = new Bundle();
+        bundle.putString(WebActivity.WEB_URL,url);
+        IntentUtil.startActivity(getActivity(),WebActivity.class,bundle);
     }
 }

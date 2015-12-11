@@ -21,6 +21,8 @@ import com.louie.luntonghui.model.result.VersionUpdate;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.task.UpdateVersionTask;
 import com.louie.luntonghui.ui.BaseNormalActivity;
+import com.louie.luntonghui.ui.Home.WebActivity;
+import com.louie.luntonghui.ui.Home.WebWithControlActivity;
 import com.louie.luntonghui.ui.register.RegisterHome;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.BaseAlertDialogUtil;
@@ -31,6 +33,7 @@ import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.MyAlertDialogUtil;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
@@ -230,9 +233,22 @@ public class SettingActivity extends BaseNormalActivity implements MyAlertDialog
     @OnClick(R.id.clean_cache)
     public void onClickCleanCache(){
         mProgressDialog.show();
+        ImageLoader.getInstance().clearDiskCache();
+        ImageLoader.getInstance().clearMemoryCache();
+
         DataCleanManager.cleanInternalCache(this);
         //cacheValue.setText("0 K");
         initCacheValue();
         mProgressDialog.dismiss();
+    }
+
+    @OnClick(R.id.about_us)
+    public void onClickAboutUs(){
+        Bundle bundle = new Bundle();
+        bundle.putString(WebWithControlActivity.TITLE,"关于我们");
+
+        String url = ConstantURL.ABOUT_US;
+        bundle.putString(WebActivity.WEB_URL,url);
+        IntentUtil.startActivity(SettingActivity.this, WebActivity.class, bundle);
     }
 }

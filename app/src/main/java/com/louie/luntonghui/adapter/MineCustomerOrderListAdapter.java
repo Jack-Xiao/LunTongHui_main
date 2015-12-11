@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.louie.luntonghui.R;
@@ -74,18 +75,21 @@ public class MineCustomerOrderListAdapter extends BaseAdapter {
             viewHolder.tvServiceCost = (TextView) convertView.findViewById(R.id.service_cost_value);
             viewHolder.tvState = (TextView)convertView.findViewById(R.id.tv_order_state);
             viewHolder.btnChat = (Button)convertView.findViewById(R.id.btn_look_over);
+            viewHolder.servicePay = (LinearLayout)convertView.findViewById(R.id.service_pay);
 
             convertView.setTag(viewHolder);
         }else{
             viewHolder = (ViewHolder)convertView.getTag();
         }
+
+        viewHolder.servicePay.setVisibility(View.VISIBLE);
         viewHolder.tvSerialNumber.setText(data.get(position).orderSn);
         viewHolder.tvAccount.setText(data.get(position).userName +" ( " + data.get(position).mobilePhone + " )");
         viewHolder.tvMoney.setText("￥" + data.get(position).orderAmount);
         viewHolder.tvServiceCost.setText("￥" + data.get(position).serviceFee);
         viewHolder.btnChat.setTag(position);
         viewHolder.btnChat.setOnClickListener(mListener);
-        int index = Integer.parseInt(data.get(position).handler)  -1;
+        int index = Integer.parseInt(data.get(position).handler) - 1;
         viewHolder.tvState.setText(orderStates[index]);
 
     return  convertView;
@@ -102,7 +106,6 @@ public class MineCustomerOrderListAdapter extends BaseAdapter {
             bundle.putInt(Order.QUERY_TYPE, Order.SERVICE_TYPE);
             bundle.putString(Order.USER_ID,data.get(position).userId);
             IntentUtil.startActivity(mContext, DetailOrderActivity.class, bundle);
-
         }
     };
 
@@ -113,6 +116,7 @@ public class MineCustomerOrderListAdapter extends BaseAdapter {
         TextView tvServiceCost;
         TextView tvState;
         Button btnChat;
+        LinearLayout servicePay;
 
     }
 }

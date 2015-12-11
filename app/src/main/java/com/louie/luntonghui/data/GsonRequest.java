@@ -10,6 +10,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.louie.luntonghui.BuildConfig;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -52,6 +53,9 @@ public class GsonRequest<T> extends Request<T> {
         try{
             mListener.onResponse(response);
         }catch (Exception e){
+            if(BuildConfig.DEBUG) {
+                //Log.d("GsonRequest", e == null ? "" : e.getMessage());
+            }
         }
     }
 

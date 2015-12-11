@@ -2,7 +2,6 @@ package com.louie.luntonghui.adapter;
 
 import android.content.Context;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,6 +100,7 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
             viewHolder.present = (TextView)convertView.findViewById(R.id.present);
             viewHolder.discount = (TextView)convertView.findViewById(R.id.discount);
             viewHolder.prim = (TextView)convertView.findViewById(R.id.prim);
+            viewHolder.mTeJia = (ImageView)convertView.findViewById(R.id.tiejia);
 
             convertView.setTag(viewHolder);
         }else{
@@ -153,22 +153,23 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
         viewHolder.prim.setVisibility(View.GONE);
         viewHolder.discount.setVisibility(View.GONE);
         viewHolder.present.setVisibility(View.GONE);
+        viewHolder.mTeJia.setVisibility(View.GONE);
 
         String birary = Integer.toBinaryString(discountType);
         if(discountType !=0) {
             for(int i =birary.length() -1;i>=0;i--){
                if(i== birary.length() -1){
-                   Log.d("length ", birary.substring(birary.length()-1) + "-1");
-                   if(birary.substring(birary.length()-1).equals("1"))
+                   if(birary.substring(birary.length()-1).equals("1")){
                        viewHolder.discount.setVisibility(View.VISIBLE);
+                       viewHolder.mTeJia.setVisibility(View.VISIBLE);
+                   }
                }else if(i == birary.length() -2){
-                   Log.d("length ",birary.substring(birary.length()-2,birary.length() -1) + "-2");
                    if(birary.substring(birary.length()-2,birary.length() -1).equals("1"))
                     viewHolder.present.setVisibility(View.VISIBLE);
                }else{
-                   Log.d("length ", birary.substring(i,i+1) + "-3");
                    if(birary.substring(i,i+1).equals("1")){
                        viewHolder.prim.setVisibility(View.VISIBLE);
+                       viewHolder.mTeJia.setVisibility(View.VISIBLE);
                        break;
                    }
                }
@@ -182,7 +183,6 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
         @Override
         public void onClick(View v) {
             isAdd = true;
-            Log.d("imgBuy.,", "mContext........  1 ");
 
             int position = Integer.parseInt(v.getTag().toString());
             curPosition = position;
@@ -270,6 +270,12 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
         notifyDataSetChanged();
     }
 
+    public void addData(List<Goods> goodses){
+        if(goodses ==null) return;
+        list.addAll(goodses);
+        notifyDataSetChanged();
+    }
+
     @Override
     public void reset(int count) {
         String goodsId = list.get(curPosition).goodsId;
@@ -312,6 +318,7 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
         TextView mShopPrice;
         TextView servicePrice;
         Button btnFastBuy;
+        ImageView mTeJia;
 
         TextView present;
         TextView discount;

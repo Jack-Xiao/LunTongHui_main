@@ -451,4 +451,18 @@
 
     <string name="account_manager">账号管理</string>
     <string name="change_password">密码修改</string>
+    
+    <string name="feedback">意见反馈</string>
+    <string name="submit_suggestion">提交意见</string>
+    
+    <string name="unit_login">联合登录</string>
+    <string name = "unit_info">为了给您更好的服务，请关联一个轮通惠账号</string>
+    <string name="unit_no_account">还没有轮通惠账号?</string>
+    <string name="quit_register">快速注册</string>
+
+    <string name="unit_has_account">已有轮通惠账号?</string>
+    <string name="right_now_unit">立即关联</string>
+    <string name="login_bind">登录绑定</string>
+    <string name="together_group">拼团</string>
+
    </resources>

@@ -17,15 +17,24 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
+import com.activeandroid.query.Update;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
+import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.ShowCarListEvent;
+import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.ShoppingCar;
+import com.louie.luntonghui.model.result.AddGoodsResult;
+import com.louie.luntonghui.model.result.Result;
+import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.BaseToolbarActivity;
 import com.louie.luntonghui.ui.MainActivity;
 import com.louie.luntonghui.ui.category.GoodsDetailActivity;
 import com.louie.luntonghui.ui.category.GoodsDetailBuyActivity;
 import com.louie.luntonghui.util.Config;
+import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.ToastUtil;
 
@@ -69,12 +78,12 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
         browser = (WebView)findViewById(R.id.web_view);
         progressBar = (ProgressBar)findViewById(R.id.progress_bar);
         progressBar.setMax(MAX);
-        App.getBusInstance().register(this);
+        //mAppBar.setVisibility(View.GONE);
 
+        App.getBusInstance().register(this);
 
         Bundle bundle = getIntent().getExtras();
         url = bundle.getString(URL);
-
 
         WebSettings settings = browser.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -106,10 +115,7 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
                 }
                 super.onProgressChanged(view, newProgress);
             }
-
-
         });
-
         browser.loadUrl(url);
     }
 
@@ -156,6 +162,7 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
 
         public BuyGoodsFromWebView(AdvertisementWebActivity context){
             this.mContext = context;
+            //init_cart();
         }
 
         @JavascriptInterface
@@ -183,7 +190,6 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
 
             adjustGoods(goodsName, goodsPrice, goodsUnit, goodsGuiGe, cureentCount + "");
 
-            //ToastUtil.showShortToast(mContext,goodsId);
         }
 
         @JavascriptInterface
@@ -228,14 +234,21 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
         }
 
         @JavascriptInterface
+        public void group(){
+            AdvertisementWebActivity.this.finish();
+        }
+
+
+        @JavascriptInterface
         public void goods_detail(String goodsId) {
             Bundle bundle = new Bundle();
             bundle.putString(GoodsDetailActivity.GOODSDETAILID, goodsId);
             IntentUtil.startActivity(mContext, GoodsDetailBuyActivity.class, bundle);
         }
 
-        //@JavascriptInterface
+        @JavascriptInterface
         public void current_cart_total_number(){
+
             List<ShoppingCar> list = new Select()
                     .from(ShoppingCar.class)
                     .execute();
@@ -245,14 +258,26 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
                 total += Integer.parseInt(cart.goodsNumber);
             }
 
-            String strTotal;
+            final String strTotal;
             if(total != 0){
                if(total > 99){
                    strTotal = "99+";
                }else{
                    strTotal = total +"";
                }
-                browser.loadUrl("javascript:current_cart_total_number('" + strTotal +"')");
+                browser.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        browser.loadUrl("javascript:current_cart_total_number('" + strTotal + "')");
+                    }
+                });
+            }else{
+                browser.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        browser.loadUrl("javascript:current_cart_total_number('" + 0 + "')");
+                    }
+                });
             }
         }
 
@@ -265,6 +290,8 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
         public void adjustGoods(String goodsName, String goodsPrice, String strUnit, String strGuige,
                                 String content) {
             //AlertDialogUtil.getInstance().show(mContext,CarFragmentAdapter.this, );
+
+            final String goodsId = mGoodsId;
 
             View contentView = LayoutInflater.from(mContext).inflate(R.layout.view_adjust_goods_number, null);
             ImageButton btnMinus = (ImageButton) contentView.findViewById(R.id.minus);
@@ -309,7 +336,7 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
                         return;
                     }
                     //notifyNumberChanged(holder, curResult[0], position, holder.checked.isChecked());
-
+                    notifyNumberChanged(goodsId,curResult[0]);
 
                     mMaterialDialog.dismiss();
                 }
@@ -363,36 +390,79 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
             });
         }
 
-        /*private void notifyNumberChanged(ViewHolder holder, int result, int position, final boolean isChecked) {
-            holder.strContent.setText(result + "");
+        private void notifyNumberChanged(String goodsId,int count) {
+            ShoppingCar car;
 
-            if (holder.strContent.getText().toString().equals("")) {
-                holder.strContent.setText("1");
-                return;
+            car = new Select()
+                    .from(ShoppingCar.class)
+                    .where("goods_id = ?",goodsId)
+                    .executeSingle();
+
+            if(car == null){
+                String url = String.format(ConstantURL.ADD_GOODS,userId,goodsId,count);
+                RequestManager.addRequest(new GsonRequest(url, AddGoodsResult.class,
+                        addGoodsListener(goodsId, count), errorListener()), this);
+            }else{
+                String carId = car.carId;
+
+                String url = String.format(ConstantURL.EDIT_GOODS,carId,userId,count);
+                RequestManager.addRequest(new GsonRequest(url,Result.class,
+                        editGoodsListener(carId,count),errorListener()),this);
             }
-
-            //holder.strContent.setSelection(holder.strContent.getText().length());
-            String recId = nativeCarList.get(position).carId;
-            String newNumber = holder.strContent.getText().toString();
-            //Result result = mApi.editCarGoods(recId,userId,newNumber);
-
-            String urlString = String.format(ConstantURL.EDIT_GOODS, recId, userId, newNumber);
-            RequestManager.addRequest(new GsonRequest(urlString,
-                    Result.class, editGoodsResponse(), errorListener()), this);
         }
 
-        private Response.Listener<Result> editGoodsResponse() {
-            return new Response.Listener<Result>() {
+        private Response.Listener<AddGoodsResult> addGoodsListener(final String goodsId,final int count) {
+            return new Response.Listener<AddGoodsResult>() {
                 @Override
-                public void onResponse(Result result) {
-                    if (result.rsgcode.equals(ConstantURL.SUCCESSCODE)) {
-                        // App.getBusInstance().post(new ReferenceCarList());
-                        refListen.reference(0);
-                    } else {
-                        ToastUtil.showShortToast(mContext, result.rsgmsg);
+                public void onResponse(AddGoodsResult result) {
+                    if(result.rsgcode.equals(ConstantURL.SUCCESSCODE)){
+                        ToastUtil.showShortToast(mContext, R.string.input_cart);
+                        new Update(Goods.class)
+                                .set("isChecked = ?",Goods.GOODS_IS_BUY)
+                                .where("goods_id=?",goodsId)
+                                .execute();
+
+                        ShoppingCar car = new ShoppingCar();
+                        car.goodsNumber = count + "";
+                        car.goodsId = goodsId;
+                        car.carId = result.cat_id;
+                        car.save();
+
+                        current_cart_total_number();
+                    }else{
+                        ToastUtil.showShortToast(mContext,result.rsgmsg);
                     }
                 }
             };
-        }*/
+        }
+
+        private Response.Listener<Result> editGoodsListener(final String carId,final int count) {
+            return new Response.Listener<Result>() {
+                @Override
+                public void onResponse(Result result) {
+                    if(result.rsgcode.equals(ConstantURL.SUCCESSCODE)){
+                        ToastUtil.showShortToast(mContext, R.string.edit_cart_success);
+                        new Update(ShoppingCar.class)
+                                .set("goods_number = ?", count)
+                                .where("car_id=?", carId)
+                                .execute();
+                        //mListener.referenceBadge();
+
+                        current_cart_total_number();
+                    }else{
+                        ToastUtil.showShortToast(mContext,result.rsgmsg);
+                    }
+                }
+            };
+        }
+
+        private Response.ErrorListener errorListener() {
+            return new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    ToastUtil.showLongToast(mContext,volleyError.getMessage());
+                }
+            };
+        }
     }
 }

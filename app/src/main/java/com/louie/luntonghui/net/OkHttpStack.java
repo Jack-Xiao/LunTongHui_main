@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class OkHttpStack implements HttpStack {
     private final OkHttpClient mClient;
+    public static final int TIME_OUT = 10 * 1000;
 
     public OkHttpStack(OkHttpClient client)
     {
@@ -42,9 +43,10 @@ public class OkHttpStack implements HttpStack {
     {
         OkHttpClient client = mClient.clone();
         int timeoutMs = request.getTimeoutMs();
-        client.setConnectTimeout(timeoutMs, TimeUnit.MILLISECONDS);
-        client.setReadTimeout(timeoutMs, TimeUnit.MILLISECONDS);
-        client.setWriteTimeout(timeoutMs, TimeUnit.MILLISECONDS);
+
+        client.setConnectTimeout(TIME_OUT, TimeUnit.MILLISECONDS);
+        client.setReadTimeout(TIME_OUT, TimeUnit.MILLISECONDS);
+        client.setWriteTimeout(TIME_OUT, TimeUnit.MILLISECONDS);
 
         com.squareup.okhttp.Request.Builder okHttpRequestBuilder =
                 new com.squareup.okhttp.Request.Builder();

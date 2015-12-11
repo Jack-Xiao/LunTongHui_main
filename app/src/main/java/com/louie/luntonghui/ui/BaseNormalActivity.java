@@ -50,7 +50,7 @@ public class BaseNormalActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onErrorResponse(VolleyError error) {
                 if(error.networkResponse == null){
-                    ToastUtil.showShortToast(mContext,R.string.network_connect_fail);
+                    ToastUtil.showShortToast(mContext,R.string.error_network);
                     return;
                 }
 

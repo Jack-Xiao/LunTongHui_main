@@ -2,11 +2,9 @@ package com.louie.luntonghui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.KeyEvent;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.google.gson.Gson;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.rest.RetrofitUtils;
@@ -14,7 +12,6 @@ import com.louie.luntonghui.rest.ServiceManager;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.ToastUtil;
-import com.squareup.okhttp.Response;
 
 import org.apache.http.HttpStatus;
 
@@ -91,5 +88,4 @@ public class BaseFragment extends Fragment {
     protected void executeRequest(Request request) {
         RequestManager.addRequest(request, this);
     }
-
 }

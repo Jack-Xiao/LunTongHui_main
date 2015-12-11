@@ -143,7 +143,7 @@ public class SecondKillActivity extends BaseNormalActivity implements SecondKill
         mContext = this;
         toolbarTitle.setText(R.string.today_second_kill);
         userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
-        killUrl = String.format(ConstantURL.SECOND_KILL_GOODS, userType);
+        killUrl = String.format(ConstantURL.SECOND_KILL_GOODS, userType,userId);
         //imageRequest.getRequestUrl();
         String userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
         String cityId = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
@@ -160,9 +160,7 @@ public class SecondKillActivity extends BaseNormalActivity implements SecondKill
         }
 
         initBadgeView();
-        killAdverUrl = String.format(ConstantURL.SECOND_KILL_ADVERT, userType, display, cityId);
-
-        //initCountDownTime();
+        killAdverUrl = String.format(ConstantURL.SECOND_KILL_ADVERT, userType, display, cityId,userId);
 
         initSecondKillView();
         referenceSencodeKillGoods();

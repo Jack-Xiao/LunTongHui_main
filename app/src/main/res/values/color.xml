@@ -228,4 +228,25 @@
     <color name="base_background_color">#ebebeb</color>
     <color name="normal_background">#666666</color>
 
+    <color name="toolbar_0">#ffffff</color>
+    <color name="toolbar_1">#f6e5e5</color>
+    <color name="toolbar_2">#edcccc</color>
+    <color name="toolbar_3">#e4b2b2</color>
+    <color name="toolbar_4">#db9999</color>
+    <color name="toolbar_5">#d17f7f</color>
+    <color name="toolbar_6">#c86666</color>
+    <color name="toolbar_7">#bf4c4c</color>
+    <color name="toolbar_8">#b63333</color>
+    <color name="toolbar_9">#ad1919</color>
+    <color name="toolbar_10">#a40000</color>
+
+
+    <color name="color_alpha">#01000000</color>
+    <color name="color_dark_red">#840000</color>
+    <color name="home_main_font_color">#333333</color>
+
+    <color name="font_hint">#cccccc</color>
+    
+    <color name="transparence_black">#191919</color>
+
 </resources>

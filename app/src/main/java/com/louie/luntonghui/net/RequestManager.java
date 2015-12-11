@@ -11,9 +11,9 @@ import java.util.ArrayList;
  * Created by Administrator on 2015/6/2.
  */
 public class RequestManager {
-    //public static RequestQueue mRequestQueue = Volley.newRequestQueue(App.getContext());
-    public static RequestQueue mRequestQueue = Volley.newRequestQueue(App.getContext(),
-            new OkHttpStack(OkHttpUtils.getInstance(App.getContext())));
+    public static RequestQueue mRequestQueue = Volley.newRequestQueue(App.getContext());
+    /*public static RequestQueue mRequestQueue = Volley.newRequestQueue(App.getContext(),
+            new OkHttpStack(OkHttpUtils.getInstance(App.getContext())));*/
 
     private static ArrayList<Object> tags = new ArrayList<>();
 

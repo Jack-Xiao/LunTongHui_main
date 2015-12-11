@@ -59,8 +59,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentRight="true"
-                        android:layout_marginBottom="20dp"
-                        android:layout_marginRight="20dp">
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginRight="15dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -81,6 +81,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textSize="10sp"
                                 android:layout_gravity="center_horizontal"
                                 android:layout_marginTop="5dp"
                                 android:text="关注" />
@@ -93,7 +94,7 @@
                     android:layout_height="wrap_content">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
@@ -126,12 +127,15 @@
                     </LinearLayout>
 
                     <TextView
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/tel_phone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="28dp"
                         android:drawableTop="@drawable/phone"
                         android:gravity="center_horizontal"
+                        android:textSize="10sp"
                         android:text="客服" />
                 </RelativeLayout>
 
@@ -277,7 +281,7 @@
             android:layout_gravity="center_vertical"
             android:text="选购数量:"
             android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/content"
@@ -304,7 +308,7 @@
             android:gravity="center"
             android:text="加入购物车"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
 </LinearLayout>

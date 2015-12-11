@@ -3,16 +3,13 @@ package com.louie.luntonghui.model;
 import android.content.Context;
 import android.net.Uri;
 
-import com.louie.luntonghui.BuildConfig;
 import com.louie.luntonghui.R;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.internal.DiskLruCache;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -41,8 +38,8 @@ public class DataModule {
                 .indicatorsEnabled(false)
                 .loggingEnabled(false);
         return builder.build();
-
     }
+
     @Provides
     @Singleton
     OkHttpClient provideOkHttp(Cache cache){

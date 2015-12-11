@@ -12,6 +12,10 @@
     android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal">
 
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
     <ImageView
         android:id="@+id/goods_img"
         android:layout_width="@dimen/goods_list_image_width"
@@ -21,7 +25,15 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/base_frame"
         tools:src="@drawable/produce_demo" />
-
+        <ImageView
+            android:id="@+id/tiejia"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/tejia"/>
+    </FrameLayout>
     <!--    <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/goods_img"
             android:layout_marginTop="10dp"

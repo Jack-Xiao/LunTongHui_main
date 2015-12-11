@@ -7,12 +7,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
@@ -42,12 +45,16 @@ import com.louie.luntonghui.fragment.OrderFragment;
 import com.louie.luntonghui.fragment.OrderFragment.ComeBackListener;
 import com.louie.luntonghui.model.db.AttentionGoods;
 import com.louie.luntonghui.model.db.Goods;
+import com.louie.luntonghui.model.db.HotSearchTable;
+import com.louie.luntonghui.model.db.Order;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.CarList;
 import com.louie.luntonghui.model.result.CurrentBrandGoodsList;
 import com.louie.luntonghui.model.result.DailySignIn;
+import com.louie.luntonghui.model.result.HotSearch;
 import com.louie.luntonghui.model.result.MineAttentionResult;
+import com.louie.luntonghui.model.result.OrderList;
 import com.louie.luntonghui.model.result.VersionUpdate;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.task.UpdateVersionTask;
@@ -67,6 +74,8 @@ import com.louie.luntonghui.view.MyAlertDialogUtil;
 import com.louie.luntonghui.view.NavigationItem;
 import com.squareup.otto.Subscribe;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.FeedbackAgent;
+import com.umeng.update.UmengUpdateAgent;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -75,6 +84,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import butterknife.Optional;
 
 import static android.support.v7.widget.Toolbar.OnClickListener;
@@ -86,7 +96,7 @@ import static com.louie.luntonghui.ui.register.RegisterLogin.NOTLOGIN;
 public class MainActivity extends BaseActivity implements OnClickListener, HomeFragment.SearchListener,
         GoodsDetailFragment.SearchGoodsListener, MyAlertDialogUtil.AlertDialogListener,
         HomeFragment.FastQueryListener, MineFragment1.OrderTypeListener, ComeBackListener,
-        CarFragment.OnReferenCartListener, CategoryFragment.UpdateListener{
+        CarFragment.OnReferenCartListener, CategoryFragment.UpdateListener ,HomeFragment.ScrollListener{
 
     public static final String BDLOCATIONCORR = "gcj02";
     public static final int BDLOCATIONSPAN = 5000;
@@ -104,8 +114,20 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     NavigationItem mCar;
     @InjectView(R.id.navigation_form)
     NavigationItem mForm;
+
+    @InjectView(R.id.login_prompt)
+    RelativeLayout mLoginPrompt;
+
+    @InjectView(R.id.btn_login)
+    Button btnLogin;
+
+    @InjectView(R.id.remove_login)
+    ImageView removeLogin;
+
     private List<NavigationItem> mTabIndicators;
     public static final String INITCHECKED = "-1";
+    private Fragment homeFragment;
+
 
 /*    @InjectView(R.id.viewpager)
     MyViewPager mViewPager;*/
@@ -162,14 +184,20 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         ButterKnife.inject(this);
         mContext = this;
 
+        UmengUpdateAgent.update(this);
+        FeedbackAgent agent = new FeedbackAgent(mContext);
+        agent.sync();
+
         userId = DefaultShared.getString(RegisterLogin.USERUID, App.DEFAULT_USER_ID);
-        userType = DefaultShared.getString(RegisterLogin.USER_TYPE,RegisterLogin.USER_DEFAULT);
+        userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
         //设置别名
-        if(!userId.equals(App.DEFAULT_USER_ID)){
-            provinceId = DefaultShared.getString(App.PROVINCEID,App.DEFAULT_PROVINCEID);
-            if(provinceId.equals(App.DEFAULT_PROVINCEID)){
+
+        mLoginPrompt.setAlpha(0.9f);
+        if (!userId.equals(App.DEFAULT_USER_ID)) {
+            provinceId = DefaultShared.getString(App.PROVINCEID, App.DEFAULT_PROVINCEID);
+            if (provinceId.equals(App.DEFAULT_PROVINCEID)) {
                 provinceId = "0";
-            }else if(provinceId.equals(App.DEFAULT_LIAO_LING_ID)){
+            } else if (provinceId.equals(App.DEFAULT_LIAO_LING_ID)) {
                 provinceId = "1";
             }
 
@@ -188,14 +216,13 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
             strTags = dProvinceId + "," + uType;
             DefaultShared.putString(Config.GT_PUSH_TAGS, strTags);
 
-            Tag [] tagss= new Tag[]{tag,tag1};
-            PushManager.getInstance().bindAlias(App.getContext(), "a" +userId);
+            Tag[] tagss = new Tag[]{tag, tag1};
+            PushManager.getInstance().bindAlias(App.getContext(), "a" + userId);
             PushManager.getInstance().setTag(App.getContext(), tagss);
 
             PushManager.getInstance().turnOnPush(App.getContext());
             String clientId = PushManager.getInstance().getClientid(App.getContext());
             String test = "a" + clientId;
-
         }
 
         Bundle bundle = getIntent().getExtras();
@@ -203,52 +230,11 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
             initTab = bundle.getInt(RegisterStep3Activity.INIT_TYPE);
         }
 
-       /* // App Logo
-        toolbar.setLogo(R.mipmap.ic_launcher);
-        // Title
-        toolbar.setTitle("App Title");
-        // Sub Title
-        toolbar.setSubtitle("Sub title");*/
-
-      /*  *//*mToolbar.setLogo(R.drawable.icon);*//*
-        setSupportActionBar(mToolbar);
-        Toolbar.LayoutParams params = new Toolbar.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        View view = View.inflate(this, R.layout.navigation_toolbar, null);
-        getSupportActionBar().setCustomView(view, params);
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
-                | ActionBar.DISPLAY_SHOW_HOME);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
-        //mToolbar.setLogo(R.drawable.actionbar_logo);
-        //mToolbar.setLogo(R.drawable.logo_white);
-        mToolbar.setNavigationIcon(R.drawable.logo_white);*/
-
         mTabIndicators = new ArrayList<NavigationItem>();
 
         fragmentManager = getSupportFragmentManager();
         initView();
-/*        fragment = new HomeFragment();
-        break;
-        case 1:
-        fragment = new CategoryFragment();
-        break;
-        case 2:
-        fragment = new MineFragment();
-        break;
-        case 3:
-        fragment = new CarFragment();
-        break;
-        case 4:
-        fragment = new FormFragment();
-        break;*/
-        /*HomeFragment.class,
-                CategoryFragment.class,
-                MineFragment.class,
-                CarFragment.class,
-                FormFragment.class*/
-      /*  Fragment[] fragments=new Fragment[]{CategoryFragment.class
-               };*/
+
         listFragment = new ArrayList<>();
         listFragment.add(new HomeFragment());
         listFragment.add(new CategoryFragment());
@@ -257,7 +243,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         listFragment.add(new OrderFragment());
 
 
-        //checkVersion();
+        initHotSearch();
+        initOrder();
 
         initNavigation();
         initConfig();
@@ -271,62 +258,163 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
         initShopCar();
         initDateFormat();
+        homeFragment = new Fragment();
+    }
+
+    private void initOrder() {
+        userId = DefaultShared.getString(RegisterLogin.USERUID, App.DEFAULT_USER_ID);
+        if (userId.equals("") || userId.equals(App.DEFAULT_USER_ID)) return;
+
+        String url = String.format(ConstantURL.GET_WHOLE_ORDER, userId);
+        RequestManager.addRequest(new GsonRequest(url, OrderList.class, getWholeOrderList(), errorListener()), this);
+    }
+
+    private Response.Listener<OrderList> getWholeOrderList() {
+        return new Response.Listener<OrderList>() {
+            @Override
+            public void onResponse(final OrderList orderList) {
+                List<Order> data = new ArrayList<Order>();
+
+                if (orderList != null && orderList.mysalelist != null) {
+                    new Delete()
+                            .from(Order.class)
+                            .execute();
+                    for (int i = 0; i < orderList.mysalelist.size(); i++) {
+                        Order order = new Order();
+                        order.allowToModify = orderList.mysalelist.get(i).allow_to_modify;
+                        order.type = orderList.mysalelist.get(i).handler;
+                        order.money = orderList.mysalelist.get(i).money;
+                        order.payName = orderList.mysalelist.get(i).pay_name;
+                        order.orderId = orderList.mysalelist.get(i).order_id;
+                        order.orderSn = orderList.mysalelist.get(i).order_sn;
+                        order.orderAmount = orderList.mysalelist.get(i).order_amount;
+                        order.addTime = orderList.mysalelist.get(i).add_time;
+                        order.save();
+                        data.add(order);
+                    }
+                }
+            }
+        };
+    }
+
+    @OnClick(R.id.btn_login)
+    public void onCLickLogin(){
+        IntentUtil.startActivity(MainActivity.this, RegisterLogin.class);
+    }
+
+    @OnClick(R.id.remove_login)
+    public void onClickRemoveLogin(){
+        mLoginPrompt.setVisibility(View.GONE);
+    }
+
+    private void initHotSearch() {
+        RequestManager.addRequest(new GsonRequest(ConstantURL.HOT_SEARCH, HotSearch.class,
+                getHotSearchList(), errorListener()), this);
+
+    }
+
+    public Response.Listener<HotSearch> getHotSearchList() {
+        return new Response.Listener<HotSearch>() {
+            @Override
+            public void onResponse(final HotSearch hotSearch) {
+                if (hotSearch != null && hotSearch.listallcat != null) {
+                    new Delete()
+                            .from(HotSearchTable.class)
+                            .execute();
+                    for (int i = 0; i < hotSearch.listallcat.size(); i++) {
+                        HotSearchTable table = new HotSearchTable();
+                        table.hotSearchChar = hotSearch.listallcat.get(i).name;
+                        table.save();
+                    }
+                }
+            }
+        };
+    }
+
+    private Fragment mFragmentContent;
+
+    public void switchContent(int fromIndex,int toIndex){
+        Fragment from;
+        Fragment to;
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+
+        to = list.get(toIndex);
+        if(fromIndex == -1){
+            transaction.add(R.id.content,to)
+                    .commitAllowingStateLoss();
+        }else{
+            from = list.get(fromIndex);
+            if(mFragmentContent !=to){
+                mFragmentContent = to;
+                if(!to.isAdded()) {
+                    transaction.add(R.id.content, to).commitAllowingStateLoss();
+
+                    //transaction.replace(R.id.content, to).commitAllowingStateLoss();
+                }else{
+                    //隐藏当前的fragment，显示下一个
+                    transaction.hide(from).show(to).commitAllowingStateLoss();
+                }
+            }
+        }
     }
 
     private void initMineAttention() {
         if (userId.equals(App.DEFAULT_USER_ID)) return;
-        String url = String.format(ConstantURL.MINEATTENTION,userId,userType);
+        String url = String.format(ConstantURL.MINEATTENTION, userId, userType);
         RequestManager.addRequest(
-                new GsonRequest(url,MineAttentionResult.class,
-                        mineAttentionRequest(),errorListener()),this);
+                new GsonRequest(url, MineAttentionResult.class,
+                        mineAttentionRequest(), errorListener()), this);
     }
 
     private Response.Listener<MineAttentionResult> mineAttentionRequest() {
         return new Response.Listener<MineAttentionResult>() {
             @Override
             public void onResponse(final MineAttentionResult list) {
-                        new Delete()
-                                .from(AttentionGoods.class)
-                                .execute();
-                        for (int i = 0; i < list.listallcat.size(); i++) {
-                            MineAttentionResult.ListallcatEntity entity = list.listallcat.get(i);
-                            AttentionGoods goods1 = new AttentionGoods();
-                            goods1.goodsId = entity.goods_id;
-                            goods1.goodsName = entity.goods_name;
-                            goods1.goodsImg = entity.goods_img;
-                            goods1.goodsSN = entity.goods_sn;
-                            goods1.goodsNumber = entity.goods_number;
-                            goods1.marketPrice = entity.market_price;
-                            goods1.shopPrice = entity.shop_price;
-                            goods1.gysMoney = entity.gys_money;
-                            goods1.promotePrice = entity.promote_price;
-                            goods1.goodsBrief = entity.goods_brief;
-                            goods1.goodsDesc = entity.goods_desc;
-                            goods1.sortOrder = entity.sort_order;
-                            goods1.isBest = entity.is_best;
-                            goods1.isNew = entity.is_new;
-                            goods1.isHot = entity.is_hot;
-                            goods1.display = entity.display;
-                            goods1.giveIntegral = entity.give_integral;
-                            goods1.integral = entity.integral;
-                            goods1.isPromote = entity.is_promote;
-                            goods1.discounta = entity.discounta;
-                            goods1.discount = entity.discount;
-                            goods1.discountTime = entity.discount_time;
-                            goods1.discountName = entity.discount_name;
-                            goods1.guige = entity.guige;
-                            goods1.unit = entity.danwei;
-                            goods1.recId = entity.rec_id;
-                            goods1.save();
-                        }
+                new Delete()
+                        .from(AttentionGoods.class)
+                        .execute();
+                for (int i = 0; i < list.listallcat.size(); i++) {
+                    MineAttentionResult.ListallcatEntity entity = list.listallcat.get(i);
+                    AttentionGoods goods1 = new AttentionGoods();
+                    goods1.goodsId = entity.goods_id;
+                    goods1.goodsName = entity.goods_name;
+                    goods1.goodsImg = entity.goods_img;
+                    goods1.goodsSN = entity.goods_sn;
+                    goods1.goodsNumber = entity.goods_number;
+                    goods1.marketPrice = entity.market_price;
+                    goods1.shopPrice = entity.shop_price;
+                    goods1.gysMoney = entity.gys_money;
+                    goods1.promotePrice = entity.promote_price;
+                    goods1.goodsBrief = entity.goods_brief;
+                    goods1.goodsDesc = entity.goods_desc;
+                    goods1.sortOrder = entity.sort_order;
+                    goods1.isBest = entity.is_best;
+                    goods1.isNew = entity.is_new;
+                    goods1.isHot = entity.is_hot;
+                    goods1.display = entity.display;
+                    goods1.giveIntegral = entity.give_integral;
+                    goods1.integral = entity.integral;
+                    goods1.isPromote = entity.is_promote;
+                    goods1.discounta = entity.discounta;
+                    goods1.discount = entity.discount;
+                    goods1.discountTime = entity.discount_time;
+                    goods1.discountName = entity.discount_name;
+                    goods1.guige = entity.guige;
+                    goods1.unit = entity.danwei;
+                    goods1.recId = entity.rec_id;
+                    goods1.save();
+                }
             }
         };
     }
 
 
-    public void initConfig(){
+    public void initConfig() {
         //init category tab selecte item.
         //DefaultShared.putInt(Config.LAST_SELECT_CATEGORY_ITEM, Config.INIT_LAST_SELECT_CATEGORY_ITEM);
+
     }
 
     private void initDateFormat() {
@@ -349,7 +437,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
     public Response.Listener<CarList> getCarList() {
         return new Response.Listener<CarList>() {
-
             @Override
             public void onResponse(final CarList carList) {
                 TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Integer>() {
@@ -361,21 +448,21 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                         int total = 0;
                         List<ShoppingCar> data = new ArrayList<ShoppingCar>();
                         if (carList != null && carList.goods_list != null) {
-                                for (int i = 0; i < carList.goods_list.size(); i++) {
-                                    ShoppingCar car = new ShoppingCar();
-                                    car.carId = carList.goods_list.get(i).rec_id;
-                                    car.isChecked = INITCHECKED;
-                                    car.goodsShopPrice = carList.goods_list.get(i).goods_price;
-                                    car.goodsImage = carList.goods_list.get(i).goods_img;
-                                    car.goodsNumber = carList.goods_list.get(i).goods_number;
-                                    car.goodsId = carList.goods_list.get(i).goods_id;
-                                    car.goodsName = carList.goods_list.get(i).goods_name;
-                                    car.guige = carList.goods_list.get(i).guige;
-                                    car.unit = carList.goods_list.get(i).danwei;
-                                    total += Integer.parseInt(carList.goods_list.get(i).goods_number);
-                                    car.save();
-                                    data.add(car);
-                                }
+                            for (int i = 0; i < carList.goods_list.size(); i++) {
+                                ShoppingCar car = new ShoppingCar();
+                                car.carId = carList.goods_list.get(i).rec_id;
+                                car.isChecked = INITCHECKED;
+                                car.goodsShopPrice = carList.goods_list.get(i).goods_price;
+                                car.goodsImage = carList.goods_list.get(i).goods_img;
+                                car.goodsNumber = carList.goods_list.get(i).goods_number;
+                                car.goodsId = carList.goods_list.get(i).goods_id;
+                                car.goodsName = carList.goods_list.get(i).goods_name;
+                                car.guige = carList.goods_list.get(i).guige;
+                                car.unit = carList.goods_list.get(i).danwei;
+                                total += Integer.parseInt(carList.goods_list.get(i).goods_number);
+                                car.save();
+                                data.add(car);
+                            }
                         }
                         return total;
                     }
@@ -392,8 +479,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     }
 
     private void checkVersion() {
-       /* Intent mServiceIntent = new Intent(MainActivity.this, UpdateService.class);
-        startService(mServiceIntent);*/
         curVersionNumber = Config.getCurrentVersion();
         String url = String.format(ConstantURL.CHECKVERSION, curVersionNumber);
         RequestManager.addRequest(new GsonRequest(url, VersionUpdate.class,
@@ -419,6 +504,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
                         return null;
                     }
+
                     @Override
                     protected void onPostExecute(Object o) {
                         if (!versionUpdate.listallcat.rsgcode.equals(SUCCESSCODE1)) {
@@ -445,12 +531,19 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         refreshCarListCount(null);
         MobclickAgent.onPageStart("SplashScreen");
         MobclickAgent.onResume(this);
+        userId = DefaultShared.getString(RegisterLogin.USERUID, App.DEFAULT_USER_ID);
+
+        if (!userId.equals(App.DEFAULT_USER_ID)) {
+            mLoginPrompt.setVisibility(View.GONE);
+        }else{
+            mLoginPrompt.setVisibility(View.VISIBLE);
+        }
 
         String lastSECONDKILLDate = DefaultShared.getString(Config.SECOND_KILL, Config.DEFAULT_SECOND_KILL);
         Date curDate = new Date(System.currentTimeMillis());//获取当前时间
 
-        int chooseIndex= getIntent().getIntExtra(AdvertisementWebActivity.WEB_CHOOSE_SURFACE,AdvertisementWebActivity.WEB_CHOOSE_DEFAULT_SURFACE);
-        if(chooseIndex != AdvertisementWebActivity.WEB_CHOOSE_DEFAULT_SURFACE){
+        int chooseIndex = getIntent().getIntExtra(AdvertisementWebActivity.WEB_CHOOSE_SURFACE, AdvertisementWebActivity.WEB_CHOOSE_DEFAULT_SURFACE);
+        if (chooseIndex != AdvertisementWebActivity.WEB_CHOOSE_DEFAULT_SURFACE) {
             onTabChange(chooseIndex);
         }
 
@@ -484,7 +577,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                                     .from(Goods.class)
                                     .where("is_second_kill = ?", Config.SECONDVKILLGOODS)
                                     .execute();
-                            Log.d("", "...........");
 
                             for (int i = 0; i < currentBrandGoodsList.listallcat.size(); i++) {
                                 CurrentBrandGoodsList.ListallcatEntity entity = currentBrandGoodsList.listallcat.get(i);
@@ -521,7 +613,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Log.d("error ", e.getMessage());
                         } finally {
 
                         }
@@ -651,19 +742,28 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         }else{
             fragment = FragmentFactory.getNavigationFragment(index);
         }*/
+
+
+       /* if(index == 0){
+            if(homeFragment == null) homeFragment = new HomeFragment();
+            fragment = homeFragment;
+        }else{
+            fragment = FragmentFactory.getNavigationFragment(index);
+        }*/
+
         fragment = FragmentFactory.getNavigationFragment(index);
         //fragment = listFragment.get(index);
-        if(index == 1){
+        if (index == 1) {
             Bundle bundle = new Bundle();
             //for..test.
             fragment.setArguments(bundle);
-
         }
 
         fragmentManager.beginTransaction()
                 .replace(R.id.content, fragment)
                 .commitAllowingStateLoss(); //yun commit类似
 
+        //switchContent(lastIndex,index);
         lastIndex = index;
         // mViewPager.setCurrentItem(index,false);
 
@@ -763,9 +863,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         onTabChange(2);
     }
 
-
     @Override
-        protected void onDestroy() {
+    protected void onDestroy() {
         App.getBusInstance().unregister(this);
         RequestManager.cancelAll(this);
         super.onDestroy();
@@ -890,9 +989,9 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         if (index == 0) {
             mBadgeView.hide();
         } else {
-            if(index >99){
+            if (index > 99) {
                 mBadgeView.setText("99+");
-            }else{
+            } else {
                 mBadgeView.setText(index + "");
             }
             mBadgeView.show();
@@ -906,7 +1005,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
     @Override
     public void confirmUpdate() {
-        UpdateVersionTask task = new UpdateVersionTask(MainActivity.this,UpdateVersionTask.NEED_VIEW);
+        UpdateVersionTask task = new UpdateVersionTask(MainActivity.this, UpdateVersionTask.NEED_VIEW);
         task.execute(curUpdateUrl);
         //checkVersion();*/
     }
@@ -1006,6 +1105,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
             ToastUtil.showShortToast(MainActivity.this, R.string.enter_exit);
         } else if (exitAppTimes == 2) {
             finish();
+            System.exit(0);
         }
     }
 
@@ -1014,5 +1114,13 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         super.onNewIntent(intent);
         setIntent(intent);
     }
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        scroll(hasFocus);
+    }
 
+
+        @Override
+    public void scroll(boolean hasFocuse) {
+    }
 }

@@ -20,9 +20,9 @@ public class MyGridView extends GridView {
         super(context, attrs, defStyleAttr);
     }
 
-    public MyGridView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    /*public MyGridView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-    }
+    }*/
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

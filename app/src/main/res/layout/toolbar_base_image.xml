@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/toolbar_background"
     android:layout_height="@dimen/toolbar_height"
     android:background="@color/black"
     style="@style/toolbar_style">

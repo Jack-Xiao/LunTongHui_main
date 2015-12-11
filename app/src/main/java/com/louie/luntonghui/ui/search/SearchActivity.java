@@ -169,7 +169,7 @@ public class SearchActivity extends BaseNormalActivity {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                String url = String.format(ConstantURL.GOODS_THINK_LIST, curSearchContent, ctype,display);
+                String url = String.format(ConstantURL.GOODS_THINK_LIST, curSearchContent, ctype,display,userId);
                 RequestManager.addRequest(new GsonRequest(url, GoodsThinkSearchList.class,
                         thinkSearch(),
                         errorListener()), this);

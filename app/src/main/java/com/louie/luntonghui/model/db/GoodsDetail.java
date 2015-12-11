@@ -45,6 +45,7 @@ public class GoodsDetail extends Model implements Parcelable {
     public String promotionName;
 
 
+    public String danwei;
     @Override
     public int describeContents() {
         return 0;

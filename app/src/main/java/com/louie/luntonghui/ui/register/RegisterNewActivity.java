@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -94,6 +96,8 @@ public class RegisterNewActivity extends BaseNormalActivity {
         toolbarTitle.setText(R.string.luntonghui_register);
         checkbox.setChecked(true);
 
+        phoneNumber.addTextChangedListener(textWatcher);
+
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -102,20 +106,43 @@ public class RegisterNewActivity extends BaseNormalActivity {
         });
     }
 
+    private final TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if(count == 1){
+                int length = s.toString().length();
+                if(length == 3 || length == 8){
+                    phoneNumber.setText(s + " ");
+                    phoneNumber.setSelection(phoneNumber.getText().toString().length());
+                }
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
     @OnClick(R.id.next_step)
     public void onCompleteClick() {
         mPattern = Pattern.compile("^\\d{11}$");
-        mMatcher = mPattern.matcher(phoneNumber.getText().toString().trim());
+        mMatcher = mPattern.matcher(phoneNumber.getText().toString().replace(" ","").trim());
 
         if (!mMatcher.find()) {
             //ToastUtil.showLongToast(this, R.string.info_input_phone_number);
             phoneNumberHolder.setErrorEnabled(true);
             phoneNumberHolder.setError("请输入11位有效电话号码");
-
             return;
         }else{
             phoneNumberHolder.setErrorEnabled(false);
         }
+
         String strPassword = password.getText().toString();
 
         if(strPassword.length()<6){
@@ -125,6 +152,7 @@ public class RegisterNewActivity extends BaseNormalActivity {
         }else{
             passwordHolder.setErrorEnabled(false);
         }
+
         String strPasswordVer = passwordVer.getText().toString();
 
         if(!strPassword.equals(strPasswordVer)){
@@ -136,7 +164,7 @@ public class RegisterNewActivity extends BaseNormalActivity {
         }
 
         String strUsername = userName.getText().toString();
-        strPhoneNumber = phoneNumber.getText().toString();
+        strPhoneNumber = phoneNumber.getText().toString().replace(" ","").trim();
 
         String type = "1";
 
@@ -170,7 +198,7 @@ public class RegisterNewActivity extends BaseNormalActivity {
                     TaskUtils.executeAsyncTask(new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... params) {
-//                            User user = User.load(User.class,)
+//                          User user = User.load(User.class,)
                             User user;
                             //if(phoneNumber.)
                             mMatcher = mPattern.matcher(strPhoneNumber);

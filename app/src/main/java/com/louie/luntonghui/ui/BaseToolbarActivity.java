@@ -12,7 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
+import com.android.volley.Request;
 import com.louie.luntonghui.R;
+import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.rest.RetrofitUtils;
 import com.louie.luntonghui.rest.ServiceManager;
 import com.louie.luntonghui.ui.register.RegisterLogin;
@@ -22,7 +24,7 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 /**
  * Created by Jack on 15/8/12.
  */
-public abstract class BaseToolbarActivity  extends AppCompatActivity{
+public abstract class BaseToolbarActivity  extends AppCompatActivity {
     protected AppBarLayout mAppBar;
     protected Toolbar mToolbar;
     protected TabLayout mTabLayout;
@@ -33,6 +35,7 @@ public abstract class BaseToolbarActivity  extends AppCompatActivity{
     protected String userType;
     public Context mContext;
     SystemBarTintManager tintManager;
+    public static final String SUCCESS = BaseNormalActivity.SUCCESSCODE;
 
 
     @Override
@@ -40,10 +43,10 @@ public abstract class BaseToolbarActivity  extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
 
-        mAppBar = (AppBarLayout)findViewById(R.id.app_bar_layout);
-        mToolbar = (Toolbar)findViewById(R.id.app_toolbar);
+        mAppBar = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
 
-        if(mToolbar == null || mAppBar ==null){
+        if (mToolbar == null || mAppBar == null) {
             throw new IllegalStateException("no toolbar");
         }
         mToolbar.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +66,7 @@ public abstract class BaseToolbarActivity  extends AppCompatActivity{
             //actionBar.setDisplayShowCustomEnabled(true); //使用自定义的普通View能在title栏显示,即setCustomView能起作用
         }
 
-        if(Build.VERSION.SDK_INT >=21){
+        if (Build.VERSION.SDK_INT >= 21) {
             mAppBar.setElevation(10.6f);
         }
         /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
@@ -79,29 +82,35 @@ public abstract class BaseToolbarActivity  extends AppCompatActivity{
         userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
     }
 
-    public void onToolbarClick(){}
+    public void onToolbarClick() {
+    }
 
     abstract protected int toolbarTitle();
+
     abstract protected int getLayoutResource();
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    protected void setAppBarAlpha(float alpha){
+    protected void setAppBarAlpha(float alpha) {
         mAppBar.setAlpha(alpha);
     }
 
-    protected void hideOrShowToolbar(){
+    protected void hideOrShowToolbar() {
         mAppBar.animate()
                 .translationY(ishidden ? 0 : -mAppBar.getHeight())
                 .setInterpolator(new DecelerateInterpolator(2))
                 .start();
         ishidden = !ishidden;
+    }
+
+    protected void executeRequest(Request request) {
+        RequestManager.addRequest(request, this);
     }
 }

@@ -278,6 +278,8 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
                     car.goods_number = lists.get(i).goods_number;
                     car.discount_type = lists.get(i).discount_type;
                     //car.rec_id = orderDetailResult.order.order_id;
+
+                    car.orderid = orderDetailResult.order.order_id;
                     car.rec_id = lists.get(i).rec_id;
 
                     car.rid = lists.get(i).rid;

@@ -15,17 +15,10 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.GeofenceClient;
 import com.baidu.location.LocationClient;
 import com.facebook.stetho.Stetho;
-import com.louie.luntonghui.data.GsonRequest;
-import com.louie.luntonghui.model.db.HotSearchTable;
-import com.louie.luntonghui.model.db.Order;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.CarList;
 import com.louie.luntonghui.model.result.GoodsList;
-import com.louie.luntonghui.model.result.HotSearch;
-import com.louie.luntonghui.model.result.OrderList;
 import com.louie.luntonghui.net.RequestManager;
-import com.louie.luntonghui.ui.register.RegisterLogin;
-import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
@@ -109,8 +102,6 @@ public class App extends Application {
         ActiveAndroid.initialize(this);
 
         parserXml();
-        initDB();
-        initOrderList();
 
         initImageLoader(getApplicationContext());
 
@@ -134,47 +125,6 @@ public class App extends Application {
     }
 
 
-    private void initOrderList() {
-        userId = DefaultShared.getString(RegisterLogin.USERUID, DEFAULT_USER_ID);
-        if (userId.equals("") || userId.equals(DEFAULT_USER_ID)) return;
-
-        String url = String.format(ConstantURL.GET_WHOLE_ORDER, userId);
-        RequestManager.addRequest(new GsonRequest(url, OrderList.class, getWholeOrderList(), errorListener()), this);
-    }
-
-    private Response.Listener<OrderList> getWholeOrderList() {
-        return new Response.Listener<OrderList>() {
-            @Override
-            public void onResponse(final OrderList orderList) {
-                        List<Order> data = new ArrayList<Order>();
-                        if (orderList != null && orderList.mysalelist != null) {
-                                new Delete()
-                                        .from(Order.class)
-                                        .execute();
-                                for (int i = 0; i < orderList.mysalelist.size(); i++) {
-                                    Order order = new Order();
-                                    order.allowToModify = orderList.mysalelist.get(i).allow_to_modify;
-                                    order.type = orderList.mysalelist.get(i).handler;
-                                    order.money = orderList.mysalelist.get(i).money;
-                                    order.payName = orderList.mysalelist.get(i).pay_name;
-                                    order.orderId = orderList.mysalelist.get(i).order_id;
-                                    order.orderSn = orderList.mysalelist.get(i).order_sn;
-                                    order.orderAmount = orderList.mysalelist.get(i).order_amount;
-                                    order.addTime = orderList.mysalelist.get(i).add_time;
-                                    order.save();
-                                    data.add(order);
-                                }
-                        }
-            }
-        };
-    }
-
-
-    public void initDB() {
-
-        RequestManager.addRequest(new GsonRequest(ConstantURL.HOT_SEARCH, HotSearch.class,
-                getHotSearchList(), errorListener()), this);
-    }
 
     public Response.Listener<CarList> getCarList() {
         return new Response.Listener<CarList>() {
@@ -224,23 +174,7 @@ public class App extends Application {
         };
     }
 
-    public Response.Listener<HotSearch> getHotSearchList() {
-        return new Response.Listener<HotSearch>() {
-            @Override
-            public void onResponse(final HotSearch hotSearch) {
-                        if (hotSearch != null && hotSearch.listallcat != null) {
-                            new Delete()
-                                    .from(HotSearchTable.class)
-                                    .execute();
-                                for (int i = 0; i < hotSearch.listallcat.size(); i++) {
-                                    HotSearchTable table = new HotSearchTable();
-                                    table.hotSearchChar = hotSearch.listallcat.get(i).name;
-                                    table.save();
-                                }
-                        }
-            }
-        };
-    }
+
 
     private com.android.volley.Response.Listener<GoodsList> getGoodsList() {
         return new com.android.volley.Response.Listener<GoodsList>() {
@@ -258,7 +192,7 @@ public class App extends Application {
         return new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ToastUtil.showLongToast(application, R.string.network_connect_fail);
+                ToastUtil.showLongToast(application, error.getMessage());
             }
         };
     }
@@ -363,4 +297,19 @@ public class App extends Application {
                 .build();
         ImageLoader.getInstance().init(config);
     }
+
+    /*//初始化网络图片缓存库
+    private void initImageLoader(){
+        //网络图片例子,结合常用的图片缓存库UIL,你可以根据自己需求自己换其他网络图片库
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true).cacheOnDisk(true).build();
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+                 getApplicationContext()).defaultDisplayImageOptions(defaultOptions)
+                .threadPriority(Thread.NORM_PRIORITY - 2)
+                .denyCacheImageMultipleSizesInMemory()
+                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
+                .tasksProcessingOrder(QueueProcessingType.LIFO).build();
+        ImageLoader.getInstance().init(config);
+    }*/
 }

@@ -6,12 +6,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -34,7 +32,6 @@ import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.TaskUtils;
-import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.MyListView;
 
 import java.io.UnsupportedEncodingException;
@@ -146,7 +143,6 @@ public class GoodsDetailFragment extends BaseFragment {
         initSearch();
 
         return contentView;
-
     }
 
 
@@ -159,7 +155,6 @@ public class GoodsDetailFragment extends BaseFragment {
                 for (GoodsThinkSearchList.ListallcatEntity entity : goodsThinkSearchList.listallcat) {
                     list.add(entity.goods_name);
                 }
-                Log.d("goods_name111", list.size() + "");
 
                 mThinkSearchAdapter.setData(list);
             }

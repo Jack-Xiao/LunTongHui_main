@@ -24,7 +24,7 @@
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@anim/logo_animation"/>
+            android:background="@anim/logo_anim_l"/>
 
         <Button
             android:textColor="@color/white"
@@ -42,6 +42,7 @@
             android:text="新建地址" />
 
         <android.support.v7.widget.RecyclerView
+            android:background="@color/background_main_grey"
             android:id="@+id/recycler_view"
             android:layout_above="@id/add"
             android:layout_width="match_parent"

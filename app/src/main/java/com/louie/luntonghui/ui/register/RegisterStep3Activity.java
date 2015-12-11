@@ -67,7 +67,6 @@ public class RegisterStep3Activity extends BaseNormalActivity {
     private String recommendCode;
     private String password;
 
-
     @InjectView(R.id.username)
     EditText mUsername;
     @InjectView(R.id.recommend_code)
@@ -80,7 +79,6 @@ public class RegisterStep3Activity extends BaseNormalActivity {
     private CountDownTimer mCountDownTime;
     private List<RadioButton> radList;
     private String mac;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

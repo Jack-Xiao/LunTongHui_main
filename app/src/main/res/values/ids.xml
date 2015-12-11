@@ -7,7 +7,6 @@
     <item name="loading_view" type="id" />
     <item name="content_loader" type = "id"/>
 
-
     <item name="toolbar_title" type="id"/>
     <item name="toolbar_navigation" type="id"/>
 
@@ -22,4 +21,6 @@
     <item name="app_bar_layout" type="id"/>
     <item name="app_toolbar" type="id"/>
     <item name="swipe_refresh_layout" type="id"/>
+    <item type="id" name="scrollview"/>
+
 </resources>

@@ -6,14 +6,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
 import com.android.volley.Response;
 import com.louie.luntonghui.App;
@@ -24,9 +25,11 @@ import com.louie.luntonghui.event.ShowCarListEvent;
 import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.CurrentBrandGoodsList;
+import com.louie.luntonghui.model.result.CurrentBrandGoodsList1;
 import com.louie.luntonghui.rest.ServiceManager;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.ui.MainActivity;
+import com.louie.luntonghui.ui.mine.MineService.MineCustomerOrderListActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.ui.search.SearchActivity;
 import com.louie.luntonghui.util.Config;
@@ -34,6 +37,7 @@ import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
+import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.BadgeView;
 import com.umeng.analytics.MobclickAgent;
 
@@ -45,6 +49,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+
 import static com.louie.luntonghui.ui.register.RegisterLogin.USER_DEFAULT;
 import static com.louie.luntonghui.ui.register.RegisterLogin.USER_TYPE;
 import static com.louie.luntonghui.ui.register.RegisterLogin.USER_WHOLESALER;
@@ -53,7 +58,8 @@ import static com.louie.luntonghui.ui.register.RegisterLogin.USER_WHOLESALER;
 /**
  * Created by Administrator on 2015/6/19.
  */
-public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDetailListAdapter.ReferenceBadgeListener {
+public class GoodsDetailActivity extends BaseNormalActivity implements
+        GoodsDetailListAdapter.ReferenceBadgeListener,AbsListView.OnScrollListener {
     public static final String GOODSDETAILURL = "url";
     public static final String GOODSDETAILID = "goods_id";
     public static final String SALES = "sales";
@@ -86,7 +92,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
 
     @InjectView(R.id.main_fab)
     //com.melnykov.fab.FloatingActionButton mainFab;
-    com.shamanland.fab.FloatingActionButton mainFab;
+            com.shamanland.fab.FloatingActionButton mainFab;
 
     private RecyclerView mRecyclerView;
     private ServiceManager.LunTongHuiApi api;
@@ -114,6 +120,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
     private String searchContent;
     public String userId;
     private boolean isNewGods = false;
+    private View footerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +162,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
 
         mAdapter = new GoodsDetailListAdapter(GoodsDetailActivity.this);
         listView.setAdapter(mAdapter);
+        footerView = LayoutInflater.from(mContext).inflate(R.layout.view_footer,null);
 
         //listView.setOnTouchListener(new ShowHideOnScroll(mainFab));
         initBadgeView();
@@ -206,7 +214,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
                     break;
             }
             //String cityId = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
-            String newGoodsUrl = String.format(ConstantURL.NEWGOODS, display, cType, INIT_PAGE, MAX_PAGE_SIZE);
+            String newGoodsUrl = String.format(ConstantURL.NEWGOODS, display, cType, INIT_PAGE, MAX_PAGE_SIZE, userId);
 
             url = newGoodsUrl;
         } else if (!isSearch) {
@@ -218,12 +226,15 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
             url = getIntent().getExtras().getString(GOODSDETAILURL).toString();
             url = url + "&" + ConstantURL.MODE + "&" + regionArg + "=" + display;
             url = url + "&ctype=" + cType;
+            url = url + "&user_id=" + userId;
             //  + "&" + BCClient + "=" + show;
 
             //id = getIntent().getBundleExtra(GOODSDETAILID);
 
             String initUrl = url + "&" + INTRO + "=" + intro +
                     "&" + SORTING + "=" + sorting;
+
+            listView.setOnScrollListener(new MyScrollListener());
 
         } else {
 
@@ -239,20 +250,241 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
             url = searchUrl;
             //executeRequest(new GsonRequest());
         }
-        onColligateset();
+
+        //为商品分类重写 分类
+        if(isNewGods || isSearch) {
+            onColligateset();
+        }else{
+            currentPage = 0;
+            loadData();
+        }
     }
+
+    private int totalCount;
+    private int currentPage;
+
+    class MyScrollListener implements AbsListView.OnScrollListener{
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            if(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                int last = view.getLastVisiblePosition();
+
+                if ( last == totalCount -1 ) {
+                    ToastUtil.showShortToast(mContext, R.string.loading_the_end);
+                    return;
+                }
+
+
+                if (mAdapter != null) {
+                    int adapterCnt =listView.getCount() - 1;
+
+                    if (adapterCnt == last) {
+                        //if(last>= adapterCnt && footView.getVisibility() == View.VISIBLE){
+                        listView.addFooterView(footerView);
+                        loadData();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        }
+    }
+
+    private void loadData() {
+        currentPage +=1;
+        String curUrl = url + "&" + "page=" + currentPage + "&" + "page_size="
+                                + MineCustomerOrderListActivity.loadingDataCount;
+        executeRequest(new GsonRequest(curUrl, CurrentBrandGoodsList1.class, getCurrentBrand(), errorListener()));
+
+    }
+
+    private Response.Listener<CurrentBrandGoodsList1> getCurrentBrand() {
+        return new Response.Listener<CurrentBrandGoodsList1>() {
+            @Override
+            public void onResponse(final CurrentBrandGoodsList1 response) {
+                totalCount = Integer.parseInt(response.total_count);
+                TaskUtils.executeAsyncTask(
+                        new AsyncTask<Object, Object, List<Goods>>() {
+                            @Override
+                            protected void onPreExecute() {
+                                super.onPreExecute();
+                                progress.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            protected void onPostExecute(List<Goods> goodses) {
+                                super.onPostExecute(goodses);
+                                listView.removeFooterView(footerView);
+                                progress.setVisibility(View.GONE);
+                                mAdapter.addData(goodses);
+                            }
+
+                            @Override
+                            protected List<Goods> doInBackground(Object... params) {
+                                if (response.listallcat.size() == 0)
+                                    return null;
+
+                                data.clear();
+
+                                List<CurrentBrandGoodsList.ListallcatEntity> list = new ArrayList<CurrentBrandGoodsList.ListallcatEntity>();
+                                List<String> curGoodsId = new ArrayList<String>();
+                                List<Goods> lists = new Select()
+                                        .from(Goods.class)
+                                        .where("goods_parent_id=?", goodsParentId)
+                                        .execute();
+
+                                for (int i = 0; i < lists.size(); i++) {
+                                    curGoodsId.add(lists.get(i).goodsId);
+                                }
+
+                                List<ShoppingCar> lists1 = new ArrayList<>();
+                                lists1 = new Select()
+                                        .from(ShoppingCar.class)
+                                        .execute();
+                                List<String> goodsIds = new ArrayList<String>();
+                                for (int i = 0; i < lists1.size(); i++) {
+                                    goodsIds.add(lists1.get(i).goodsId);
+                                }
+
+                                if (lists.size() > 0) {
+                                    try {
+                                        for (int i = 0; i < response.listallcat.size(); i++) {
+                                            CurrentBrandGoodsList1.ListallcatEntity entity = response.listallcat.get(i);
+                                            Goods goods1 = new Goods();
+                                            goods1.goodsId = entity.goods_id;
+                                            goods1.goodsName = entity.goods_name;
+                                            goods1.goodsImg = entity.goods_img;
+                                            goods1.goodsSN = entity.goods_sn;
+                                            goods1.goodsNumber = entity.goods_number;
+                                            goods1.marketPrice = entity.market_price;
+                                            goods1.shopPrice = entity.shop_price;
+                                            goods1.gysMoney = entity.gys_money;
+                                            goods1.promotePrice = entity.promote_price;
+                                            goods1.goodsBrief = entity.goods_brief;
+                                            goods1.goodsDesc = entity.goods_desc;
+                                            goods1.sortOrder = entity.sort_order;
+                                            goods1.isBest = entity.is_best;
+                                            goods1.isNew = entity.is_new;
+                                            goods1.isHot = entity.is_hot;
+                                            goods1.display = entity.display;
+                                            goods1.giveIntegral = entity.give_integral;
+                                            goods1.integral = entity.integral;
+                                            goods1.isPromote = entity.is_promote;
+                                            goods1.discounta = entity.discounta;
+                                            goods1.discount = entity.discount;
+                                            goods1.discountTime = entity.discount_time;
+                                            goods1.discountName = entity.discount_name;
+                                            goods1.goodsParentId = goodsParentId;
+                                            goods1.guige = entity.guige;
+                                            goods1.unit = entity.danwei;
+                                            goods1.discountType = entity.discount_type;
+
+                                            data.add(goods1);
+                                            if (!curGoodsId.contains(entity.goods_id)) {
+                                                Goods goods = new Goods();
+                                                goods.goodsId = entity.goods_id;
+                                                goods.goodsName = entity.goods_name;
+                                                goods.goodsImg = entity.goods_img;
+                                                goods.goodsSN = entity.goods_sn;
+                                                goods.goodsNumber = entity.goods_number;
+                                                goods.marketPrice = entity.market_price;
+                                                goods.shopPrice = entity.shop_price;
+                                                goods.gysMoney = entity.gys_money;
+                                                goods.promotePrice = entity.promote_price;
+                                                goods.goodsBrief = entity.goods_brief;
+                                                goods.goodsDesc = entity.goods_desc;
+                                                goods.sortOrder = entity.sort_order;
+                                                goods.isBest = entity.is_best;
+                                                goods.isNew = entity.is_new;
+                                                goods.isHot = entity.is_hot;
+                                                goods.display = entity.display;
+                                                goods.giveIntegral = entity.give_integral;
+                                                goods.integral = entity.integral;
+                                                goods.isPromote = entity.is_promote;
+                                                goods.discounta = entity.discounta;
+                                                goods.discount = entity.discount;
+                                                goods.discountTime = entity.discount_time;
+                                                goods.discountName = entity.discount_name;
+                                                goods.goodsParentId = goodsParentId;
+                                                goods.guige = entity.guige;
+                                                goods.unit = entity.danwei;
+                                                goods.discountType = entity.discount_type;
+                                                goods.save();
+                                            }
+                                        }
+                                    } finally {
+                                        //ActiveAndroid.setTransactionSuccessful();
+                                        //ActiveAndroid.endTransaction();
+                                    }
+
+                                } else {
+
+                                    for (int i = 0; i < response.listallcat.size(); i++) {
+                                        CurrentBrandGoodsList1.ListallcatEntity entity = response.listallcat.get(i);
+                                        Goods goods = new Goods();
+                                        goods.goodsId = entity.goods_id;
+                                        goods.goodsName = entity.goods_name;
+                                        goods.goodsImg = entity.goods_img;
+                                        goods.goodsSN = entity.goods_sn;
+                                        goods.goodsNumber = entity.goods_number;
+                                        goods.marketPrice = entity.market_price;
+                                        goods.shopPrice = entity.shop_price;
+                                        goods.gysMoney = entity.gys_money;
+                                        goods.promotePrice = entity.promote_price;
+                                        goods.goodsBrief = entity.goods_brief;
+                                        goods.goodsDesc = entity.goods_desc;
+                                        goods.sortOrder = entity.sort_order;
+                                        goods.isBest = entity.is_best;
+                                        goods.isNew = entity.is_new;
+                                        goods.isHot = entity.is_hot;
+                                        goods.display = entity.display;
+                                        goods.giveIntegral = entity.give_integral;
+                                        goods.integral = entity.integral;
+                                        goods.isPromote = entity.is_promote;
+                                        goods.discounta = entity.discounta;
+                                        goods.discount = entity.discount;
+                                        goods.discountTime = entity.discount_time;
+                                        goods.discountName = entity.discount_name;
+                                        goods.goodsParentId = goodsParentId;
+                                        goods.isChecked = Goods.GOODS_IS_NOT_BUY;
+                                        goods.guige = entity.guige;
+                                        goods.unit = entity.danwei;
+                                        goods.discountType = entity.discount_type;
+                                        goods.save();
+                                        data.add(goods);
+                                    }
+                                }
+                                for (int i = 0; i < data.size(); i++) {
+                                    if (goodsIds.contains(data.get(i).goodsId)) {
+                                        data.get(i).isChecked = Goods.GOODS_IS_BUY;
+                                    } else {
+                                        data.get(i).isChecked = Goods.GOODS_IS_NOT_BUY;
+                                    }
+                                }
+                                return data;
+                            }
+
+                        }
+                );
+            }
+        };
+    }
+
 
     private void executeUrl(String url) {
         executeRequest(new GsonRequest(url, CurrentBrandGoodsList.class, getGoodsList(), errorListener()));
-
     }
 
     private Response.Listener<CurrentBrandGoodsList> getGoodsList() {
-        //new Response.Listener<Login>()
         return new Response.Listener<CurrentBrandGoodsList>() {
             @Override
             public void onResponse(final CurrentBrandGoodsList currentBrandGoodsList) {
-                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<Goods>>() {
+                TaskUtils.executeAsyncTask(
+                        new AsyncTask<Object, Object, List<Goods>>() {
                                                @Override
                                                protected void onPreExecute() {
                                                    progress.setVisibility(View.VISIBLE);
@@ -275,12 +507,8 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
                                                    List<Goods> data = new ArrayList<Goods>();
 
                                                    if (isSearch || isNewGods) {
-                                                       //List<Goods> lists1 = new ArrayList<Goods>();
-                                                       /*lists1 = new Select()
-                                                               .from(Goods.class)
-                                                               .where("isChecked = ?", Goods.GOODS_IS_BUY)
-                                                               .execute();*/
-                                                       List <ShoppingCar> lists1 = new ArrayList<>();
+
+                                                       List<ShoppingCar> lists1 = new ArrayList<>();
                                                        lists1 = new Select()
                                                                .from(ShoppingCar.class)
                                                                .execute();
@@ -342,13 +570,9 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
                                                        for (int i = 0; i < lists.size(); i++) {
                                                            curGoodsId.add(lists.get(i).goodsId);
                                                        }
-                                                       /*List<Goods> lists1 = new ArrayList<Goods>();
-                                                       lists1 = new Select()
-                                                               .from(Goods.class)
-                                                               .where("goods_parent_id = ? and isChecked = ?", goodsParentId, Goods.GOODS_IS_BUY)
-                                                               .execute();*/
 
-                                                       List <ShoppingCar> lists1 = new ArrayList<>();
+
+                                                       List<ShoppingCar> lists1 = new ArrayList<>();
                                                        lists1 = new Select()
                                                                .from(ShoppingCar.class)
                                                                .execute();
@@ -359,7 +583,6 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
 
                                                        if (lists.size() > 0) {
                                                            try {
-                                                               ActiveAndroid.beginTransaction();
                                                                for (int i = 0; i < currentBrandGoodsList.listallcat.size(); i++) {
                                                                    CurrentBrandGoodsList.ListallcatEntity entity = currentBrandGoodsList.listallcat.get(i);
                                                                    Goods goods1 = new Goods();
@@ -426,59 +649,12 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
                                                                    }
                                                                }
                                                            } finally {
-                                                               ActiveAndroid.setTransactionSuccessful();
-                                                               ActiveAndroid.endTransaction();
+                                                               //ActiveAndroid.setTransactionSuccessful();
+                                                               //ActiveAndroid.endTransaction();
                                                            }
-                                /*else{
-                                    new Update(Goods.class)
-                                            .set("goods_sn = ?," +
-                                                            "goods_number = ?," +
-                                                            "market_price = ?," +
-                                                            "shop_price = ?," +
-                                                            "gys_money=?," +
-                                                            "promote_price=?," +
-                                                            "goods_brief=?," +
-                                                            "goods_desc=?," +
-                                                            "sort_order = ?," +
-                                                            "is_best=?," +
-                                                            "is_new=?," +
-                                                            "is_hot=?," +
-                                                            "display=?," +
-                                                            "give_integral=?," +
-                                                            "integral=?," +
-                                                            "is_promote=?," +
-                                                            "discounta=?," +
-                                                            "discount=?," +
-                                                            "discount_time=?," +
-                                                            "discount_name=?," +
-                                                            "goods_parent_id=?"
-                                                    ,
-                                                    entity.goods_sn,
-                                                    entity.goods_number,
-                                                    entity.market_price,
-                                                    entity.shop_price,
-                                                    entity.gys_money,
-                                                    entity.promote_price,
-                                                    entity.goods_brief,
-                                                    entity.goods_desc,
-                                                    entity.sort_order,
-                                                    entity.is_best,
-                                                    entity.is_new,
-                                                    entity.is_hot,
-                                                    entity.display,
-                                                    entity.give_integral,
-                                                    entity.integral,
-                                                    entity.is_promote,
-                                                    entity.discounta,
-                                                    entity.discount,
-                                                    entity.discount_time,
-                                                    entity.discount_name,
-                                                    goodsParentId)
-                                            .where("goods_id = ?", entity.goods_id)
-                                            .execute();
-                                }*/
+
                                                        } else {
-                                                           ActiveAndroid.beginTransaction();
+
                                                            for (int i = 0; i < currentBrandGoodsList.listallcat.size(); i++) {
                                                                CurrentBrandGoodsList.ListallcatEntity entity = currentBrandGoodsList.listallcat.get(i);
                                                                Goods goods = new Goods();
@@ -513,8 +689,6 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
                                                                goods.save();
                                                                data.add(goods);
                                                            }
-                                                           ActiveAndroid.setTransactionSuccessful();
-                                                           ActiveAndroid.endTransaction();
                                                        }
                                                        for (int i = 0; i < data.size(); i++) {
                                                            if (goodsIds.contains(data.get(i).goodsId)) {
@@ -529,8 +703,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
                                            }
                 );
             }
-        }
-                ;
+        };
     }
 
 
@@ -676,19 +849,30 @@ public class GoodsDetailActivity extends BaseNormalActivity implements GoodsDeta
                 .from(ShoppingCar.class)
                 .execute();
 
-        for(int i=0;i<list.size();i++){
+        for (int i = 0; i < list.size(); i++) {
             total += Integer.parseInt(list.get(i).goodsNumber);
         }
 
-        if(total == 0){
+        if (total == 0) {
             mBadgeView.hide();
-        }else{
-            if(total > 99){
+        } else {
+            if (total > 99) {
                 mBadgeView.setText("99+");
-            }else{
-                mBadgeView.setText(total+"");
+            } else {
+                mBadgeView.setText(total + "");
             }
             mBadgeView.show();
         }
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
     }
 }

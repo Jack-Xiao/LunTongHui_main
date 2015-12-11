@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <include layout="@layout/view_toolbar" />
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/unit_user_image"
+                android:layout_height="70dp"
+                android:layout_width="70dp"
+                tools:src="@drawable/feedback_user"/>
+
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:textColor="@color/normal_background"
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/unit_welcome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="您好，QQ用户："/>
+                <TextView
+                    android:layout_gravity="center_horizontal"
+                    android:id='@+id/unit_username'
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="黄明"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft = "20dp"
+        android:text="@string/unit_info"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:textColor="@color/normal_background"
+        android:layout_marginTop="30dp"
+        android:text="@string/unit_no_account"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:textColor="@color/white"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:id="@+id/quite_register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/quit_register"
+        android:background="@drawable/next_step"/>
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/unit_has_account"/>
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:id="@+id/immediate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/right_now_unit"
+        android:background="@drawable/immediate_unit"/>
+</LinearLayout>
