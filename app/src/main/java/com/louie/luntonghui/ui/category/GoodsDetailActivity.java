@@ -1,17 +1,16 @@
 package com.louie.luntonghui.ui.category;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -37,8 +36,8 @@ import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
-import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.BadgeView;
+import com.louie.luntonghui.view.MyPullUpListView;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.UnsupportedEncodingException;
@@ -73,7 +72,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
     public String url;
     public String id;
     @InjectView(R.id.listview)
-    ListView listView;
+    MyPullUpListView listView;
 
     @InjectView(R.id.progress)
     ProgressBar progress;
@@ -120,7 +119,8 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
     private String searchContent;
     public String userId;
     private boolean isNewGods = false;
-    private View footerView;
+    private ProgressDialog mProgressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +128,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
         setContentView(R.layout.activity_goods_detail_list);
         ButterKnife.inject(this);
 
+        mProgressDialog = new ProgressDialog(mContext);
         icon.setImageResource(R.drawable.actionbar_back);
         Bundle bundle = getIntent().getExtras();
         userId = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
@@ -159,15 +160,20 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
         }
 
         data = new ArrayList<>();
-
+        //listView.addFooterView(footerView);
         mAdapter = new GoodsDetailListAdapter(GoodsDetailActivity.this);
-        listView.setAdapter(mAdapter);
-        footerView = LayoutInflater.from(mContext).inflate(R.layout.view_footer,null);
 
+        listView.setAdapter(mAdapter);
+
+
+        mProgressDialog.show();
         //listView.setOnTouchListener(new ShowHideOnScroll(mainFab));
         initBadgeView();
 
         initSorting();
+
+        mProgressDialog.hide();
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -189,34 +195,23 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
     }
 
     private void initSorting() {
-        display = DefaultShared.getString(App.PROVINCEID, App.DEFAULT_PROVINCEID);
-
-        switch (display) {
-            case "6":
-                display = "0";
-                break;
-            case "388":
-                display = "1";
-                break;
-        }
+        display = Config.getRenamePlace();
 
         String cType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
 
         if (isNewGods) {
-            display = DefaultShared.getString(App.PROVINCEID, App.DEFAULT_PROVINCEID);
-
-            switch (display) {
-                case "6":
-                    display = "0";
-                    break;
-                case "388":
-                    display = "1";
-                    break;
-            }
             //String cityId = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
             String newGoodsUrl = String.format(ConstantURL.NEWGOODS, display, cType, INIT_PAGE, MAX_PAGE_SIZE, userId);
 
             url = newGoodsUrl;
+
+            listView.setMyPullUpListViewCallBack(new MyPullUpListView.MyPullUpListViewCallBack() {
+                @Override
+                public void scrollBottomState() {
+                    listView.hideFooterView(false);
+                }
+            });
+
         } else if (!isSearch) {
             display = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
 
@@ -234,12 +229,16 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
             String initUrl = url + "&" + INTRO + "=" + intro +
                     "&" + SORTING + "=" + sorting;
 
-            listView.setOnScrollListener(new MyScrollListener());
-
+            //listView.setOnScrollListener(new MyScrollListener());
+            listView.setMyPullUpListViewCallBack(new MyPullUpListView.MyPullUpListViewCallBack() {
+                @Override
+                public void scrollBottomState() {
+                    loadData();
+                }
+            });
         } else {
 
             //navigationSearch.setVisibility(View.GONE);
-
             try {
                 searchContent = URLEncoder.encode(searchContent, "utf-8");
             } catch (UnsupportedEncodingException e) {
@@ -248,6 +247,13 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
             String searchUrl = String.format(ConstantURL.GOODS_SEARCH_LIST, userId, searchContent,
                     cType, display);
             url = searchUrl;
+
+            listView.setMyPullUpListViewCallBack(new MyPullUpListView.MyPullUpListViewCallBack() {
+                @Override
+                public void scrollBottomState() {
+                    listView.hideFooterView(false);
+                }
+            });
             //executeRequest(new GsonRequest());
         }
 
@@ -263,7 +269,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
     private int totalCount;
     private int currentPage;
 
-    class MyScrollListener implements AbsListView.OnScrollListener{
+    /*class MyScrollListener implements AbsListView.OnScrollListener{
 
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -275,6 +281,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
                     return;
                 }
 
+                listView.removeFooterView(footerView);
 
                 if (mAdapter != null) {
                     int adapterCnt =listView.getCount() - 1;
@@ -282,6 +289,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
                     if (adapterCnt == last) {
                         //if(last>= adapterCnt && footView.getVisibility() == View.VISIBLE){
                         listView.addFooterView(footerView);
+
                         loadData();
                     }
                 }
@@ -292,9 +300,10 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
         }
-    }
+    }*/
 
     private void loadData() {
+        progress.setVisibility(View.VISIBLE);
         currentPage +=1;
         String curUrl = url + "&" + "page=" + currentPage + "&" + "page_size="
                                 + MineCustomerOrderListActivity.loadingDataCount;
@@ -312,15 +321,14 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
                             @Override
                             protected void onPreExecute() {
                                 super.onPreExecute();
-                                progress.setVisibility(View.VISIBLE);
                             }
 
                             @Override
                             protected void onPostExecute(List<Goods> goodses) {
                                 super.onPostExecute(goodses);
-                                listView.removeFooterView(footerView);
                                 progress.setVisibility(View.GONE);
                                 mAdapter.addData(goodses);
+                                listView.hideFooterView(false);
                             }
 
                             @Override
@@ -382,6 +390,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
                                             goods1.guige = entity.guige;
                                             goods1.unit = entity.danwei;
                                             goods1.discountType = entity.discount_type;
+                                            goods1.inventory = entity.inventory;
 
                                             data.add(goods1);
                                             if (!curGoodsId.contains(entity.goods_id)) {
@@ -413,6 +422,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
                                                 goods.guige = entity.guige;
                                                 goods.unit = entity.danwei;
                                                 goods.discountType = entity.discount_type;
+                                                goods.inventory = entity.inventory;
                                                 goods.save();
                                             }
                                         }
@@ -454,6 +464,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
                                         goods.guige = entity.guige;
                                         goods.unit = entity.danwei;
                                         goods.discountType = entity.discount_type;
+                                        goods.inventory = entity.inventory;
                                         goods.save();
                                         data.add(goods);
                                     }
@@ -467,7 +478,6 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
                                 }
                                 return data;
                             }
-
                         }
                 );
             }
@@ -547,6 +557,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
                                                            goods1.guige = entity.guige;
                                                            goods1.unit = entity.danwei;
                                                            goods1.discountType = entity.discount_type;
+                                                           goods1.inventory = entity.inventory;
                                                            //goods1.save();
                                                            data.add(goods1);
                                                        }
@@ -613,6 +624,8 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
                                                                    goods1.guige = entity.guige;
                                                                    goods1.unit = entity.danwei;
                                                                    goods1.discountType = entity.discount_type;
+                                                                   goods1.inventory = entity.inventory;
+
                                                                    //goods1.save();
                                                                    data.add(goods1);
 
@@ -645,6 +658,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
                                                                        goods.guige = entity.guige;
                                                                        goods.unit = entity.danwei;
                                                                        goods.discountType = entity.discount_type;
+                                                                       goods1.inventory = entity.inventory;
                                                                        goods.save();
                                                                    }
                                                                }
@@ -686,6 +700,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
                                                                goods.guige = entity.guige;
                                                                goods.unit = entity.danwei;
                                                                goods.discountType = entity.discount_type;
+                                                               goods.inventory = entity.inventory;
                                                                goods.save();
                                                                data.add(goods);
                                                            }

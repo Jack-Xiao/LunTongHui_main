@@ -8,8 +8,8 @@ public class ConstantURL {
     public static final String SUCCESSCODE = "000";
 
     //public static final String HOST = "http://120.25.224.250/api/"; //测试 Ip
-    //public static final String HOST = "http://192.168.0.254/ecs/api/"; //测试 Ip
-      public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
+
+    public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
     //public static final String HOST = "http://120.25.201.114/api_new/"; //另一台正式机
 
     //public static final String HOST = "http://img.zgltong.com/api_new/"; //另一台正式机
@@ -239,7 +239,7 @@ public class ConstantURL {
             +"user_id=" + ARGSCONTENT1 + "&"
             +"goodsname=" +ARGSCONTENT2 + "&"
             +"ctype=" + ARGSCONTENT3 + "&"
-            +"display=" + ARGSCONTENT3;
+            +"display=" + ARGSCONTENT4;
 
 
     //首页商品轮播广告
@@ -491,5 +491,11 @@ public class ConstantURL {
 
     public static final String ABOUT_US = HOST
             +"mobile.php?act=about";
+
+    //public static final String
+    public static final String SCAN_QR_CODE = HOST
+            +"mobile.php?act=scan_group_qrcode&"
+            +"group_id=" + ARGSCONTENT1 + "&"
+            +"user_id="+ARGSCONTENT2;
 
 }

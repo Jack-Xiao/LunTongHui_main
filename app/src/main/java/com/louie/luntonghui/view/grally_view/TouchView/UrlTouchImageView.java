@@ -95,15 +95,26 @@ public class UrlTouchImageView extends RelativeLayout {
                 InputStream is = conn.getInputStream();
                 int totalLen = conn.getContentLength();
                 InputStreamWrapper bis = new InputStreamWrapper(is, 8192, totalLen);
-                bis.setProgressListener(new InputStreamWrapper.InputStreamProgressListener(){
-					@Override
-					public void onProgress(float progressValue, long bytesLoaded,
-							long bytesTotal)
-					{
-						publishProgress((int)(progressValue * 100));
-					}
-				});
-                bm = BitmapFactory.decodeStream(bis);  //会内存溢出...
+                bis.setProgressListener(new InputStreamWrapper.InputStreamProgressListener() {
+                    @Override
+                    public void onProgress(float progressValue, long bytesLoaded,
+                                           long bytesTotal) {
+                        publishProgress((int) (progressValue * 100));
+                    }
+                });
+                /*bm = BitmapFactory.decodeStream(bis);  //会内存溢出...
+                bis.close();
+                is.close();*/
+
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inTempStorage = new byte[100 * 1024];
+                options.inPreferredConfig = Bitmap.Config.RGB_565;
+                options.inPurgeable = true;
+                //options.inSampleSize = 2; //压缩
+                options.inSampleSize = 1; // 压缩比 1:1
+                options.inInputShareable = true;
+
+                bm = BitmapFactory.decodeStream(bis,null,options);
                 bis.close();
                 is.close();
             } catch (Exception e) {

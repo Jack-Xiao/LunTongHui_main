@@ -115,7 +115,6 @@ public class SearchActivity extends BaseNormalActivity {
         mThinkSearchAdapter = new ThinkSearchAdapter1(mContext, R.layout.goods_think_search_list_item);
         navigationSearchContent.setAdapter(mThinkSearchAdapter);
 
-
         initView();
 
         initSearch();
@@ -186,8 +185,6 @@ public class SearchActivity extends BaseNormalActivity {
 
             }
         });
-
-
     }
 
     public Response.Listener<GoodsThinkSearchList> thinkSearch() {
@@ -345,8 +342,7 @@ public class SearchActivity extends BaseNormalActivity {
                                                }
                                            }
                                        }
-                                   }
-        );
+                                   });
     }
 
     @OnClick(R.id.search_btn)
@@ -426,11 +422,4 @@ public class SearchActivity extends BaseNormalActivity {
         super.onPause();
         MobclickAgent.onPause(this);
     }
-
-/*    @Optional
-    @OnItemClick(R.id.navigation_search1_content)
-    public void OnItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String curSearchContent = mSearchAdapter.getItem(position).toString();
-        mListener.search(curSearchContent);
-    }*/
 }

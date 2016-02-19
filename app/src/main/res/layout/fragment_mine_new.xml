@@ -67,18 +67,6 @@
                                 android:textSize="16sp"
                                 tools:text="李光华" />
 
-                            <!--<TextView
-                                android:id="@+id/mine_user_center"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerInParent="true"
-                                android:layout_marginLeft="3dp"
-                                android:layout_marginRight="3dp"
-                                android:singleLine="true"
-                                android:text=""
-                                android:textColor="@color/white"
-                                android:textSize="16sp" />-->
-
                             <View
                                 android:layout_marginTop="4dp"
                                 android:layout_marginBottom="4dp"
@@ -121,7 +109,6 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginRight="10dp"
                         android:src="@drawable/face" />
-
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -151,7 +138,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_centerVertical="true"
                             android:layout_gravity="left"
-                            android:layout_marginLeft="10dp"
+                            android:layout_marginLeft="7dp"
                             android:drawableLeft="@drawable/coin"
                             android:drawablePadding="10dp"
                             android:gravity="center"
@@ -196,7 +183,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginRight="20dp"
+                            android:layout_marginRight="10dp"
                             android:gravity="center"
                             android:textColor="@color/white"
                             android:textSize="16sp"
@@ -205,232 +192,6 @@
                 </RelativeLayout>
             </LinearLayout>
 
-            <!--<RelativeLayout
-                android:layout_width="match_parent"
-                android:background="@drawable/navigation_bar_user"
-                android:layout_height="100dp">
-
-                <LinearLayout
-                    android:layout_centerHorizontal="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:orientation="horizontal">
-
-                    &lt;!&ndash;                <de.hdodenhof.circleimageview.CircleImageView
-                                        android:id="@+id/user_image"
-                                        android:layout_width="80dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_centerInParent="true"
-                                        android:layout_marginLeft="60dp"
-                                        android:layout_marginTop="20dp"
-                                        android:src="@drawable/login_person_icon"
-                                        app:border_color="@color/khaki"
-                                        app:border_width="2dp" />&ndash;&gt;
-                    <ImageView
-                        android:id="@+id/user_image"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-
-                        android:layout_marginTop="10dp"
-                        android:src="@drawable/face" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="15dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:textColor="@color/white"
-                            android:id="@+id/username"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@id/user_image"
-                            android:textSize="16sp"
-                            tools:text="用户名:fionyxia" />
-
-                        <TextView
-                            android:textColor="@color/white"
-                            android:id="@+id/phone_number"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="16sp"
-                            tools:text="手机号:13746464614" />
-
-                        <TextView
-                            android:textColor="@color/white"
-                            android:id="@+id/custom_type"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:drawablePadding="10dp"
-                            android:textSize="16sp"
-                            tools:text="类型：终端门店" />
-                    </LinearLayout>
-                </LinearLayout>
-            </RelativeLayout>-->
-            <!--<LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@drawable/login_background_grey">
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:drawableLeft="@drawable/login_gold"
-                                android:drawablePadding="2dp"
-                                android:text="轮通币"
-                                android:textColor="@color/white"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/luntong_money"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:textColor="@color/white"
-                            android:textSize="12sp"
-                            tools:text="20" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:background="@drawable/login_break_line_white" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/login_background_grey"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/status_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:drawableLeft="@drawable/login_menoy"
-                                android:drawablePadding="2dp"
-                                android:text="账户余额"
-                                android:textColor="@color/white"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/status_value"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:textColor="@color/white"
-                            android:textSize="12sp"
-                            tools:text="20" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:background="@drawable/login_break_line_white" />
-                </RelativeLayout>
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="4"
-                    android:background="@drawable/login_background_grey"
-                    android:paddingLeft="20dp">
-
-                    &lt;!&ndash; <Button
-                         android:layout_centerVertical="true"
-                         android:layout_alignParentRight="true"
-                         android:layout_marginRight="10dp"
-                         android:textColor="@color/white"
-                         android:text="签到送轮通币"
-                         android:background="@drawable/login_success_sign"
-                         android:id="@+id/sign_in_send_money"
-                         android:layout_width="wrap_content"
-                         android:layout_height="30dp" />&ndash;&gt;
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true">
-                        &lt;!&ndash;                <ImageView
-                                            android:layout_marginBottom="2dp"
-                                           android:layout_marginTop="2dp"
-                                            android:layout_marginLeft="20dp"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:src="@drawable/not_signin_background"
-                                            />&ndash;&gt;
-
-                    </RelativeLayout>
-
-                    <FrameLayout
-                        android:id="@+id/lin_sign_in"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true">
-
-                        <TextView
-                            android:id="@+id/signin_songlungtobi"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="24dp"
-                            android:layout_marginTop="3dp"
-                            android:background="@drawable/not_signin_background"
-                            android:gravity="center"
-                            android:text="@string/not_signin" />
-
-
-                        <TextView
-                            android:id="@+id/signin_value"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/sign_in"
-                            android:gravity="center"
-                            android:text="@string/signin_value"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
-                    </FrameLayout>
-
-
-                </RelativeLayout>
-            </LinearLayout>-->
 
             <include layout="@layout/mine_break_line_view" />
 
@@ -712,7 +473,6 @@
                         android:gravity="center_vertical|left"
                         android:text="意见反馈" />
                 </RelativeLayout>
-
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

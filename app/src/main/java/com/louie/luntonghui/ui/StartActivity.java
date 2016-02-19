@@ -25,7 +25,8 @@ public class StartActivity extends BaseNormalActivity{
     @InjectView(R.id.register)
     Button register;
     private Handler handler = new Handler();
-    public String DEFAULT_USERID = "-1";
+    public static String DEFAULT_USERID = "-1";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +42,19 @@ public class StartActivity extends BaseNormalActivity{
 
         String userId = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.USER_DEFAULT);
 
-        if(userId.equals(DEFAULT_USERID)){
-            IntentUtil.startActivityToMainActivity(StartActivity.this, RegisterLogin.class);
+        int runCount = DefaultShared.getInt(Config.RUN_COUNT,Config.DEFAULT_COUNT);
 
+        if(runCount == Config.DEFAULT_COUNT){
+            IntentUtil.startActivity(StartActivity.this,GuideActivity.class);
         }else{
-            IntentUtil.startActivityToMainActivity(StartActivity.this, MainActivity.class);
-            finish();
+            if(userId.equals(DEFAULT_USERID)){
+                IntentUtil.startActivityToMainActivity(StartActivity.this, RegisterLogin.class);
+            }else{
+                IntentUtil.startActivityToMainActivity(StartActivity.this, MainActivity.class);
+            }
         }
+        finish();
+
        /* handler.postDelayed(new Runnable() {
             @Override
             public void run() {

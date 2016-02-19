@@ -240,6 +240,7 @@
     <color name="toolbar_9">#ad1919</color>
     <color name="toolbar_10">#a40000</color>
 
+    <color name="category_grey">#999999</color>
 
     <color name="color_alpha">#01000000</color>
     <color name="color_dark_red">#840000</color>
@@ -249,4 +250,8 @@
     
     <color name="transparence_black">#191919</color>
 
+    <!-- 二维码 -->
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="possible_result_points">#c0ffff00</color>
 </resources>

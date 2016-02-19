@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.android.volley.Response;
@@ -92,16 +91,13 @@ public class MineServiceCostQueryActivity extends BaseNormalActivity {
                                     .from(MineServiceCostTable.class)
                                     .execute();
 
-                            ActiveAndroid.beginTransaction();
                             for(int i =0;i<mineServiceCostResult.listallcat.size();i++){
                                 MineServiceCostTable cost = new MineServiceCostTable();
                                 cost.curDate = mineServiceCostResult.listallcat.get(i).date;
                                 cost.curProfit = mineServiceCostResult.listallcat.get(i).profit;
                                 cost.save();
                             }
-                            ActiveAndroid.setTransactionSuccessful();
                         }finally {
-                            ActiveAndroid.endTransaction();
                         }
                         return null;
                     }

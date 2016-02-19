@@ -44,8 +44,10 @@ public class GoodsDetail extends Model implements Parcelable {
     @Column(name = "promotion_name")
     public String promotionName;
 
-
     public String danwei;
+
+    @Column(name = "inventory")
+    public String inventory;
     @Override
     public int describeContents() {
         return 0;
@@ -66,6 +68,8 @@ public class GoodsDetail extends Model implements Parcelable {
         dest.writeString(this.goodsDesc);
         dest.writeString(this.hasPromotion);
         dest.writeString(this.promotionName);
+        dest.writeString(this.danwei);
+        dest.writeString(this.inventory);
     }
 
     public GoodsDetail() {
@@ -85,6 +89,8 @@ public class GoodsDetail extends Model implements Parcelable {
         this.goodsDesc = in.readString();
         this.hasPromotion = in.readString();
         this.promotionName = in.readString();
+        this.danwei = in.readString();
+        this.inventory = in.readString();
     }
 
     public static final Parcelable.Creator<GoodsDetail> CREATOR = new Parcelable.Creator<GoodsDetail>() {

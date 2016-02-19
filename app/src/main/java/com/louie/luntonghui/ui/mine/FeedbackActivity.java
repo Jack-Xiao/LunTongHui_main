@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.activeandroid.query.Select;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.model.db.User;
+import com.louie.luntonghui.model.result.Result;
 import com.louie.luntonghui.ui.BaseToolbarActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.DefaultShared;
@@ -36,6 +37,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import rx.Observer;
+import rx.android.app.AppObservable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Jack on 15/10/21.
@@ -131,6 +136,8 @@ public class FeedbackActivity extends BaseToolbarActivity {
                     mHandler.sendMessage(new Message());
                     // 数据同步
                     sync();
+                    // 返回后台app.
+                    sendFeedback(content);
                 }
             }
         });
@@ -142,19 +149,39 @@ public class FeedbackActivity extends BaseToolbarActivity {
                 sync();
             }
         });
-        mSwipeRefreshLayout.setColorScheme(android.R.color.holo_blue_bright,
+
+        mSwipeRefreshLayout.setColorSchemeColors(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
     }
 
+    private void sendFeedback(String content) {
+        AppObservable.bindActivity(this,mApi.sendFeedback(mUid,content,"android"))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    Observer<Result> observer = new Observer<Result>() {
+        @Override
+        public void onCompleted() {
+        }
+
+        @Override
+        public void onError(Throwable e) {
+        }
+
+        @Override
+        public void onNext(Result result) {
+        }
+    };
+
     // 数据同步
     private void sync() {
-
         mComversation.sync(new SyncListener() {
-
             @Override
             public void onSendUserReply(List<Reply> replyList) {
+
             }
 
             @Override

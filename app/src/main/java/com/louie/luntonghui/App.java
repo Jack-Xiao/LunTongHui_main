@@ -2,39 +2,34 @@ package com.louie.luntonghui;
 
 import android.app.Application;
 import android.app.Service;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Vibrator;
 
 import com.activeandroid.ActiveAndroid;
-import com.activeandroid.query.Delete;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
-import com.baidu.location.GeofenceClient;
 import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.facebook.stetho.Stetho;
-import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.CarList;
 import com.louie.luntonghui.model.result.GoodsList;
+import com.louie.luntonghui.net.OkHttpUtils;
 import com.louie.luntonghui.net.RequestManager;
+import com.louie.luntonghui.util.DataCleanManager;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.util.XmlParserHandler;
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.squareup.otto.Bus;
 
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,8 +47,6 @@ import com.facebook.stetho.Stetho;*/
 public class App extends Application {
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
-    private static final String TWITTER_KEY = "casoxiao@gmail.com";
-    private static final String TWITTER_SECRET = "zz3321";
 
     public static final String CITY = "city";
     public static final String PROVINCE = "province";
@@ -73,7 +66,6 @@ public class App extends Application {
     private static App application;
     private static Bus bus = new Bus();
     public LocationClient mLocationClient;
-    public GeofenceClient mGeofenceClient;
     public MyLocationListener mMyLocationListener;
     public Vibrator mVibrator;
     public String strLocation;
@@ -97,22 +89,43 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         application = this;
         ActiveAndroid.initialize(this);
+        //refWatcher = LeakCanary.install(this);
 
+        initCache();
         parserXml();
-
-        initImageLoader(getApplicationContext());
+        initImageConnect();
 
         mLocationClient = new LocationClient(this.getApplicationContext());
+        LocationClientOption option = new LocationClientOption();
+        option.setIsNeedAddress(true);
+        mLocationClient.setLocOption(option);
+
         mMyLocationListener = new MyLocationListener();
         //mLocationClient.registerLocationListener(mMyLocationListener);
-        mGeofenceClient = new GeofenceClient(getApplicationContext());
+        //mGeofenceClient = new GeofenceClient(getApplicationContext());
         mVibrator = (Vibrator) getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
 
         initDebug();
     }
+
+
+
+    private void initCache() {
+        DataCleanManager.cleanInternalCache(this);
+    }
+
+    private void initImageConnect() {
+        Glide.get(this).register(GlideUrl.class,InputStream.class,
+                new OkHttpUrlLoader.Factory(OkHttpUtils.getInstance(this)));
+    }
+/*
+    private static RefWatcher refWatcher;
+
+    public static RefWatcher getRefWatcher(Context context){
+        return refWatcher;
+    }*/
 
     private void initDebug() {
         if(BuildConfig.DEBUG) {
@@ -124,75 +137,11 @@ public class App extends Application {
         }
     }
 
-
-
-    public Response.Listener<CarList> getCarList() {
-        return new Response.Listener<CarList>() {
-
-            @Override
-            public void onResponse(final CarList carList) {
-                mCarList = carList;
-                for (int i = 0; i < carList.goods_list.size(); i++) {
-                    goodsInCaridsList.add(carList.goods_list.get(i).goods_id);
-                }
-                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
-                    @Override
-                    protected Object doInBackground(Object... params) {
-                        new Delete()
-                                .from(ShoppingCar.class)
-                                .execute();
-
-                        List<ShoppingCar> data = new ArrayList<ShoppingCar>();
-                        if (carList != null && carList.goods_list != null) {
-                            try {
-                                ActiveAndroid.beginTransaction();
-                                for (int i = 0; i < carList.goods_list.size(); i++) {
-                                    ShoppingCar car = new ShoppingCar();
-                                    car.carId = carList.goods_list.get(i).rec_id;
-                                    car.isChecked = INITCHECKED;
-                                    car.goodsShopPrice = carList.goods_list.get(i).goods_price;
-                                    car.goodsImage = carList.goods_list.get(i).goods_img;
-                                    car.goodsNumber = carList.goods_list.get(i).goods_number;
-                                    car.goodsId = carList.goods_list.get(i).goods_id;
-                                    car.goodsName = carList.goods_list.get(i).goods_name;
-                                    car.guige = carList.goods_list.get(i).guige;
-                                    car.unit = carList.goods_list.get(i).danwei;
-                                    car.save();
-                                    data.add(car);
-                                }
-                                ActiveAndroid.setTransactionSuccessful();
-                            } finally {
-                                ActiveAndroid.endTransaction();
-                            }
-                        }
-                        return data;
-                    }
-
-                    ;
-                });
-            }
-        };
-    }
-
-
-
-    private com.android.volley.Response.Listener<GoodsList> getGoodsList() {
-        return new com.android.volley.Response.Listener<GoodsList>() {
-
-            @Override
-            public void onResponse(final GoodsList goodsList) {
-
-                mGoods_list = goodsList.goods_list;
-            }
-        };
-    }
-
-
     protected com.android.volley.Response.ErrorListener errorListener() {
         return new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ToastUtil.showLongToast(application, error.getMessage());
+                ToastUtil.showLongToast(application, "网络连接失败");
             }
         };
     }
@@ -228,36 +177,15 @@ public class App extends Application {
     public class MyLocationListener implements BDLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
-            StringBuffer sb = new StringBuffer(256);
-            sb.append(location.getTime());
-            sb.append("\nerror code : ");
-            sb.append(location.getLocType());
-            sb.append("\nlatitude : ");
-            sb.append(location.getLatitude());
-            sb.append("\nlontitude : ");
-            sb.append(location.getLongitude());
-            sb.append("\nradius : ");
-            sb.append(location.getRadius());
-            if (location.getLocType() == BDLocation.TypeGpsLocation) {
-                sb.append("\nspeed : ");
-                sb.append(location.getSpeed());
-                sb.append("\nsatellite : ");
-                sb.append(location.getSatelliteNumber());
-                sb.append("\ndirection : ");
-                sb.append("\naddr : ");
-                sb.append(location.getAddrStr());
 
+            if (location.getLocType() == BDLocation.TypeGpsLocation) {
                 cityName = location.getCity().replace("市", "");
                 provinceName = location.getProvince().replace("省", "");
 
             } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                sb.append("\naddr : ");
-                sb.append(location.getAddrStr());
+
                 cityName = location.getCity().replace("市", "");
                 provinceName = location.getProvince().replace("省", "");
-                //运营商信息
-                sb.append("\noperationers : ");
-                sb.append(location.getOperators() + "");
             }
 
             DefaultShared.putString(CITY, cityName);
@@ -268,7 +196,6 @@ public class App extends Application {
             if (nameidList != null && nameidList.containsKey(provinceName)) {
                 DefaultShared.putString(PROVINCEID, nameidList.get(provinceName));
             }
-
         }
     }
 
@@ -286,30 +213,8 @@ public class App extends Application {
         RequestManager.cancelAll();
     }
 
-
-    // 初始化ImageLoader
-    public static void initImageLoader(Context context) {
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-                .threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory()
-                .memoryCache(new LruMemoryCache(2 * 1024 * 1024)).discCacheSize(10 * 1024 * 1024)
-                .discCacheFileNameGenerator(new Md5FileNameGenerator())
-                .tasksProcessingOrder(QueueProcessingType.LIFO)
-                .build();
-        ImageLoader.getInstance().init(config);
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
     }
-
-    /*//初始化网络图片缓存库
-    private void initImageLoader(){
-        //网络图片例子,结合常用的图片缓存库UIL,你可以根据自己需求自己换其他网络图片库
-        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-                .cacheInMemory(true).cacheOnDisk(true).build();
-
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-                 getApplicationContext()).defaultDisplayImageOptions(defaultOptions)
-                .threadPriority(Thread.NORM_PRIORITY - 2)
-                .denyCacheImageMultipleSizesInMemory()
-                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
-                .tasksProcessingOrder(QueueProcessingType.LIFO).build();
-        ImageLoader.getInstance().init(config);
-    }*/
 }

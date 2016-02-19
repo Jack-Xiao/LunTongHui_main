@@ -15,13 +15,13 @@ import com.activeandroid.query.Update;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.AddGoodsResult;
 import com.louie.luntonghui.model.result.Result;
-import com.louie.luntonghui.net.ImageCacheManager;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.rest.RetrofitUtils;
 import com.louie.luntonghui.rest.ServiceManager;
@@ -107,26 +107,9 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
             viewHolder =(ViewHolder)convertView.getTag();
         }
 
-
-/*        Picasso.with(mContext).load(list.get(position).goodsImg)
-                //.placeholder(R.drawable.category_default_image) //错误或空白占位
-                //.centerCrop()
-                .into(viewHolder.mGoodsImg);*/
-
-/*        Uri uri = Uri.parse(list.get(position).goodsImg);
-        viewHolder.mGoodsImg.setImageURI(uri);*/
-
-        if (viewHolder.imageRequest != null) {
-            viewHolder.imageRequest.cancelRequest();
-        }
-
-        viewHolder.imageRequest = ImageCacheManager.loadImage(list.get(position).goodsImg,
-                ImageCacheManager.getImageListener(viewHolder.mGoodsImg));
-
- /*       Picasso.with(mContext).load(list.get(position).goodsImg)
-                //.placeholder(R.drawable.category_default_image) //错误或空白占位
-                //.centerCrop()
-                .into(viewHolder.mGoodsImg);*/
+        Glide.with(mContext).load(list.get(position).goodsImg)
+                .placeholder(R.drawable.default_image_in_no_source) //错误或空白占位
+                .into(viewHolder.mGoodsImg);
 
         viewHolder.mGoodsName.setText(list.get(position).goodsName);
         //viewHolder.mMarketPrice.setMarketPrice(list.get(position).marketPrice);
@@ -174,6 +157,19 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
                    }
                }
             }
+        }
+
+
+        String inventory = list.get(position).inventory;
+        if(inventory.equals(Goods.NO_GOODS)){
+            viewHolder.btnFastBuy.setEnabled(false);
+            viewHolder.btnFastBuy.setText("缺货");
+            //@drawable/category_fast_buy;
+            viewHolder.btnFastBuy.setBackgroundResource(R.drawable.category_fast_buy_grey);
+        }else{
+            viewHolder.btnFastBuy.setEnabled(true);
+            viewHolder.btnFastBuy.setText("快订");
+            viewHolder.btnFastBuy.setBackgroundResource(R.drawable.category_fast_buy);
         }
 
         return convertView;

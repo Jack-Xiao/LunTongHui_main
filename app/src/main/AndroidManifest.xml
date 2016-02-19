@@ -103,6 +103,19 @@
     <!-- 自定义权限 -->
     <uses-permission android:name="getui.permission.GetuiService.com.louie.luntonghui" />
 
+    <!-- 照相机权限 -->
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+
+    <!-- Leak canary needs access to External storage to save heap dumps -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+
+
     <permission
         android:name="getui.permission.GetuiService.com.louie.luntonghui"
         android:protectionLevel="normal"></permission>
@@ -123,8 +136,13 @@
             android:value="luntonghui.db" />
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="17" />
+            android:value="19" />
         <!-- options  default to 1-->
+
+       <!--  修改Glide 默认解析图片，改为AGR8888 -->
+        <meta-data
+            android:name="com.louie.luntonghui.view.GlideConfiguration"
+            android:value="GlideModule"/>-
 
         <activity
             android:name=".ui.StartActivity"
@@ -373,18 +391,18 @@
 
         </activity>
 
-
+        <!-- 2015.12.23 删除-->
         <!--QQ客户端回调分享 -->
         <!-- QQ客户端回调 2.6.3开始独立添加activity来处理QQ客户端的回调-->
-        <activity
+        <!--<activity
             android:name="cn.sharesdk.tencent.qq.ResultReceiver"
             android:launchMode="singleTask"
             android:noHistory="true">
-            <!--
+            &lt;!&ndash;
             如果集成QQ分享，或者使用QQ客户端来进行QQ空间的分享，须要在此处添加一个对ACTION_VIEW
             事件的过滤器，其中的scheme是“tencent”前缀再开发者应用的加上appId。如果此过滤器不设置，
             则分享结束以后不能得到正确的回调
-            -->
+            &ndash;&gt;
             <intent-filter android:priority="1000">
                 <data android:scheme="tencent1104755935" />
                 <action android:name="android.intent.action.VIEW" />
@@ -392,7 +410,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-
+-->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -578,5 +596,39 @@
             android:configChanges="orientation|keyboardHidden|navigation"
             android:exported="false"
             android:screenOrientation="behind" />-->
+
+
+        <!--<service
+            android:name="com.squareup.leakcanary.internal.HeapAnalyzerService"
+            android:enabled="false"
+            android:process=":leakcanary" />
+        <service
+            android:name="com.squareup.leakcanary.DisplayLeakService"
+            android:enabled="false" />
+
+        <activity
+            android:name="com.squareup.leakcanary.internal.DisplayLeakActivity"
+            android:enabled="false"
+            android:icon="@drawable/__leak_canary_icon"
+            android:label="@string/__leak_canary_display_activity_label"
+            android:taskAffinity="com.squareup.leakcanary"
+            android:theme="@style/__LeakCanary.Base" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>-->
+
+        <activity android:name=".ui.Home.QrCodeActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.Home.MipcaActivityCapture"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.GuideActivity"/>
+
     </application>
 </manifest>

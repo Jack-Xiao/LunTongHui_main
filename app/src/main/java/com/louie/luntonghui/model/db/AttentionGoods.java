@@ -97,4 +97,8 @@ public class AttentionGoods extends Model{
     //优惠活动
     @Column(name = "discount_type")
     public String discountType;
+
+    @Column(name = "inventory")
+    public String inventory;
+
 }

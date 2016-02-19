@@ -30,22 +30,11 @@
                     android:layout_centerInParent="true"
                     android:orientation="horizontal">
 
-                    <!--                <de.hdodenhof.circleimageview.CircleImageView
-                                        android:id="@+id/user_image"
-                                        android:layout_width="80dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_centerInParent="true"
-                                        android:layout_marginLeft="60dp"
-                                        android:layout_marginTop="20dp"
-                                        android:src="@drawable/login_person_icon"
-                                        app:border_color="@color/khaki"
-                                        app:border_width="2dp" />-->
                     <ImageView
                         android:id="@+id/user_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-
                         android:layout_marginTop="10dp"
                         android:src="@drawable/face" />
 
@@ -375,6 +364,7 @@
                     style="@style/mine_order_list_item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <TextView
                         style="@style/mine_order_list_first_font"
                         android:layout_width="wrap_content"

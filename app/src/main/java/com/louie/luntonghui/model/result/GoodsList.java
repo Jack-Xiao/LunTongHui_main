@@ -54,6 +54,7 @@ public class GoodsList {
                 public String name;
                 public String id;
                 public String url;
+                public String type; //用以区分不同view占用
             }
         }
     }

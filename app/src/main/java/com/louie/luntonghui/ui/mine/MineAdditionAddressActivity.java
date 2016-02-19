@@ -280,8 +280,10 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
         }
 
         provinceId = nameIdList.get(curProvinceName);
+
         cityId = nameIdList.get(curCityName);
         districtId =nameIdList.get(curDistrict);
+
         if(isProxy){
 
             Intent intent = new Intent();
@@ -322,7 +324,6 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
                 progress.setVisibility(View.GONE);
                 scrollView.setVisibility(View.VISIBLE);
                 if(result.rsgcode.equals(SUCCESSCODE)){
-
                     if(isAddition){
                         Intent intent = new Intent();
                         intent.putExtra(PROVINCE_ID,provinceId);

@@ -11,14 +11,13 @@ import java.lang.reflect.Field;
  * Created by Administrator on 2015/6/18.
  */
 public class GsonUtils {
-
     public static Gson newInstance() {
         GsonBuilder builder = new GsonBuilder();
         builder.setFieldNamingStrategy(new AnnotateNaming());
         return builder.create();
     }
-    private static class AnnotateNaming implements FieldNamingStrategy {
 
+    private static class AnnotateNaming implements FieldNamingStrategy {
         @Override
         public String translateName(Field field) {
             ParamName a = field.getAnnotation(ParamName.class);

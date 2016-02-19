@@ -271,7 +271,7 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
                 List<ProduceOrder.CartGoodsEntity> cart_goods = new ArrayList<>();
                 ProduceOrder produceOrder = new ProduceOrder();
                 for (int i = 0; i < lists.size(); i++) {
-                    ProduceOrder.CartGoodsEntity car = produceOrder.new CartGoodsEntity();
+                    ProduceOrder.CartGoodsEntity car = new ProduceOrder.CartGoodsEntity();
                     car.goods_thumb = lists.get(i).goods_thumb;
                     car.goods_name = lists.get(i).goods_name;
                     car.goods_price = lists.get(i).goods_price;

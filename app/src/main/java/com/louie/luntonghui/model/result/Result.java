@@ -5,6 +5,9 @@ package com.louie.luntonghui.model.result;
  */
 public class Result {
     public static final String SUCCESS = "000";
+    public static final String FAIL = "001";
+    public static final String RSG_CODE = "rsgcode";
+    public static final String RSG_MSG = "rsgmsg";
     /*
         000: 代表成功
 

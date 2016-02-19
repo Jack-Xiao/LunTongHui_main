@@ -3,6 +3,7 @@ package com.louie.luntonghui.ui.car;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -20,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
 import com.activeandroid.query.Update;
 import com.android.volley.Response;
 import com.louie.luntonghui.App;
@@ -28,6 +28,7 @@ import com.louie.luntonghui.R;
 import com.louie.luntonghui.adapter.ProduceOrderAdapter;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.OrderConfirmEvent;
+import com.louie.luntonghui.fragment.CarFragment;
 import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.OrderConfirm;
@@ -38,6 +39,7 @@ import com.louie.luntonghui.ui.mine.MineReceiverAddressActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.BaseAlertDialogUtil;
 import com.louie.luntonghui.util.BaseMainAlertDialogUtil;
+import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.TaskUtils;
@@ -49,7 +51,6 @@ import com.umeng.analytics.MobclickAgent;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -159,13 +160,19 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
 
     private View view;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_confirm_order);
+
         ButterKnife.inject(this);
         App.getBusInstance().register(this);
+
+        progress.setVisibility(View.VISIBLE);
+        Bundle bundle = getIntent().getExtras();
+
+        ProduceOrder order = getIntent().getParcelableExtra(CarFragment.ORDER);
+        //ProduceOrder3 order =(ProduceOrder3) getIntent().getSerializableExtra(CarFragment.ORDER);
         mAdapter = new ProduceOrderAdapter(this,this);
         listView.setAdapter(mAdapter);
 
@@ -179,38 +186,114 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.setView(view);
 
-
+        progress.setVisibility(View.VISIBLE);
         initGetInfo();
-        initNet();
+        initOrderInfo(order);
+        focusable();//获取焦点
+        progress.setVisibility(View.GONE);
+
     }
 
-    private void initNet() {
+    private void focusable() {
+        new Handler().
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollView.fullScroll(ScrollView.FOCUS_UP);
+                    }
+                });
+        addressPresent.setFocusable(true);
+        addressPresent.setFocusableInTouchMode(true);
+        addressPresent.requestFocus();
+    }
 
-        //use_luntong_money_count.
+    private void initOrderInfo(ProduceOrder produceOrder) {
         regions = ((App) getApplication()).idNList;
 
         userId = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
-        progress.setVisibility(View.VISIBLE);
-        execConfirmOrder();
-    }
 
-    private void execConfirmOrder() {
-        List<ShoppingCar> list = new Select()
-                .from(ShoppingCar.class)
-                .execute();
-        StringBuilder ids = new StringBuilder("");
+        progress.setVisibility(View.GONE);
+        scrollView.setVisibility(View.VISIBLE);
+        totalPrice.setVisibility(View.VISIBLE);
 
-        for (int i = 0; i < list.size(); i++) {
-            if(!list.get(i).rId.equals("0")) continue;
-            ids.append(list.get(i).carId + "," + list.get(i).goodsNumber + ":");
+        if(produceOrder.consignee.size() > 0) {
+            initAddress();
+            addressPresent.setVisibility(View.GONE);
+            addressId = Integer.parseInt(produceOrder.consignee.get(0).address_id);
+            String province = regions.get(produceOrder.consignee.get(0).province) + "省";
+            String city = regions.get(produceOrder.consignee.get(0).city) + "市";
+            String district = regions.get(produceOrder.consignee.get(0).district);
+            String addressDetail = produceOrder.consignee.get(0).address;
+
+            username.setText(produceOrder.consignee.get(0).consignee);
+            phoneNumber.setText(produceOrder.consignee.get(0).mobile);
+            regionDetail.setText(province + city + district + addressDetail);
+        }else{
+            addressPresent.setVisibility(View.VISIBLE);
+            username.setVisibility(View.GONE);
+            phoneNumber.setVisibility(View.GONE);
+            regionDetail.setVisibility(View.GONE);
+            addressSelectMore.setVisibility(View.GONE);
         }
-        String new_number = ids.toString();
-        if (new_number.length() > 0) {
-            new_number = new_number.substring(0, new_number.length() - 1);
+
+        if(produceOrder.total.integral_control.equals(ProduceOrder.CAN_NOT_INTEGRAL)){
+            integralControl.setVisibility(View.VISIBLE);
+        }else{
+            integralControl.setVisibility(View.GONE);
         }
 
-        String url = String.format(ConstantURL.PRODUCE_ORDER, userId, new_number);
-        executeRequest(new GsonRequest(url, ProduceOrder.class, responseListener(), errorListener()));
+        mAdapter.setData(produceOrder.cart_goods, false);
+
+        goodsValueValue.setText("￥" + produceOrder.total.goods_price + "");
+        freightValue.setText("￥" + produceOrder.total.shipping_fee);
+        goodsTotal.setText("￥" + produceOrder.total.goods_price);
+        couponValue.setText("-￥"+ produceOrder.total.discounts);
+        totalOrgValue = produceOrder.total.goods_price;
+
+        String strRadio = produceOrder.total.ratio;
+        radio.setText(strRadio);
+
+        Pattern pattern;
+        Matcher matcher;
+        String strPattern = ".*?([\\d]+).*?([\\d]+).*+";
+        pattern = Pattern.compile(strPattern);
+        matcher = pattern.matcher(strRadio);
+        String grounp = "";
+        while (matcher.find()) {
+            grounp = matcher.group(1);
+        }
+        maxLuntongMoney = Integer.parseInt(grounp);
+
+        enoughTotalDeliver.setVisibility(View.GONE);
+        enoughTotalReduce.setVisibility(View.GONE);
+        giftPrompt.setVisibility(View.GONE);
+
+        switch (produceOrder.total.act_type) {
+            //减
+            case ENOUGH_TOTAL_REDUCE:
+                enoughTotalReduce.setVisibility(View.VISIBLE);
+                enoughTotalReduceValue.setText(produceOrder.total.details);
+                break;
+            //赠
+            case ENOUGH_TOTAL_DELIVER:
+                enoughTotalDeliver.setVisibility(View.VISIBLE);
+                enoughTotalDeliverValue.setText(produceOrder.total.gift);
+                break;
+            case ENOUGH_TOTAL_ALL:
+                enoughTotalDeliver.setVisibility(View.VISIBLE);
+                enoughTotalReduce.setVisibility(View.VISIBLE);
+                enoughTotalReduceValue.setText(produceOrder.total.details);
+                enoughTotalDeliverValue.setText(produceOrder.total.gift);
+                break;
+        }
+
+        if(!TextUtils.isEmpty(produceOrder.total.prompt)){
+            giftPrompt.setVisibility(View.VISIBLE);
+            giftPrompt.setText(produceOrder.total.prompt);
+        }else{
+            giftPrompt.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -347,109 +430,6 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
             @Override
             public void onResponse(final ProduceOrder produceOrder) {
 
-                /*if(produceOrder.consignee.size() == 0){
-                    MaterialDialog materialDialog = new MaterialDialog(ProduceOrderActivity.this);
-                    materialDialog.setCanceledOnTouchOutside(false)
-                            .setMessage(R.string.no_address_info)
-                            .setNegativeButton(R.string.sure, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(ProduceOrderActivity.this,
-                                            MineAdditionAddressActivity.class);
-                                    startActivityForResult(intent,REQUESTCODE);
-                                    finish();
-                                }
-                            })
-                            .setPositiveButton(R.string.cancel, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    finish();
-                                }
-                            });
-                    return;
-                }*/
-
-                progress.setVisibility(View.GONE);
-                scrollView.setVisibility(View.VISIBLE);
-                totalPrice.setVisibility(View.VISIBLE);
-
-                if(produceOrder.consignee.size() > 0) {
-                    initAddress();
-                    addressPresent.setVisibility(View.GONE);
-                    addressId = Integer.parseInt(produceOrder.consignee.get(0).address_id);
-                    String province = regions.get(produceOrder.consignee.get(0).province) + "省";
-                    String city = regions.get(produceOrder.consignee.get(0).city) + "市";
-                    String district = regions.get(produceOrder.consignee.get(0).district);
-                    String addressDetail = produceOrder.consignee.get(0).address;
-
-                    username.setText(produceOrder.consignee.get(0).consignee);
-                    phoneNumber.setText(produceOrder.consignee.get(0).mobile);
-                    regionDetail.setText(province + city + district + addressDetail);
-                }else{
-                    addressPresent.setVisibility(View.VISIBLE);
-                    username.setVisibility(View.GONE);
-                    phoneNumber.setVisibility(View.GONE);
-                    regionDetail.setVisibility(View.GONE);
-                    addressSelectMore.setVisibility(View.GONE);
-                }
-
-                if(produceOrder.total.integral_control.equals(ProduceOrder.CAN_NOT_INTEGRAL)){
-                    integralControl.setVisibility(View.VISIBLE);
-                }else{
-                    integralControl.setVisibility(View.GONE);
-                }
-
-                mAdapter.setData(produceOrder.cart_goods, false);
-
-                goodsValueValue.setText("￥" + produceOrder.total.goods_price + "");
-                freightValue.setText("￥" + produceOrder.total.shipping_fee);
-                goodsTotal.setText("￥" + produceOrder.total.goods_price);
-                couponValue.setText("-￥"+ produceOrder.total.discounts);
-                totalOrgValue = produceOrder.total.goods_price;
-
-                String strRadio = produceOrder.total.ratio;
-                radio.setText(strRadio);
-
-                Pattern pattern;
-                Matcher matcher;
-                String strPattern = ".*?([\\d]+).*?([\\d]+).*+";
-                pattern = Pattern.compile(strPattern);
-                matcher = pattern.matcher(strRadio);
-                String grounp = "";
-                while (matcher.find()) {
-                    grounp = matcher.group(1);
-                }
-                maxLuntongMoney = Integer.parseInt(grounp);
-
-                enoughTotalDeliver.setVisibility(View.GONE);
-                enoughTotalReduce.setVisibility(View.GONE);
-                giftPrompt.setVisibility(View.GONE);
-
-                switch (produceOrder.total.act_type) {
-                    //减
-                    case ENOUGH_TOTAL_REDUCE:
-                        enoughTotalReduce.setVisibility(View.VISIBLE);
-                        enoughTotalReduceValue.setText(produceOrder.total.details);
-                        break;
-                    //赠
-                    case ENOUGH_TOTAL_DELIVER:
-                        enoughTotalDeliver.setVisibility(View.VISIBLE);
-                        enoughTotalDeliverValue.setText(produceOrder.total.gift);
-                        break;
-                    case ENOUGH_TOTAL_ALL:
-                        enoughTotalDeliver.setVisibility(View.VISIBLE);
-                        enoughTotalReduce.setVisibility(View.VISIBLE);
-                        enoughTotalReduceValue.setText(produceOrder.total.details);
-                        enoughTotalDeliverValue.setText(produceOrder.total.gift);
-                        break;
-                }
-
-                if(!TextUtils.isEmpty(produceOrder.total.prompt)){
-                    giftPrompt.setVisibility(View.VISIBLE);
-                    giftPrompt.setText(produceOrder.total.prompt);
-                }else{
-                    giftPrompt.setVisibility(View.GONE);
-                }
             }
         };
     }
@@ -577,20 +557,12 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         String uid = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
         String integral = useLuntongMoneyCount.getText() + "";
         String payId = CACHPLAY;
-        String display = DefaultShared.getString(App.PROVINCEID,App.DEFAULT_PROVINCEID);
+
+        String display = Config.getRenamePlace();
         try {
             strUserFeedback = URLEncoder.encode(strUserFeedback, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
-
-        switch (display){
-            case "6":
-                display = "0";
-                break;
-            case "388":
-                display = "1";
-                break;
         }
 
         String url = String.format(ConstantURL.CONFIRM_ORDER,uid,addressId,payId,strUserFeedback,integral,display);

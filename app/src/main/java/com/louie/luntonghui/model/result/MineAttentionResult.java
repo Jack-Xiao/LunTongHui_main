@@ -70,5 +70,8 @@ public class MineAttentionResult {
         public String guige;
         public String goods_img;
         public String discount_type;
+
+        public String inventory;
+
     }
 }

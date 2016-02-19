@@ -86,10 +86,11 @@ public class MineAttentionAdapter extends RecyclerView.Adapter<MineAttentionAdap
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         AttentionGoods goods = data.get(position);
 
+
         Picasso.with(mContext).load(data.get(position).goodsImg)
                 .placeholder(R.drawable.default_image_in_no_source) //错误或空白占位
-                //.centerCrop()
                 .into(viewHolder.goodsImg);
+
 
         viewHolder.goodsName.setText(goods.goodsName);
         //viewHolder.mMarketPrice.setMarketPrice(list.get(position).marketPrice);
@@ -146,6 +147,18 @@ public class MineAttentionAdapter extends RecyclerView.Adapter<MineAttentionAdap
                     }
                 }
             }
+        }
+
+        String inventory = goods.inventory;
+        if(inventory.equals(Goods.NO_GOODS)){
+            viewHolder.fastBuy.setEnabled(false);
+            viewHolder.fastBuy.setText("缺货");
+            viewHolder.fastBuy.setBackgroundResource(R.drawable.category_fast_buy_grey);
+        }else{
+            viewHolder.fastBuy.setEnabled(true);
+            viewHolder.fastBuy.setText("快订");
+            viewHolder.fastBuy.setBackgroundResource(R.drawable.category_fast_buy);
+
         }
     }
 

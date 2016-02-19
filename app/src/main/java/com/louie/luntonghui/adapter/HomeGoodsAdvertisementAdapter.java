@@ -8,10 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.android.volley.toolbox.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.model.result.HomeAdversion;
-import com.louie.luntonghui.net.ImageCacheManager;
 import com.louie.luntonghui.ui.category.GoodsDetailActivity;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.IntentUtil;
@@ -34,6 +33,15 @@ public class HomeGoodsAdvertisementAdapter extends BaseAdapter{
     public HomeGoodsAdvertisementAdapter(Activity context,
                                          List<HomeAdversion.GoodsAdvPartEntity.GoodsPartAdvArrayEntity> entity){
         this.mContext = context;
+        if(data == null){
+            data = new ArrayList<>();
+        }
+        data.clear();
+        data.addAll(entity);
+        notifyDataSetChanged();
+    }
+
+    public void setData(List<HomeAdversion.GoodsAdvPartEntity.GoodsPartAdvArrayEntity> entity){
         if(data == null){
             data = new ArrayList<>();
         }
@@ -70,7 +78,7 @@ public class HomeGoodsAdvertisementAdapter extends BaseAdapter{
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        ViewHolder vh = null;
+        ViewHolder vh;
         if(convertView == null){
             convertView = LayoutInflater.from(mContext).inflate(R.layout.fragment_home_adver_part_item,parent,false);
             vh = new ViewHolder();
@@ -80,26 +88,16 @@ public class HomeGoodsAdvertisementAdapter extends BaseAdapter{
             vh = (ViewHolder)convertView.getTag();
         }
 
-        if(vh.imageRequest !=null){
-            vh.imageRequest.cancelRequest();
-        }
-        vh.imageRequest = ImageCacheManager.loadImage(data.get(position).img,
-                ImageCacheManager.getImageListener(vh.imageView));
+        Glide.with(mContext)
+                .load(data.get(position).img)
+                .placeholder(R.drawable.default_image_in_no_source)
+                .crossFade()
+                .into(vh.imageView);
 
-        //vh.imageView.setTag(data.get(position).url);
-        vh.imageView.setTag(position);
+        //vh.imageView.setTag(position);
+        vh.imageView.setTag(R.string.position,position);
         vh.imageView.setOnClickListener(mListener);
 
-        /*vh.imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString(GoodsDetailActivity.GOODSDETAILURL, data.get(position).url);
-                //bundle.putString(GoodsDetailActivity.GOODSDETAILID,data.get(position).id);
-                //IntentUtil.startActivity(mContext, GoodsDetailActivity.class, bundle);
-
-            }
-        });*/
         return convertView;
     }
 
@@ -107,7 +105,8 @@ public class HomeGoodsAdvertisementAdapter extends BaseAdapter{
         @Override
         public void onClick(View v) {
             //String url = v.getTag().toString();
-            int position = (int) v.getTag();
+            //int position = (int) v.getTag();
+            int position = (int) v.getTag(R.string.position);
             String id = data.get(position).cat_id;
             String url = ConstantURL.CATEGORYGOODS + id;
 
@@ -120,7 +119,7 @@ public class HomeGoodsAdvertisementAdapter extends BaseAdapter{
 
     static class ViewHolder{
         ImageView imageView;
-        public ImageLoader.ImageContainer imageRequest;
+        //public ImageLoader.ImageContainer imageRequest;
 
     }
 }

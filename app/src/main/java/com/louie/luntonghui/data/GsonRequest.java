@@ -10,7 +10,9 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.louie.luntonghui.BuildConfig;
+import com.louie.luntonghui.App;
+import com.louie.luntonghui.util.Config;
+import com.louie.luntonghui.util.ToastUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -53,8 +55,8 @@ public class GsonRequest<T> extends Request<T> {
         try{
             mListener.onResponse(response);
         }catch (Exception e){
-            if(BuildConfig.DEBUG) {
-                //Log.d("GsonRequest", e == null ? "" : e.getMessage());
+            if(Config.DEBUG){
+                ToastUtil.showLongToast(App.getContext(), "gson deliver response error " + e.getMessage());
             }
         }
     }
@@ -70,9 +72,9 @@ public class GsonRequest<T> extends Request<T> {
         try {
 
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-
             return Response.success(mGson.fromJson(json,mClazz),
                     HttpHeaderParser.parseCacheHeaders(response));
+
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         } catch (JsonSyntaxException e) {

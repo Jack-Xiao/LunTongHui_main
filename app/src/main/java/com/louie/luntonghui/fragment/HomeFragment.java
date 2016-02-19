@@ -3,6 +3,7 @@ package com.louie.luntonghui.fragment;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,21 +19,25 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.activeandroid.query.Delete;
 import com.activeandroid.query.Update;
 import com.android.volley.Response;
 import com.bigkoo.convenientbanner.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.ConvenientBanner;
+import com.bumptech.glide.Glide;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
-import com.louie.luntonghui.adapter.HomeGoodsAdvertisementAdapter;
+import com.louie.luntonghui.adapter.HomeAdvertisementArrayAdapter;
 import com.louie.luntonghui.adapter.HomeRecyclerViewAdapter;
 import com.louie.luntonghui.data.AdvertisementInfo;
 import com.louie.luntonghui.data.GsonRequest;
+import com.louie.luntonghui.model.db.DBHomeAdvertisement;
 import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.DailySignIn;
 import com.louie.luntonghui.model.result.HomeAdver;
 import com.louie.luntonghui.model.result.HomeAdversion;
 import com.louie.luntonghui.net.RequestManager;
+import com.louie.luntonghui.ui.Home.MipcaActivityCapture;
 import com.louie.luntonghui.ui.Home.SecondKillActivity;
 import com.louie.luntonghui.ui.Home.WebActivity;
 import com.louie.luntonghui.ui.Home.WebTogetherGroupActivity;
@@ -40,18 +45,16 @@ import com.louie.luntonghui.ui.category.GoodsDetailActivity;
 import com.louie.luntonghui.ui.mine.MineAttentionActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.ui.search.SearchActivity;
-import com.louie.luntonghui.ui.web.AdvertisementWebActivity;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
-import com.louie.luntonghui.view.MyGridView;
+import com.louie.luntonghui.view.MyListView;
 import com.louie.luntonghui.view.MyPtrClassicDefaultHeader;
 import com.louie.luntonghui.view.MyScrollView;
 import com.louie.luntonghui.view.NetworkImageHolderView;
-import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -62,19 +65,19 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
-import cn.lightsky.infiniteindicator.InfiniteIndicatorLayout;
-import cn.lightsky.infiniteindicator.slideview.BaseSliderView;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
+import rx.Observer;
+import rx.android.app.AppObservable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Louie on 2015/5/28.
  */
-public class HomeFragment extends BaseFragment implements BaseSliderView.OnSliderClickListener
-        ,NetworkImageHolderView.OnSelectItemListener, MyScrollView.OnScrollListener {
+public class HomeFragment extends BaseFragment implements
+        NetworkImageHolderView.OnSelectItemListener, MyScrollView.OnScrollListener {
     //@InjectView(R.id.iv_zoom)
-    InfiniteIndicatorLayout mAnimCircleIndicator;
 
     TextView tvRegion;
     TextView tvRegion1;
@@ -134,7 +137,6 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
     }
 
 
@@ -157,24 +159,11 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
     private ImageView ivGoodsRecommendAdvRight1;
     private ImageView ivGoodsRecommendAdvRight2;
 
-    private TextView tvGoodsRecommendAdvGoods1Title;
-    private ImageView ivGoodsRecommendAdvGoods1Image;
-    private MyGridView mvHomeGoodsPart1;
-
-    private TextView tvGoodsRecommendAdvGoods2Title;
-    private ImageView ivGoodsRecommendAdvGoods2Image;
-    private MyGridView mvHomeGoodsPart2;
-    private HomeGoodsAdvertisementAdapter mGoodsAdvApater1;
-    private HomeGoodsAdvertisementAdapter mGoodsAdvApater2;
-
-    private TextView tvGoodsRecommendAdvGoods3Title;
-    private ImageView ivGoodsRecommendAdvGoods3Image;
-    private MyGridView mvHomeGoodsPart3;
-    private HomeGoodsAdvertisementAdapter mGoodsAdvApater3;
-    private LinearLayout mLinearLayoutIndicator;
     private LinearLayout.LayoutParams mLayoutIndictorParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT
     , ViewGroup.LayoutParams.WRAP_CONTENT);
     private PtrFrameLayout ptrFrameLayout;
+    private MyListView mListView;
+    private HomeAdvertisementArrayAdapter arrayAdapter;
 
     private View.OnClickListener mOnClickSearchListener = new View.OnClickListener() {
         @Override
@@ -237,7 +226,6 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
 
         initAdver();
 
-
         //testAnimCircleIndicator(); //广告页
         //initRecommend(); //今天剁手价
         //loadRecyclerView(); //产品列表
@@ -249,7 +237,8 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String catId = v.getTag().toString();
+            //String catId = v.getTag().toString();
+            String catId = v.getTag(R.string.position).toString();
             String url = ConstantURL.CATEGORYGOODS + catId;
             Bundle bundle = new Bundle();
             bundle.putString(GoodsDetailActivity.GOODSDETAILURL, url);
@@ -278,7 +267,7 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
         ivGoodsRecommendAdvRight1 = (ImageView)contentView1.findViewById(R.id.goods_recommend_adv_right1);
         ivGoodsRecommendAdvRight2 = (ImageView)contentView1.findViewById(R.id.goods_recommend_adv_right2);
 
-        tvGoodsRecommendAdvGoods1Title = (TextView)contentView1.findViewById(R.id.goods_recommend_adv_goods1_title);
+        /*tvGoodsRecommendAdvGoods1Title = (TextView)contentView1.findViewById(R.id.goods_recommend_adv_goods1_title);
         ivGoodsRecommendAdvGoods1Image = (ImageView)contentView1.findViewById(R.id.goods_recommend_adv_goods1_image);
         mvHomeGoodsPart1 = (MyGridView)contentView1.findViewById(R.id.home_goods_part1);
 
@@ -288,8 +277,9 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
 
         tvGoodsRecommendAdvGoods3Title = (TextView)contentView1.findViewById(R.id.goods_recommend_adv_goods3_title);
         ivGoodsRecommendAdvGoods3Image = (ImageView)contentView1.findViewById(R.id.goods_recommend_adv_goods3_image);
-        mvHomeGoodsPart3 = (MyGridView)contentView1.findViewById(R.id.home_goods_part3);
+        mvHomeGoodsPart3 = (MyGridView)contentView1.findViewById(R.id.home_goods_part3);*/
 
+        mListView = (MyListView)contentView1.findViewById(R.id.list_view);
 
         mLinearEverydayKill.setOnClickListener(onClickEveryDayKill);
         mLinearMineAttention.setOnClickListener(onClickMineAttention);
@@ -297,7 +287,6 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
         mLinearHotGoods.setOnClickListener(onClickHotGoods);
         mLinearBrandStreet.setOnClickListener(onClickBrandStreet);
         mLinearSalePrice.setOnClickListener(onClickSpacialPrice);
-
     }
 
     private View.OnClickListener onClickEveryDayKill = new View.OnClickListener() {
@@ -392,181 +381,119 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
                 break;
         }
 
-        String url = String.format(ConstantURL.GOODS_HOME_ADVER, userId, cityId,display);
+        AppObservable.bindFragment(this,mApi.getHomeAdv(userId, cityId, display))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(advServer);
 
-
-        RequestManager.addRequest(new GsonRequest(url, HomeAdver.class, getHomeAdver(), errorListener()), this);
-
-
-        String url1 =String.format(ConstantURL.HOME_ADV_ARRAY,sourceDisplay,userId);
-
-        RequestManager.addRequest(new GsonRequest(url1, HomeAdversion.class,
-                getHomeAdverGoods(), errorListener()),this);
+        AppObservable.bindFragment(this, mApi.getHomeAdvArray(sourceDisplay, userId))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(arrayServer);
     }
 
-    private Response.Listener<HomeAdversion> getHomeAdverGoods(){
-        return new Response.Listener<HomeAdversion>() {
-            @Override
-            public void onResponse(HomeAdversion response) {
+    Observer<HomeAdver> advServer = new Observer<HomeAdver>() {
+        @Override
+        public void onCompleted() {
 
-                tvGoodsRecommendTitle.setText(response.goods_recommend.title);
-                /*Picasso.with(mContext).load(response.goods_recommend.recommend_adv.img)
-                        *//*.placeholder(R.drawable.default_image_in_no_source)
-                    .error(R.drawable.default_image_in_no_source)*//*
-                        .into(ivGoodsRecommendAdvTop);*/
+        }
 
-                Picasso.with(mContext)
-                        .load(response.goods_recommend.recommend_adv.img)
-                        .into(ivGoodsRecommendAdvTop);
+        @Override
+        public void onError(Throwable e) {
 
-                ivGoodsRecommendAdvTop.setTag(response.goods_recommend.recommend_adv.cat_id);
+        }
 
-                Picasso.with(mContext).load(response.goods_recommend.recommend_adv_left.img)
-                        /*.placeholder(R.drawable.default_image_in_no_source)
-                        .error(R.drawable.default_image_in_no_source)*/
-                        .into(ivGoodsRecommendAdvLeft);
+        @Override
+        public void onNext(HomeAdver homeAdver) {
+            new Delete()
+                    .from(DBHomeAdvertisement.class)
+                    .execute();
+            DBHomeAdvertisement ad = new DBHomeAdvertisement();
+            ad.adver = homeAdver.toString();
+            ad.adverArray = "";
+            ad.save();
+            initRound(homeAdver);
+        }
+    };
 
-                ivGoodsRecommendAdvLeft.setTag(response.goods_recommend.recommend_adv_left.cat_id);
-
-                Picasso.with(mContext).load(response.goods_recommend.recommend_adv_right1.img)
-                        /*.placeholder(R.drawable.default_image_in_no_source)
-                        .error(R.drawable.default_image_in_no_source)*/
-                        .into(ivGoodsRecommendAdvRight1);
-                ivGoodsRecommendAdvRight1.setTag(response.goods_recommend.recommend_adv_right1.cat_id);
-
-
-                Picasso.with(mContext).load(response.goods_recommend.recommend_adv_right2.img)
-                        /*.placeholder(R.drawable.default_image_in_no_source)
-                        .error(R.drawable.default_image_in_no_source)*/
-                        .into(ivGoodsRecommendAdvRight2);
-                ivGoodsRecommendAdvRight2.setTag(response.goods_recommend.recommend_adv_right2.cat_id);
-
-
-                tvGoodsRecommendAdvGoods1Title.setText(response.goods_adv_part.get(0).title);
-                Picasso.with(mContext).load(response.goods_adv_part.get(0).goods_part_adv.img)
-                        /*.placeholder(R.drawable.default_image_in_no_source)
-                        .error(R.drawable.default_image_in_no_source)*/
-                        .into(ivGoodsRecommendAdvGoods1Image);
-                ivGoodsRecommendAdvGoods1Image.setTag(response.goods_adv_part.get(0).goods_part_adv.cat_id);
-
-
-                tvGoodsRecommendAdvGoods2Title.setText(response.goods_adv_part.get(1).title);
-                Picasso.with(mContext).load(response.goods_adv_part.get(1).goods_part_adv.img)
-                       /* .placeholder(R.drawable.default_image_in_no_source)
-                        .error(R.drawable.default_image_in_no_source)*/
-                        .into(ivGoodsRecommendAdvGoods2Image);
-
-                ivGoodsRecommendAdvGoods2Image.setTag(response.goods_adv_part.get(1).goods_part_adv.cat_id);
-
-
-                tvGoodsRecommendAdvGoods3Title.setText(response.goods_adv_part.get(2).title);
-                Picasso.with(mContext).load(response.goods_adv_part.get(2).goods_part_adv.img)
-                        /*.placeholder(R.drawable.default_image_in_no_source)
-                        .error(R.drawable.default_image_in_no_source)*/
-                        .into(ivGoodsRecommendAdvGoods3Image);
-                ivGoodsRecommendAdvGoods3Image.setTag(response.goods_adv_part.get(2).goods_part_adv.cat_id);
-
-                mGoodsAdvApater1 = new HomeGoodsAdvertisementAdapter(getActivity(),response.goods_adv_part.get(0).goods_part_adv_array);
-                mGoodsAdvApater2 = new HomeGoodsAdvertisementAdapter(getActivity(),response.goods_adv_part.get(1).goods_part_adv_array);
-                mGoodsAdvApater3 = new HomeGoodsAdvertisementAdapter(getActivity(),response.goods_adv_part.get(2).goods_part_adv_array);
-
-                ivGoodsRecommendAdvTop.setOnClickListener(mOnClickListener);
-                ivGoodsRecommendAdvLeft.setOnClickListener(mOnClickListener);
-                ivGoodsRecommendAdvRight1.setOnClickListener(mOnClickListener);
-                ivGoodsRecommendAdvRight2.setOnClickListener(mOnClickListener);
-
-                ivGoodsRecommendAdvGoods1Image.setOnClickListener(mOnClickListener);
-                ivGoodsRecommendAdvGoods2Image.setOnClickListener(mOnClickListener);
-                ivGoodsRecommendAdvGoods3Image.setOnClickListener(mOnClickListener);
-
-
-                mvHomeGoodsPart1.setAdapter(mGoodsAdvApater1);
-                mvHomeGoodsPart2.setAdapter(mGoodsAdvApater2);
-                mvHomeGoodsPart3.setAdapter(mGoodsAdvApater3);
-
-
-
-                ptrFrameLayout.refreshComplete();
-
-                /*mGoodsAdvApater1.addData(response.goods_adv_part.get(0).goods_part_adv_array);
-                mGoodsAdvApater2.addData(response.goods_adv_part.get(1).goods_part_adv_array);
-                mGoodsAdvApater3.addData(response.goods_adv_part.get(2).goods_part_adv_array);*/
+    public synchronized void initRound(HomeAdver homeAdver){
+        webUrl.clear();
+        List<String> urls = new ArrayList<>();
+        List<HomeAdver.ListallcatEntity> networkImages = new ArrayList<HomeAdver.ListallcatEntity>();
+        if (homeAdver !=null && homeAdver.listallcat != null) {
+            for (int i = 0; i < homeAdver.listallcat.size(); i++) {
+                networkImages.add(homeAdver.listallcat.get(i));
+                urls.add(homeAdver.listallcat.get(i).ad_code);
+                webUrl.put(i, homeAdver.listallcat.get(i).ad_link);
             }
-        };
+        }
+
+        convenientBanner.setPages(new CBViewHolderCreator<NetworkImageHolderView>() {
+            @Override
+            public NetworkImageHolderView createHolder() {
+                return new NetworkImageHolderView(getActivity(),HomeFragment.this);
+            }
+        },urls);
+        convenientBanner.startTurning(TURNNING_TIME);
+        focusable();
     }
-    private void focusable(){
+
+    Observer<HomeAdversion> arrayServer = new Observer<HomeAdversion>() {
+        @Override
+        public void onCompleted() {
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            ToastUtil.showLongToast(mContext,"网络连接失败");
+        }
+
+        @Override
+        public void onNext(HomeAdversion response) {
+            tvGoodsRecommendTitle.setText(response.goods_recommend.title);
+
+            Glide.with(mContext)
+                    .load(response.goods_recommend.recommend_adv.img)
+                    .crossFade()
+                    .into(ivGoodsRecommendAdvTop);
+            ivGoodsRecommendAdvTop.setTag(R.string.position,
+                    response.goods_recommend.recommend_adv.cat_id);
+
+            Glide.with(mContext).load(response.goods_recommend.recommend_adv_left.img)
+                    .crossFade()
+                    .into(ivGoodsRecommendAdvLeft);
+
+            ivGoodsRecommendAdvLeft.setTag(R.string.position,
+                    response.goods_recommend.recommend_adv_left.cat_id);
+
+            Glide.with(mContext).load(response.goods_recommend.recommend_adv_right1.img)
+                    .crossFade()
+                    .into(ivGoodsRecommendAdvRight1);
+            ivGoodsRecommendAdvRight1.setTag(R.string.position,response.goods_recommend.recommend_adv_right1.cat_id);
+
+            Glide.with(mContext).load(response.goods_recommend.recommend_adv_right2.img)
+                    .crossFade()
+                    .into(ivGoodsRecommendAdvRight2);
+
+            ivGoodsRecommendAdvRight2.setTag(R.string.position,response.goods_recommend.recommend_adv_right2.cat_id);
+
+            ivGoodsRecommendAdvTop.setOnClickListener(mOnClickListener);
+            ivGoodsRecommendAdvLeft.setOnClickListener(mOnClickListener);
+            ivGoodsRecommendAdvRight1.setOnClickListener(mOnClickListener);
+            ivGoodsRecommendAdvRight2.setOnClickListener(mOnClickListener);
+
+            arrayAdapter = new HomeAdvertisementArrayAdapter(getActivity(),response.goods_adv_part);
+            mListView.setAdapter(arrayAdapter);
+
+            ptrFrameLayout.refreshComplete();
+        }
+    };
+
+    private void focusable() {
         convenientBanner.setFocusable(true);
         convenientBanner.setFocusableInTouchMode(true);
         convenientBanner.requestFocus();
     }
 
-    private Response.Listener<HomeAdver> getHomeAdver() {
-        return new Response.Listener<HomeAdver>() {
-            @Override
-            public void onResponse(final HomeAdver homeAdver) {
-
-                webUrl.clear();
-                List<String> urls = new ArrayList<>();
-                List<HomeAdver.ListallcatEntity> networkImages = new ArrayList<HomeAdver.ListallcatEntity>();
-                if (homeAdver !=null && homeAdver.listallcat != null) {
-                    for (int i = 0; i < homeAdver.listallcat.size(); i++) {
-                        networkImages.add(homeAdver.listallcat.get(i));
-                        urls.add(homeAdver.listallcat.get(i).ad_code);
-                        webUrl.put(i, homeAdver.listallcat.get(i).ad_link);
-                    }
-                }
-
-                convenientBanner.setPages(new CBViewHolderCreator<NetworkImageHolderView>() {
-                    @Override
-                    public NetworkImageHolderView createHolder() {
-                        return new NetworkImageHolderView(getActivity(),HomeFragment.this);
-                    }
-                },urls);
-                convenientBanner.startTurning(TURNNING_TIME);
-                focusable();
-            }
-        };
-    }
-
-    private void initRecommend() {
-        for (Integer ids : recommendPicList) {
-            LinearLayout.LayoutParams mLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT);
-            mLayoutParams.setMargins(0, 10, 15, 10);
-            ImageView mImageView = new ImageView(getActivity());
-            mImageView.setLayoutParams(mLayoutParams);
-            mImageView.setImageResource(ids);
-            mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            mImageView.setTag(ids);
-            /*int index = mRecommend.getChildCount();
-            if (index > 1) {
-                mRecommend.addView(mImageView, index - 1);
-            } else {
-                mRecommend.addView(mImageView);
-            }*/
-        }
-    }
-
-
-    @Override
-    public void onSliderClick(BaseSliderView slider) {
-        Bundle bundle = slider.getBundle();
-
-        String url = bundle.getString(WEB_URL);
-
-        if(userId.equals(RegisterLogin.DEFAULT_USER_ID)){
-            IntentUtil.startActivityFromMain(getActivity(), RegisterLogin.class);
-            return;
-        }
-
-        if(TextUtils.isEmpty(url)){
-            ToastUtil.showShortToast(mContext,"功能正在赶制中...");
-            return;
-        }
-
-        bundle.putString(AdvertisementWebActivity.URL, url);
-        IntentUtil.startActivity(getActivity(),AdvertisementWebActivity.class,bundle);
-    }
 
     @Optional
     @OnClick({R.id.search,R.id.search_text})
@@ -617,7 +544,6 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
     @Optional
     @OnClick(R.id.mine_attention)
     public void onAttention() {
-        //ToastUtil.showShortToast(mContext, R.string.does_not_deploy);
         IntentUtil.startActivityWiehAlpha(getActivity(), MineAttentionActivity.class);
     }
 
@@ -625,7 +551,6 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
     @Optional
     @OnClick(R.id.qiandao)
     public void onQiandao() {
-        //ToastUtil.showShortToast(getActivity(),);
         mProgressDialog.show();
         String userId = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
         String url = String.format(ConstantURL.DAILY_SIGN_IN, userId, Config.SEND_SIGN_IN);
@@ -675,15 +600,14 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
 
     public void onSearch(int index) {
         Bundle bundle = new Bundle();
-        bundle.putString(SearchActivity.SEARCH_CONTENT,
-                activtyArea[index]);
+        bundle.putString(SearchActivity.SEARCH_CONTENT, activtyArea[index]);
+
         IntentUtil.startActivity(getActivity(), GoodsDetailActivity.class, bundle);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if(mAnimCircleIndicator !=null)mAnimCircleIndicator.stopAutoScroll();
         ButterKnife.reset(this);
     }
 
@@ -735,20 +659,37 @@ public class HomeFragment extends BaseFragment implements BaseSliderView.OnSlide
     @Optional
     @OnClick(R.id.new_goods)
     public void newGoods() {
-        //ToastUtil.showShortToast(mContext, R.string.waiting_for);
         Bundle bundle = new Bundle();
         bundle.putInt(GoodsDetailActivity.NEW_GOODS,GoodsDetailActivity.IS_NEW_GOODS);
-        IntentUtil.startActivity(getActivity(),GoodsDetailActivity.class,bundle);
+        IntentUtil.startActivity(getActivity(), GoodsDetailActivity.class, bundle);
     }
 
     @Optional
     @OnClick(R.id.second_kill)
     public void onSecondKill() {
-
-        //ToastUtil.showShortToast(mContext, R.string.waiting_for);
-        //ToastUtil.showShortToast(mContext, R.string.waiting_for);
-        //mFastQueryListener.query("产品秒杀");
-
         IntentUtil.startActivity(getActivity(), SecondKillActivity.class);
+    }
+
+    @Optional
+    @OnClick(R.id.qr_code1)
+    public void onClickQrCode1(){
+        qrCode();
+    }
+
+    @Optional
+    @OnClick(R.id.qr_code2)
+    public void onClickQrCode2(){
+        qrCode();
+    }
+
+    public void qrCode(){
+        Intent intent = new Intent();
+        intent.setClass(getActivity(), MipcaActivityCapture.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setClass(getActivity(), MipcaActivityCapture.class);
+        getActivity().startActivity(intent);
+        
+        getActivity().overridePendingTransition(R.anim.activity_push_left_in, R.anim.activity_push_left_out);
+
     }
 }

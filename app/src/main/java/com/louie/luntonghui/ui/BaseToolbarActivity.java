@@ -19,7 +19,6 @@ import com.louie.luntonghui.rest.RetrofitUtils;
 import com.louie.luntonghui.rest.ServiceManager;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.DefaultShared;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 /**
  * Created by Jack on 15/8/12.
@@ -34,7 +33,6 @@ public abstract class BaseToolbarActivity  extends AppCompatActivity {
     protected String userId;
     protected String userType;
     public Context mContext;
-    SystemBarTintManager tintManager;
     public static final String SUCCESS = BaseNormalActivity.SUCCESSCODE;
 
 
@@ -69,6 +67,7 @@ public abstract class BaseToolbarActivity  extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 21) {
             mAppBar.setElevation(10.6f);
         }
+
         /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             tintManager = new SystemBarTintManager(this);
             tintManager.setStatusBarTintEnabled(true);

@@ -24,11 +24,14 @@ import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.activeandroid.query.Update;
 import com.android.volley.Response;
+import com.bigkoo.convenientbanner.CBViewHolderCreator;
+import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.ShowCarListEvent;
 import com.louie.luntonghui.model.db.AttentionGoods;
+import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.GoodsDetail;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.AddGoodsResult;
@@ -48,22 +51,22 @@ import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.BadgeView;
+import com.louie.luntonghui.view.NetworkImageHolderViewProductDesc;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.Optional;
-import cn.lightsky.infiniteindicator.InfiniteIndicatorLayout;
-import cn.lightsky.infiniteindicator.slideview.BaseSliderView;
-import cn.lightsky.infiniteindicator.slideview.DefaultSliderView;
 import rx.Observer;
 import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 import static com.louie.luntonghui.ui.category.GoodsDetailActivity.GOODSDETAILID;
@@ -71,7 +74,8 @@ import static com.louie.luntonghui.ui.category.GoodsDetailActivity.GOODSDETAILID
 /**
  * Created by Administrator on 2015/6/23.
  */
-public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSliderView.OnSliderClickListener {
+public class GoodsDetailBuyActivity extends BaseNormalActivity implements
+        NetworkImageHolderViewProductDesc.OnSelectItemListener {
     public static final String DETAIL_ITEM = "detail_item";
 
     @InjectView(R.id.menu_list)
@@ -80,8 +84,10 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
     @InjectView(R.id.progress)
     ProgressBar progress;
 
+    /*@InjectView(R.id.product_viewpager)
+    InfiniteIndicatorLayout productViewpager;*/
     @InjectView(R.id.product_viewpager)
-    InfiniteIndicatorLayout productViewpager;
+    ConvenientBanner productViewpager;
 
     @InjectView(R.id.goods_name)
     TextView goodsName;
@@ -154,7 +160,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
     public static final String INDEX = "index";
     //private List<String> attentionGoodsIds;
     private GoodsDetail currentGoodsDetail;
-    private HashMap<String,String> attentionGoodsMap;
+    private HashMap<String, String> attentionGoodsMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,9 +168,11 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         setContentView(R.layout.activity_goods_detail_item_buy);
         ButterKnife.inject(this);
         App.getBusInstance().register(this);
+        //+++ 20121214 测试内存泄露
+        /*RefWatcher refWatcher = App.getRefWatcher(this);
+        refWatcher.watch(this);*/
 
         mContext = this;
-
         mCarList = (ImageView) findViewById(R.id.car_list);
         mgAttention = new ImageView(mContext);
         mgAttention.setImageResource(R.drawable.product_attention_info);
@@ -178,16 +186,104 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         String goodsId = bundle.getString(GOODSDETAILID);
         String userType = DefaultShared.getString(RegisterLogin.USER_TYPE, RegisterLogin.USER_DEFAULT);
         mGoodsId = goodsId;
-        String url = String.format(ConstantURL.GOODS_DETAIL_ITEM, goodsId, cityId, userType,userId);
+        String url = String.format(ConstantURL.GOODS_DETAIL_ITEM, goodsId, cityId, userType, userId);
 
         initView();
         initBadgeView();
 
-        executeRequest(new GsonRequest(url, DetailItem.class, getGoodsItemDetail(), errorListener()));
-        //String userId = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
+        //executeRequest(new GsonRequest(url, DetailItem.class, getGoodsItemDetail(), errorListener()));
+        AppObservable.bindActivity(this, mApi.getProductDetail(goodsId, cityId, userType, userId))
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .map(new Func1<DetailItem, List<GoodsDetail>>() {
+                    @Override
+                    public List<GoodsDetail> call(DetailItem detailItem) {
+                        List<GoodsDetail> goodses = new ArrayList<GoodsDetail>();
+                        List<DetailItem.ListallcatEntity> listallcat = detailItem.listallcat;
+                        if (listallcat != null && listallcat.size() > 0) {
+                            for (int i = 0; i < listallcat.size(); i++) {
+                                String goodsId = listallcat.get(i).goods_id;
+                                new Delete()
+                                        .from(GoodsDetail.class)
+                                        .where("goods_id = ? ", goodsId);
+                                GoodsDetail goods = new GoodsDetail();
+                                goods.goodsId = listallcat.get(i).goods_id;
+                                goods.goodsName = listallcat.get(i).goods_name;
+                                goods.brandName = listallcat.get(i).brand_name;
+                                goods.goodsBrief = listallcat.get(i).goods_brief;
+                                goods.guiGe = listallcat.get(i).guige;
+                                goods.goodsImg = listallcat.get(i).goods_img;
+                                goods.goodsCode = listallcat.get(i).goods_sn;
+                                goods.goodsCount = listallcat.get(i).goods_number;
+                                goods.marketPrice = listallcat.get(i).market_price;
+                                goods.shopPrice = listallcat.get(i).shop_price;
+                                goods.goodsDesc = listallcat.get(i).goods_desc;
+                                goods.hasPromotion = listallcat.get(i).discounta;
+                                goods.promotionName = listallcat.get(i).discount_name;
+                                goods.danwei = listallcat.get(i).danwei;
 
-       /* url = String.format(ConstantURL.GET_CAR_LIST, userId);
-        executeRequest(new GsonRequest(url, CarList.class, getCarList(), errorListener()));*/
+                                goods.save();
+                                goods.inventory = listallcat.get(i).inventory;
+
+                                goodses.add(goods);
+
+                                goodsBoughtList = listallcat.get(i).bought_goods;
+                            }
+                            return goodses;
+                        }
+                        return null;
+                    }})
+                .subscribe(new Action1<List<GoodsDetail>>() {
+                    @Override
+                    public void call(List<GoodsDetail> goodsDetails) {
+                        if (goodsDetails != null) {
+                            GoodsDetail goods = goodsDetails.get(0);
+                            currentGoodsDetail = goods;
+
+                            String goodsId = goods.goodsId;
+                            mCar = new Select()
+                                    .from(ShoppingCar.class)
+                                    .where("goods_id=?", goodsId)
+                                    .executeSingle();
+                            if (mCar != null) {
+                                content.setText(mCar.goodsNumber + "");
+                            } else {
+                                content.setText(1 + "");
+                            }
+                            mGoods = goods;
+                            goodsName.setText(goods.goodsName);
+                            goodsStandardValue.setText(goods.guiGe);
+                            marketpPrice.setText("￥" + goods.marketPrice + "/" + goods.danwei);
+                            marketpPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                            shopPrice.setText("￥" + goods.shopPrice + "/" + goods.danwei);
+                            if (goods.hasPromotion.equals(GoodsDetail.HASPROMOTION)) {
+                                lineSalesPromotion.setVisibility(View.VISIBLE);
+                                salesPromotionValue.setText(goods.promotionName);
+                            } else {
+                                lineSalesPromotion.setVisibility(View.GONE);
+                            }
+
+
+                            //showGoodsPicture();
+                            initViewPager();
+                            initInventory(goods);
+                        }
+                     }
+                });
+    }
+
+    private void initInventory(GoodsDetail goods) {
+        String inventory = goods.inventory;
+        if(inventory.equals(Goods.NO_GOODS)){
+            intoCar.setEnabled(false);
+            intoCar.setText("缺货");
+            intoCar.setBackgroundResource(R.color.category_grey);
+            content.setEnabled(false);
+        }else{
+            intoCar.setEnabled(true);
+            intoCar.setText("加入购物车");
+            intoCar.setBackgroundResource(R.color.input_car);
+            content.setEnabled(true);
+        }
     }
 
     private void initBadgeView() {
@@ -200,14 +296,14 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
             total += Integer.parseInt(list.get(i).goodsNumber);
         }
         if (total > 0) {
-            if(total>99){
+            if (total > 99) {
                 mBadgeView.setText("99+");
-            }else{
+            } else {
                 mBadgeView.setText(total + "");
             }
             mBadgeView.setTextSize(Config.BADGEVIEW_SIZE);
             mBadgeView.show();
-        }else{
+        } else {
             mBadgeView.hide();
         }
     }
@@ -230,11 +326,11 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                 .execute();
 
         for (int i = 0; i < attGoodsList.size(); i++) {
-            attentionGoodsMap.put(attGoodsList.get(i).goodsId,attGoodsList.get(i).recId);
+            attentionGoodsMap.put(attGoodsList.get(i).goodsId, attGoodsList.get(i).recId);
         }
 
         adjustAttentionGoods();
-        productViewpager = (InfiniteIndicatorLayout) findViewById(R.id.product_viewpager);
+        productViewpager = (ConvenientBanner) findViewById(R.id.product_viewpager);
 
 
         content.addTextChangedListener(new TextWatcher() {
@@ -378,6 +474,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                                 goods.promotionName = listallcat.get(i).discount_name;
                                 goods.danwei = listallcat.get(i).danwei;
                                 goods.save();
+                                goods.inventory = listallcat.get(i).danwei;
                                 goodses.add(goods);
 
                                 goodsBoughtList = listallcat.get(i).bought_goods;
@@ -391,25 +488,28 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
         };
     }
 
+    public static Map<Integer, String> webUrl = new HashMap<>();
+
     private void initViewPager() {
-        HashMap<String, String> urlMaps = new HashMap<>();
+        webUrl.clear();
         imgList = new String[goodsBoughtList.size()];
+        List<String> urls = new ArrayList<>();
         for (int i = 0; i < goodsBoughtList.size(); i++) {
-            urlMaps.put(i + "", goodsBoughtList.get(i).img_url);
+            //urlMaps.put(i + "", goodsBoughtList.get(i).img_url);
             imgList[i] = goodsBoughtList.get(i).img_url;
+            webUrl.put(i, goodsBoughtList.get(i).img_url);
+            urls.add(goodsBoughtList.get(i).img_url);
+            //urls.add(goodsBoughtList.get(i).thumb_url);
         }
 
-        for (String name : urlMaps.keySet()) {
-            DefaultSliderView textSliderView = new DefaultSliderView(this);
-            textSliderView
-                    .image(urlMaps.get(name))
-                    .setScaleType(BaseSliderView.ScaleType.CenterCrop)
-                    .setOnSliderClickListener(this);
-            textSliderView.getBundle()
-                    .putString(sliderName, name);
-            productViewpager.addSlider(textSliderView);
-        }
-        productViewpager.setIndicatorPosition(InfiniteIndicatorLayout.IndicatorPosition.Center_Bottom);
+        productViewpager.setPages(new CBViewHolderCreator() {
+            @Override
+            public Object createHolder() {
+                return new NetworkImageHolderViewProductDesc(GoodsDetailBuyActivity.this, GoodsDetailBuyActivity.this);
+            }
+        }, urls);
+        //productViewpager.add
+        productViewpager.setPageIndicator(new int[]{R.drawable.ic_page_indicator, R.drawable.ic_page_indicator_focused});
     }
 
 
@@ -424,7 +524,6 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
     @Override
     protected void onResume() {
         super.onResume();
-        //productViewpager.startAutoScroll();
         MobclickAgent.onResume(this);
 
     }
@@ -478,18 +577,15 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                     .map(new Func1<Result, Void>() {
                         @Override
                         public Void call(Result result) {
-                            Log.d("observer", " result cancel " + result.rsgcode + " " + result.rsgmsg);
-                            Log.d("observer", "" + result.rsgcode.equals(SUCCESSCODE));
-                            if(result.rsgcode.equals(SUCCESSCODE)){
-                                Log.d("observer","into  cancel ");
+                            if (result.rsgcode.equals(SUCCESSCODE)) {
                                 new Delete()
                                         .from(AttentionGoods.class)
                                         .where("goods_id = ?", mGoodsId)
                                         .execute();
                                 attentionGoodsMap.remove(mGoodsId);
 
-                            }else{
-                                ToastUtil.showShortToast(mContext,result.rsgmsg);
+                            } else {
+                                ToastUtil.showShortToast(mContext, result.rsgmsg);
                             }
                             return null;
                         }
@@ -503,7 +599,6 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                         @Override
                         public Void call(AddtionAttentionResult result) {
                             if (result.rsgcode.equals(SUCCESSCODE)) {
-                                Log.d("observer","into  addtion ");
                                 AttentionGoods goods = new AttentionGoods();
                                 goods.goodsId = mGoodsId;
                                 goods.marketPrice = currentGoodsDetail.marketPrice;
@@ -511,9 +606,9 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                                 goods.goodsName = currentGoodsDetail.goodsName;
                                 goods.recId = result.rec_id;
                                 goods.save();
-                                attentionGoodsMap.put(mGoodsId,result.rec_id);
-                            }else{
-                                ToastUtil.showShortToast(mContext,result.rsgmsg);
+                                attentionGoodsMap.put(mGoodsId, result.rec_id);
+                            } else {
+                                ToastUtil.showShortToast(mContext, result.rsgmsg);
                             }
                             return null;
                         }
@@ -528,13 +623,11 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
     Observer<Void> observer = new Observer<Void>() {
         @Override
         public void onCompleted() {
-            Log.d("observer", "onCompleted");
             toast.show();
         }
 
         @Override
         public void onError(Throwable e) {
-            Log.d("observer", "onError");
             ToastUtil.showShortToast(mContext, R.string.network_connect_fail);
         }
 
@@ -646,24 +739,11 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
                             mBadgeView.show();
                         }
                     });
-
                 } else {
                     ToastUtil.showShortToast(mContext, result.rsgmsg);
                 }
             }
         };
-    }
-
-    @Override
-    public void onSliderClick(BaseSliderView slider) {
-        String index = slider.getBundle().getString(sliderName);
-        //executeRequest();
-        Bundle bundle = new Bundle();
-        bundle.putString(INDEX, index);
-
-        bundle.putStringArray(IMAGES, imgList);
-        //IntentUtil.startActivity(GoodsDetailBuyActivity.this, SpaceImageDetailActivity.class,bundle);
-        IntentUtil.startActivity(GoodsDetailBuyActivity.this, ImageActivity.class, bundle);
     }
 
     @OnClick(R.id.car_list)
@@ -676,7 +756,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
     }
 
     @OnClick(R.id.tel_phone)
-    public void onTelPhone(){
+    public void onTelPhone() {
         try {
             String servicePhone = getResources().getString(R.string.service_phone);
 
@@ -688,5 +768,15 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements BaseSl
             //存在双卡的问题 等待android 5.1 修复.
             //ToastUtil.showShortToast(mContext,);
         }
+    }
+
+    @Override
+    public void selectItem(int index) {
+        Bundle bundle = new Bundle();
+        bundle.putString(INDEX, index + "");
+
+        bundle.putStringArray(IMAGES, imgList);
+
+        IntentUtil.startActivity(GoodsDetailBuyActivity.this, ImageActivity.class, bundle);
     }
 }

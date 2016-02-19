@@ -40,5 +40,7 @@
     <string name="set_default">默认地址</string>
     <string name="address_modify">修改地址</string>
 
+    <string name="position">position</string>
+
 
 </resources>

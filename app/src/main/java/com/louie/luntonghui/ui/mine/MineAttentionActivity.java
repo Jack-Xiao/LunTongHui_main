@@ -7,7 +7,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.TextView;
 
-import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.adapter.MineAttentionAdapter;
@@ -94,7 +93,6 @@ public class MineAttentionActivity extends SwipeRefreshBaseActivity {
                                      from(AttentionGoods.class)
                                      .execute();
                              try {
-                                 ActiveAndroid.beginTransaction();
                                  for (int i = 0; i < list.listallcat.size(); i++) {
                                      MineAttentionResult.ListallcatEntity entity = list.listallcat.get(i);
                                      AttentionGoods goods1 = new AttentionGoods();
@@ -127,11 +125,10 @@ public class MineAttentionActivity extends SwipeRefreshBaseActivity {
                                      goods1.discount = entity.discount;
                                      goods1.discountType = entity.discount_type;
                                      goods1.save();
+                                     goods1.inventory = entity.inventory;
                                      data.add(goods1);
                                  }
-                                 ActiveAndroid.setTransactionSuccessful();
                              } finally {
-                                 ActiveAndroid.endTransaction();
                              }
                              return data;
                          }

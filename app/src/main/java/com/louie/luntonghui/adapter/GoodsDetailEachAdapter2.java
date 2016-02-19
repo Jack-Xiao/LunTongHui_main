@@ -9,9 +9,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.model.result.GoodsList;
-import com.louie.luntonghui.net.ImageCacheManager;
 import com.louie.luntonghui.ui.category.GoodsDetailActivity;
 import com.louie.luntonghui.util.IntentUtil;
 
@@ -64,34 +64,10 @@ public class GoodsDetailEachAdapter2 extends BaseAdapter {
         }
 
         vh.textView.setText(data.get(position).name);
-/*        Picasso.with(mContext).load(data.get(curPositon).img)
-                //.placeholder(R.drawable.user_placeholder) 错误或空白占位
-                //.centerCrop()
-                .placeholder(R.drawable.category_default_image)
-                .error(R.drawable.category_default_image)
-                .into(vh.imageView);*/
-/*        Uri uri = Uri.parse(data.get(curPositon).img);
-        vh.imageView.setImageURI(uri)*/;
 
-        if(vh.imageRequest !=null){
-            vh.imageRequest.cancelRequest();
-        }
-        vh.imageRequest = ImageCacheManager.loadImage(data.get(curPositon).img,
-                ImageCacheManager.getImageListener(vh.imageView));
-
-        /*ImageLoader.getInstance().displayImage(imageUrl, photoView, options, new SimpleImageLoadingListener() {
-            @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                progressWheel.setVisibility(View.GONE);
-                mAttacher.update();
-            }
-        }, new ImageLoadingProgressListener() {
-            @Override
-            public void onProgressUpdate(String imageUri, View view, int current, int total) {
-                progressWheel.setProgress(360 * current / total);
-            }
-        });*/
-
+        Glide.with(mContext).load(data.get(curPositon).img)
+                .placeholder(R.drawable.default_image_in_no_source)
+                .into(vh.imageView);
 
         vh.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -100,7 +76,6 @@ public class GoodsDetailEachAdapter2 extends BaseAdapter {
                     bundle.putString(GoodsDetailActivity.GOODSDETAILURL, data.get(curPositon).url);
                     bundle.putString(GoodsDetailActivity.GOODSDETAILID,data.get(curPositon).id);
                     IntentUtil.startActivity(mContext,GoodsDetailActivity.class,bundle);
-
                 }
         });
 
@@ -111,6 +86,6 @@ public class GoodsDetailEachAdapter2 extends BaseAdapter {
         ImageView imageView;
         TextView textView;
 
-        public com.android.volley.toolbox.ImageLoader.ImageContainer imageRequest;
+        //public com.android.volley.toolbox.ImageLoader.ImageContainer imageRequest;
     }
 }

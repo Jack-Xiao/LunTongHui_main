@@ -464,5 +464,10 @@
     <string name="right_now_unit">立即关联</string>
     <string name="login_bind">登录绑定</string>
     <string name="together_group">拼团</string>
+    <string name="qr_code">二维码扫描</string>
 
-   </resources>
+    <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
+    <string name="no_goods">缺货</string>
+
+
+</resources>

@@ -249,7 +249,6 @@ public class MyPtrClassicDefaultHeader extends FrameLayout implements PtrUIHandl
 
     @Override
     public void onUIPositionChange(PtrFrameLayout frame, boolean isUnderTouch, byte status, PtrIndicator ptrIndicator) {
-
         final int mOffsetToRefresh = frame.getOffsetToRefresh();
         final int currentPos = ptrIndicator.getCurrentPosY();
         final int lastPos = ptrIndicator.getLastPosY();
@@ -259,7 +258,7 @@ public class MyPtrClassicDefaultHeader extends FrameLayout implements PtrUIHandl
                 crossRotateLineFromBottomUnderTouch(frame);
                 if (mRotateView != null) {
                     mRotateView.clearAnimation();
-                    mRotateView.startAnimation(mReverseFlipAnimation);
+                    //mRotateView.startAnimation(mReverseFlipAnimation);
                 }
             }
         } else if (currentPos > mOffsetToRefresh && lastPos <= mOffsetToRefresh) {
@@ -267,7 +266,7 @@ public class MyPtrClassicDefaultHeader extends FrameLayout implements PtrUIHandl
                 crossRotateLineFromTopUnderTouch(frame);
                 if (mRotateView != null) {
                     mRotateView.clearAnimation();
-                    mRotateView.startAnimation(mFlipAnimation);
+                    //mRotateView.startAnimation(mFlipAnimation);
                 }
             }
         }

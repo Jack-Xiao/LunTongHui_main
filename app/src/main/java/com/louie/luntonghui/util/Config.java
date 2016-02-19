@@ -36,7 +36,7 @@ public class Config {
 
     public static final String RESPONSE_CACHE = "okHttp_response";
 
-    public static final int RESPONSE_CACHE_SIZE = 10 * 1024 * 1024; // 10MB
+    public static final int RESPONSE_CACHE_SIZE = 20 * 1024 * 1024; // 10MB
 
     public static final int HTTP_CONNECT_TIMEOUT = 10 * 1000;
     public static final int HTTP_READ_TIMEOUT = 10 * 1000;
@@ -123,6 +123,9 @@ public class Config {
     public static final String ALI_KEY = "vdjtux4pzdfunovqppt8nd4cxiao55nh";
 
     public static final String FACTORY_ID = "378";
+
+    public static final String RUN_COUNT = "run_count";
+    public static final int DEFAULT_COUNT = 0;
 
 
 
@@ -410,6 +413,20 @@ public class Config {
     public static String getUserId(){
         String userId = DefaultShared.getString(RegisterLogin.USERUID,RegisterLogin.DEFAULT_USER_ID);
         return userId;
+    }
+
+    public static String getRenamePlace(){
+        String display = DefaultShared.getString(App.PROVINCEID, App.DEFAULT_PROVINCEID);
+
+        switch (display) {
+            case "6":
+                display = "0";
+                break;
+            case "388":
+                display = "1";
+                break;
+        }
+        return display;
     }
 
 }

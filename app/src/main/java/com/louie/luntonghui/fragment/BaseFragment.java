@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.rest.RetrofitUtils;
@@ -38,9 +39,10 @@ public class BaseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        userId = DefaultShared.getString(RegisterLogin.USERUID,RegisterLogin.DEFAULT_USER_ID);
+        userId = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
 
         mApi = RetrofitUtils.createApi(getActivity(), ServiceManager.LunTongHuiApi.class);
+
     }
 
     public static abstract class ResponseCallback<T> implements Callback<T> {
@@ -60,10 +62,15 @@ public class BaseFragment extends Fragment {
             retrofit.client.Response response = error.getResponse();
 
             ToastUtil.showShortToast(fragment.getActivity(), error.getMessage());
-
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        /*RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        refWatcher.watch(this);*/
+    }
 
     protected com.android.volley.Response.ErrorListener errorListener() {
         return new com.android.volley.Response.ErrorListener() {

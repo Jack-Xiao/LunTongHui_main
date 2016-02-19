@@ -104,5 +104,6 @@ public class MineCouponActivity extends BaseToolbarActivity {
         Bundle bundle = new Bundle();
         bundle.putString(PHONE_NUMBER,strPhoneNumber);
         IntentUtil.startActivity(MineCouponActivity.this, MineAccountManager.class, bundle);
+        finish();
     }
 }

@@ -108,13 +108,6 @@ public class UpdateService extends IntentService {
                         UpdateVersionTask task = new UpdateVersionTask(UpdateService.this, UpdateVersionTask.NOT_NEED_VIEW);
                         task.execute(curUpdateUrl);
 
-                    /*MyAlertDialogUtil.getInstance()
-                            .setMessage(versionUpdate.listallcat.remark)
-                            .setCanceledOnTouchOutside(false)
-                            .setNegativeContent(R.string.update_not)
-                            .setPositiveContent(R.string.update_now);
-
-                    MyAlertDialogUtil.getInstance().show(MainActivity.this, MainActivity.this);*/
                     }
                 }
             }

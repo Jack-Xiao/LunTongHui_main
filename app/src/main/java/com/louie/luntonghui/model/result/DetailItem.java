@@ -76,6 +76,9 @@ public class DetailItem {
         public String discount_name;
         public List<?> properties;
         public List<?> specification;
+
+        //有库存的话inventory为1,没有的话inventory为0
+        public String inventory;
         /**
          * goods_id : 2917
          * goods_name : 095型永康型彩色胶兰（梅红）

@@ -95,5 +95,11 @@ public class Goods extends Model {
 
     @Column(name = "discount_type")
     public String discountType;
+    //有库存的话inventory为1,没有的话inventory为0
+    @Column(name = "inventory")
+    public String inventory;
+
+    public static final String HAS_GOODS = "1";
+    public static final String NO_GOODS = "0";
 
 }

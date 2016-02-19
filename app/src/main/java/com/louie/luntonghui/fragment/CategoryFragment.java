@@ -25,10 +25,7 @@ import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.adapter.CategoryHomeAdapter;
 import com.louie.luntonghui.adapter.GoodsDetailAdapter;
-import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.model.result.GoodsList;
-import com.louie.luntonghui.net.RequestManager;
-import com.louie.luntonghui.rest.ServiceManager;
 import com.louie.luntonghui.ui.search.SearchActivity;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
@@ -43,6 +40,9 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import rx.Observer;
+import rx.android.app.AppObservable;
+import rx.android.schedulers.AndroidSchedulers;
 
 import static com.louie.luntonghui.App.CITYID;
 import static com.louie.luntonghui.App.DEFAULT_CITYID;
@@ -74,7 +74,6 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
     @InjectView(R.id.logo_anim_whole)
     RelativeLayout logoWhole;
 
-    private ServiceManager.LunTongHuiApi mApi;
     private ArrayAdapter mListAdapter;
 
     private ListView mGoodList;
@@ -99,7 +98,6 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
     private boolean firstRun = false;
 
     private AnimationDrawable animationDrawable;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -139,50 +137,7 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
         return new Response.Listener<GoodsList>() {
             @Override
             public void onResponse(final GoodsList goodsList) {
-                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<String>>() {
 
-                    @Override
-                    protected List<String> doInBackground(Object... params) {
-
-                        List<String> categoryList = new ArrayList<>();
-                        goodsLists = goodsList.goods_list;
-                        if (goodsList.version_list.get(0).version != Config.NOT_NEED_UPDATE) {
-                            mUpdateListener.updateVersion();
-                        }
-                        //App.mGoods_list = goodsLists;
-                        for (int i = 0; i < goodsLists.size(); i++) {
-                            categoryList.add(goodsList.goods_list.get(i).name);
-                            if (fastQuery && queryContent.equals(goodsList.goods_list.get(i).id)) {
-                                INITCATEGORYITEM = i;
-                            }
-                        }
-                        return categoryList;
-                    }
-
-                    @Override
-                    protected void onPostExecute(List<String> categoryList) {
-                        //super.onPostExecute(o);
-                        if(animationDrawable!=null && animationDrawable.isRunning()){
-                            if(logoAnim !=null)logoAnim.setVisibility(View.GONE);
-                            if(logoWhole !=null)logoWhole.setVisibility(View.GONE);
-                            if(animationDrawable!=null)animationDrawable.stop();
-                        }
-
-                        if(listWhole!=null)listWhole.setVisibility(View.VISIBLE);
-
-                        try {
-                            mHomeAdapter = new CategoryHomeAdapter(mContext, R.layout.simple_list_item, categoryList);
-                            if(mGoodList !=null) mGoodList.setAdapter(mHomeAdapter);
-
-                            if (INITCATEGORYITEM > categoryList.size()) INITCATEGORYITEM = 0;
-
-                            onItemClick(null, null, INITCATEGORYITEM, 0);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
             }
         };
     }
@@ -295,29 +250,75 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
         }
 
         url = url + tempArg;
-        RequestManager.addRequest(new GsonRequest(url, GoodsList.class,
-                getGoodsList(), errorListener()), this);
+        /*RequestManager.addRequest(new GsonRequest(url, GoodsList.class,
+                getGoodsList(), errorListener()), this);*/
+        String display = Config.getRenamePlace();
+        AppObservable.bindFragment(this,mApi.getProductCategory(cityId,userType,version,userId,display))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(categoryServer);
         return;
-        //}
-
-       /* for (int i = 0; i < goodsLists.size(); i++) {
-            categoryList.add(goodsLists.get(i).name);
-            if(fastQuery && queryContent.equals(goodsLists.get(i).name)){
-                INITCATEGORYITEM = i;
-            }
-        }*/
-
-
-
-       /* mListAdapter = new ArrayAdapter(getActivity(),R.layout.simple_list_item,categoryList);
-        mGoodList.setAdapter(mListAdapter);*/
-
-/*
-        mHomeAdapter = new CategoryHomeAdapter(mContext, R.layout.simple_list_item, categoryList);
-        mGoodList.setAdapter(mHomeAdapter);
-
-        onItemClick(null, null, INITCATEGORYITEM, 0);*/
     }
+
+    Observer<GoodsList> categoryServer = new Observer<GoodsList>() {
+        @Override
+        public void onCompleted() {
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+
+        @Override
+        public void onNext(final GoodsList goodsList) {
+            TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<String>>() {
+                @Override
+                protected List<String> doInBackground(Object... params) {
+
+                    List<String> categoryList = new ArrayList<>();
+                    goodsLists = goodsList.goods_list;
+                    if (goodsList.version_list.get(0).version != Config.NOT_NEED_UPDATE) {
+                        mUpdateListener.updateVersion();
+                    }
+                    //App.mGoods_list = goodsLists;
+                    for (int i = 0; i < goodsLists.size(); i++) {
+                        categoryList.add(goodsList.goods_list.get(i).name);
+                        if (fastQuery && queryContent.equals(goodsList.goods_list.get(i).id)) {
+                            INITCATEGORYITEM = i;
+                        }
+                    }
+                    return categoryList;
+                }
+
+                @Override
+                protected void onPostExecute(List<String> categoryList) {
+                    //super.onPostExecute(o);
+                    if(animationDrawable!=null && animationDrawable.isRunning()){
+                        if(logoAnim !=null)logoAnim.setVisibility(View.GONE);
+                        if(logoWhole !=null)logoWhole.setVisibility(View.GONE);
+                        if(animationDrawable!=null)animationDrawable.stop();
+                    }
+
+                    if(listWhole!=null)listWhole.setVisibility(View.VISIBLE);
+
+                    try {
+                        mHomeAdapter = new CategoryHomeAdapter(mContext, R.layout.simple_list_item, categoryList);
+                        if(mGoodList !=null) mGoodList.setAdapter(mHomeAdapter);
+
+                        if (INITCATEGORYITEM > categoryList.size()) INITCATEGORYITEM = 0;
+
+                        onItemClick(null, null, INITCATEGORYITEM, 0);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -325,8 +326,32 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
         currentItem = position;
         mGoodList.setSelection(position);
         mDetailAdapter = new GoodsDetailAdapter(getActivity(), goods_list1);
+
         mHomeAdapter.setBackground(position);
         mGoodDetail.setAdapter(mDetailAdapter);
+
+        //for(int i = 0;i<goods_list1.size()
+        /*List<Goods> goodes =
+                new ArrayList<>();
+        int size = 0;
+
+        for(int i=0;i<goods_list1.size();i++){
+            Goods goods = new Goods();
+            goods.id = goods_list1.get(i).id;
+            goods.img = goods_list1.get(i).img;
+            goods.name = goods_list1.get(i).name;
+            goods.url = goods_list1.get(i).url;
+            goods.type = CategoryFragmentAdapter.CATEGORY_TITLE;
+            for(int j = 0;j<goods_list1.get(i).goods_list.size();j++){
+
+            }
+        }*/
+
+        /*for(int i =0;i<goods_list1.size();i++){
+                goods_list1.get(i).goods_list.size();
+        }*/
+
+        //mFragmentAdapter.setData(goods_list1);
 
         if(firstRun){
             scrollTop = DefaultShared.getInt(SCROLL_LOCATION, INIT_SCROLL);

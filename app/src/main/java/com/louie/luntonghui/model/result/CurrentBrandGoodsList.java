@@ -65,6 +65,8 @@ public class CurrentBrandGoodsList {
         public String guige;
         public String goods_img;
         public String discount_type;
+        //有库存的话inventory为1,没有的话inventory为0
+        public String inventory;
     }
 
 

@@ -1,1 +1,1 @@
-include ':app', ':InfiniteIndicator', ':ToggleButtonLib'
+include ':app', ':ToggleButtonLib'

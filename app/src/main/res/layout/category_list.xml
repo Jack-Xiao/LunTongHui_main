@@ -17,7 +17,7 @@
             android:id="@+id/logo_anim"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@anim/logo_anim_l" />
+            android:background="@drawable/logo_anim_l" />
     </RelativeLayout>
 
     <LinearLayout
@@ -35,7 +35,6 @@
             android:divider="@color/tinge_break_link"
             android:background="@color/background_main_grey"
             android:scrollbars="none"/>
-
 
         <ListView
             android:background="@color/white"

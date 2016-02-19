@@ -33,7 +33,6 @@ import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.MyAlertDialogUtil;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
@@ -232,14 +231,18 @@ public class SettingActivity extends BaseNormalActivity implements MyAlertDialog
 
     @OnClick(R.id.clean_cache)
     public void onClickCleanCache(){
-        mProgressDialog.show();
-        ImageLoader.getInstance().clearDiskCache();
-        ImageLoader.getInstance().clearMemoryCache();
+        try{
+            mProgressDialog.show();
 
-        DataCleanManager.cleanInternalCache(this);
-        //cacheValue.setText("0 K");
-        initCacheValue();
-        mProgressDialog.dismiss();
+            DataCleanManager.cleanInternalCache(this);
+            //cacheValue.setText("0 K");
+            initCacheValue();
+        }catch (Exception e){
+            Log.d("clear cache fail.",e.getMessage());
+        } finally {
+            mProgressDialog.dismiss();
+        }
+
     }
 
     @OnClick(R.id.about_us)

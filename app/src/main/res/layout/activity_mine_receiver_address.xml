@@ -24,7 +24,7 @@
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@anim/logo_anim_l"/>
+            android:background="@drawable/logo_anim_l"/>
 
         <Button
             android:textColor="@color/white"

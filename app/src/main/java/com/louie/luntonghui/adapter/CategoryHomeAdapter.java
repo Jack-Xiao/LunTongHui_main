@@ -30,7 +30,6 @@ public class CategoryHomeAdapter extends ArrayAdapter {
         notifyDataSetChanged();
     }
 
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater =LayoutInflater.from(mContext);

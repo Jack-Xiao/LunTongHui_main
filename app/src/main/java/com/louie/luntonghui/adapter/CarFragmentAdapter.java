@@ -23,14 +23,13 @@ import com.activeandroid.query.Delete;
 import com.activeandroid.query.Update;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.CarList;
 import com.louie.luntonghui.model.result.Result;
-import com.louie.luntonghui.net.ImageCacheManager;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.rest.RetrofitUtils;
 import com.louie.luntonghui.rest.ServiceManager;
@@ -241,17 +240,9 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
             }
         });
 
-        /*Picasso.with(mContext)
+        Glide.with(mContext)
                 .load(nativeCarList.get(position).goodsImage)
-                .into(holder.goodsImg);*/
-
-    /*    Uri uri = Uri.parse(nativeCarList.get(position).goodsImage);
-        holder.goodsImg.setImageURI(uri);*/
-        if (holder.imageRequest != null) {
-            holder.imageRequest.cancelRequest();
-        }
-        holder.imageRequest = ImageCacheManager.loadImage(nativeCarList.get(position).goodsImage,
-                ImageCacheManager.getImageListener(holder.goodsImg));
+                .into(holder.goodsImg);
 
         holder.goodsPrice.setText("价格:￥" + nativeCarList.get(position).goodsShopPrice);
 
@@ -620,7 +611,7 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
 
 
 
-        public ImageLoader.ImageContainer imageRequest;
+        //public ImageLoader.ImageContainer imageRequest;
 
         boolean isChecked = true;
 

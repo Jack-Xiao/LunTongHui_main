@@ -1,34 +1,20 @@
 package com.louie.luntonghui.adapter;
 
 import android.app.Activity;
-import android.content.Context;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.model.result.GoodsList;
-import com.louie.luntonghui.util.Utility;
 import com.louie.luntonghui.view.MyGridView;
-import com.louie.luntonghui.view.MyListView;
 import com.louie.luntonghui.view.MyRecyclerView;
-import com.louie.luntonghui.view.RecyclerViewGridItemDecoration;
-import com.louie.luntonghui.view.RecyclerViewLinearLayoutViewItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.louie.luntonghui.view.RecyclerViewLinearLayoutViewItemDecoration.HORIZONTAL_LIST;
 
 /**
  * Created by Administrator on 2015/6/18.
@@ -73,7 +59,6 @@ public class GoodsDetailAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.fragment_goods_detail, parent,false);
             viewHolder.mTextView = (TextView) convertView.findViewById(R.id.goods_home_name);
 
-
             /*viewHolder.mRecyclerView = (MyRecyclerView) convertView.findViewById(R.id.goods_detail_list);
 
             //设置默认动画
@@ -96,7 +81,6 @@ public class GoodsDetailAdapter extends BaseAdapter {
             //paint.setFakeBoldText(true);
 
             viewHolder.mGridView = (MyGridView) convertView.findViewById(R.id.goods_detail_list);
-
 
             convertView.setTag(viewHolder);
         }else{

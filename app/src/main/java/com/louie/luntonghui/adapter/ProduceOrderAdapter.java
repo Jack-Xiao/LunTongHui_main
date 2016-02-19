@@ -21,13 +21,13 @@ import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.model.result.ProduceOrder;
 import com.louie.luntonghui.model.result.ProduceOrderResult;
 import com.louie.luntonghui.model.result.Result;
-import com.louie.luntonghui.net.ImageCacheManager;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.util.BaseAlertDialogUtil;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
 import com.louie.luntonghui.util.ToastUtil;
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpStatus;
 
@@ -93,9 +93,9 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
                 giftList.add(cart_goods.get(i));
             }
         }
-
         notifyDataSetChanged();
     }
+
     @Override
     public int getCount() {
         return goodsList == null? 0 : goodsList.size();
@@ -141,8 +141,13 @@ public class ProduceOrderAdapter extends BaseAdapter implements BaseAlertDialogU
         if(viewHolder.imageRequest !=null){
             viewHolder.imageRequest.cancelRequest();
         }
-        viewHolder.imageRequest = ImageCacheManager.loadImage(goodsList.get(position).goods_thumb
-            ,ImageCacheManager.getImageListener(viewHolder.goodsImg));
+        /*viewHolder.imageRequest = ImageCacheManager.loadImage(goodsList.get(position).goods_thumb
+            ,ImageCacheManager.getImageListener(viewHolder.goodsImg));*/
+
+        Picasso.with(mContext)
+                .load(goodsList.get(position).goods_thumb)
+                .placeholder(R.drawable.default_image_in_no_source)
+                .into(viewHolder.goodsImg);
         
         viewHolder.goodsName.setText(goodsList.get(position).goods_name);
         viewHolder.goodsPrice.setText("价格:￥" + goodsList.get(position).goods_price +"/" + goodsList.get(position).danwei);

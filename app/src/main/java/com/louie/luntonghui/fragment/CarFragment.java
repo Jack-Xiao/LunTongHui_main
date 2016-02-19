@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
@@ -37,6 +39,7 @@ import com.louie.luntonghui.event.CategoryGoAroundEvent;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.AddressList;
 import com.louie.luntonghui.model.result.CarList;
+import com.louie.luntonghui.model.result.ProduceOrder;
 import com.louie.luntonghui.model.result.Result;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.car.ProduceOrderActivity;
@@ -61,6 +64,9 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.Optional;
 import rx.Observer;
+import rx.android.app.AppObservable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static com.louie.luntonghui.ui.register.RegisterLogin.USERUID;
 
@@ -69,6 +75,7 @@ import static com.louie.luntonghui.ui.register.RegisterLogin.USERUID;
  */
 public class CarFragment extends BaseFragment implements CarFragmentAdapter.ReferenceList {
     public static final String BROADCASE_REFEREN_CAR_LIST = "broadcase_reference_car_list";
+    public static String ORDER = "product_order";
     @Optional
     @InjectView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -237,7 +244,6 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
 
         mAdapter = new CarFragmentAdapter(mContext, this);
 
-
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //设置默认动画
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -284,8 +290,101 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
             animationDrawable.start();
         }
         if(mRecyclerView !=null)mRecyclerView.setVisibility(View.GONE);
-        String url = String.format(ConstantURL.GET_CAR_LIST, userId);
-        RequestManager.addRequest(new GsonRequest(url, CarList.class, getCarListListener(), errorListener()), this);
+        //String url = String.format(ConstantURL.GET_CAR_LIST, userId);
+        //RequestManager.addRequest(new GsonRequest(url, CarList.class, getCarListListener(), errorListener()), this);
+        AppObservable.bindFragment(this,mApi.getCarList(userId))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<CarList>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        ToastUtil.showLongToast(mContext, "请检查网络,错误代码 - " + Config.CAR_ERROR_CODE);
+                    }
+
+                    @Override
+                    public void onNext(final CarList carList) {
+                        TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<ShoppingCar>>() {
+                            @Override
+                            protected void onPreExecute() {
+                                super.onPreExecute();
+                                //if(progress !=null) progress.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            protected List<ShoppingCar> doInBackground(Object... params) {
+                                goodsIdList = new ArrayList<>();
+                                new Delete()
+                                        .from(ShoppingCar.class)
+                                        .execute();
+                                List<ShoppingCar> data = new ArrayList<ShoppingCar>();
+                                if(carList !=null && carList.goods_list !=null) {
+                                    try {
+                                        for (int i = 0; i < carList.goods_list.size(); i++) {
+                                            ShoppingCar car = new ShoppingCar();
+                                            car.carId = carList.goods_list.get(i).rec_id;
+                                            car.isChecked = INITCHECKED;
+                                            car.goodsShopPrice = carList.goods_list.get(i).goods_price;
+                                            car.goodsImage = carList.goods_list.get(i).goods_img;
+                                            car.goodsNumber = carList.goods_list.get(i).goods_number;
+                                            car.goodsId = carList.goods_list.get(i).goods_id;
+                                            car.goodsName = carList.goods_list.get(i).goods_name;
+                                            car.guige = carList.goods_list.get(i).guige;
+                                            car.unit = carList.goods_list.get(i).danwei;
+                                            car.rId = carList.goods_list.get(i).rid;
+                                            car.discountType = carList.goods_list.get(i).discount_type;
+                                            car.discount = carList.goods_list.get(i).discount;
+                                            car.save();
+                                            isInsertSuccess = true;
+                                            data.add(car);
+                                        }
+                                    }catch(Exception e){
+                                        dbOperFial = e.getStackTrace().toString();
+                                    }finally {
+                                    }
+                                }
+                                return data;
+                            }
+
+                            @Override
+                            protected void onPostExecute(List<ShoppingCar> list) {
+                                //if (progress != null) progress.setVisibility(View.GONE);
+                                if(animationDrawable!=null && animationDrawable.isRunning()){
+                                    if(logoAnim!=null)logoAnim.setVisibility(View.GONE);
+                                    if(animationDrawable!=null)animationDrawable.stop();
+                                }
+                                if(mRecyclerView!=null) mRecyclerView.setVisibility(View.VISIBLE);
+                                postValue(list);
+                                int total=0;
+                                for(int i =0;i<list.size();i++){
+                                    if(!list.get(i).rId.equals("0")) continue;
+                                    total += Integer.parseInt(list.get(i).goodsNumber);
+                                }
+
+                                if(mCartListener!=null) mCartListener.referenceCart(total);
+
+                                if(mPlaying!=null)mPlaying.setText("去结算(" + carList.total.real_goods_count + ")");
+                                if(goodsTotoal!=null)goodsTotoal.setText("￥" + carList.total.goods_price);
+                                if(list.size() !=0){
+                                    List<ShoppingCar> goodsList = new ArrayList<ShoppingCar>();
+                                    List<ShoppingCar> goodsGift = new ArrayList<ShoppingCar>();
+                                    for(int i =0;i<list.size();i++){
+                                        if(list.get(i).rId.equals("0")){
+                                            goodsList.add(list.get(i));
+                                        }else{
+                                            goodsGift.add(list.get(i));
+                                        }
+                                    }
+                                    mAdapter.setData(goodsList, goodsGift);
+                                }
+                            }
+                        });
+                    }
+                });
     }
 
     public com.android.volley.Response.Listener<CarList> getCarListListener() {
@@ -583,7 +682,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
         return new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ToastUtil.showLongToast(mContext, "请检查网络,错误代码 - " + Config.CAR_ERROR_CODE);
+                ToastUtil.showLongToast(mContext, "请检查网络,错误代码 - " + error.getMessage());
             }
         };
     }
@@ -600,7 +699,12 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
                 return;
             }
 
-            IntentUtil.startActivity(getActivity(), ProduceOrderActivity.class);
+            execConfirmOrder();
+
+
+            //IntentUtil.startActivity(getActivity(), ProduceOrderActivity.class);
+
+
 
 
             /*String url = String.format(ConstantURL.ADDRESSLIST, userId);
@@ -628,6 +732,75 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
             });*/
         }
     };
+
+    private void execConfirmOrder() {
+        List<ShoppingCar> list = new Select()
+                .from(ShoppingCar.class)
+                .execute();
+        StringBuilder ids = new StringBuilder("");
+
+        for (int i = 0; i < list.size(); i++) {
+            if(!list.get(i).rId.equals("0")) continue;
+            ids.append(list.get(i).carId + "," + list.get(i).goodsNumber + ":");
+        }
+
+        String new_number = ids.toString();
+        if (new_number.length() > 0) {
+            new_number = new_number.substring(0, new_number.length() - 1);
+        }
+
+        String url = String.format(ConstantURL.PRODUCE_ORDER, userId, new_number);
+        mProgressDialog.show();
+        AppObservable.bindFragment(this,mApi.getProduceOrder(userId,new_number))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ProduceOrder>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mProgressDialog.hide();
+                        ToastUtil.showLongToast(mContext,"网络连接失败 " );
+                    }
+
+                    @Override
+                    public void onNext(ProduceOrder produceOrder) {
+                        mProgressDialog.hide();
+                        if(produceOrder.rsgcode != null && produceOrder.rsgcode.equals(Result.FAIL)){
+                            ToastUtil.showLongToast(mContext,produceOrder.rsgmsg);
+                        }else{
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable(CarFragment.ORDER,produceOrder);
+
+                            //bundle.putSerializable(CarFragment.ORDER,produceOrder);
+                            Intent intent = new Intent();
+
+                            intent.putExtras(bundle);
+                            intent.setClass(getActivity(),ProduceOrderActivity.class);
+                            startActivity(intent);
+                            //getActivity().overridePendingTransition(R.anim.activity_push_left_in, R.anim.activity_push_left_out);
+                            //IntentUtil.startActivity(getActivity(),ProduceOrderActivity.class,bundle);
+                        }
+                    }
+                });
+        //executeRequest(new GsonRequest(url, ProduceOrder.class, responseListener(), errorListener()));
+    }
+
+
+    private Response.Listener<ProduceOrder> responseListener() {
+        return new Response.Listener<ProduceOrder>() {
+            @Override
+            public void onResponse(final ProduceOrder produceOrder) {
+                    Bundle bundle = new Bundle();
+                    if(produceOrder.total!=null){
+                        //bundle.putParcelable(CarFragment.ORDER,produceOrder);
+                        IntentUtil.startActivity(getActivity(),ProduceOrderActivity.class,bundle);
+                    }
+            }
+        };
+    }
 
     public com.android.volley.Response.Listener<AddressList> getAddressList() {
 

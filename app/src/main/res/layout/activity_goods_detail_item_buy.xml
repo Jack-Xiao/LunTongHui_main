@@ -48,11 +48,16 @@
                          android:layout_width="wrap_content"
                          android:layout_height="wrap_content"/>-->
 
-                    <cn.lightsky.infiniteindicator.InfiniteIndicatorLayout
+                    <!--<cn.lightsky.infiniteindicator.InfiniteIndicatorLayout
                         android:id="@+id/product_viewpager"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:indicator_type="indicator_anim_circle" />
+                        app:indicator_type="indicator_anim_circle" />-->
+
+                    <com.bigkoo.convenientbanner.ConvenientBanner
+                        android:id="@+id/product_viewpager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
