@@ -111,7 +111,8 @@ public class MineWorkCustomerOrderListActivity extends BaseNormalActivity {
     public synchronized void loadData() {
         currentPage +=1;
         String url = String.format(ConstantURL.MINE_WORK_CUSTOMER_ORDER, userId,3, currentPage, loadingDataCount);
-        executeRequest(new GsonRequest(url, MineServiceOrderListResult.class, getWholeRequest(), errorListener()));
+        executeRequest(new GsonRequest(url, MineServiceOrderListResult.class,
+                getWholeRequest(), errorListener()));
     }
 
     private Response.Listener<MineServiceOrderListResult> getWholeRequest() {

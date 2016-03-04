@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/view_toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/mine_month_outstanding_statistics"
+            style="@style/order_home_font_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableRight="@drawable/order_break_line"
+            android:text="@string/cur_month_outstanding_statistics" />
+
+        <TextView
+            android:id="@+id/mine_outstanding_statistics"
+            style="@style/order_home_font_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableRight="@drawable/order_break_line"
+            android:text="@string/outstanding_statistics" />
+
+        <TextView
+            android:id="@+id/mine_order_query"
+            style="@style/order_home_font_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/mine_order_query" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/search_order"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:layout_height="50dp">
+
+        <Spinner
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            tools:text="2015"
+            android:id="@+id/spinner_year"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            style="@style/mine_work_select_spinner_style" />
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/spinner_year"
+            android:id="@+id/tv_year"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="年"/>
+
+        <Spinner
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/tv_year"
+            tools:text="2"
+            android:id="@+id/spinner_month"
+            android:layout_width="60dp"
+            style="@style/mine_work_select_spinner_style"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:id="@+id/tv_month"
+            android:layout_toRightOf="@id/spinner_month"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="月"/>
+
+        <Spinner
+            android:layout_toRightOf="@id/tv_month"
+            tools:text="15"
+            android:id="@+id/spinner_day"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            style="@style/mine_work_select_spinner_style"/>
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/spinner_day"
+            android:id="@+id/tv_day"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="日"/>
+
+        <Button
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/white"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:text="搜索"
+            android:background="@drawable/next_step" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:background="@drawable/base_frame_grey">
+
+        <TextView
+            android:id="@+id/item1"
+            tools:text="2016年"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            style="@style/mine_outstanding_font"
+            android:layout_gravity="center"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey_break_line"/>
+
+        <TextView
+            android:id="@+id/item2"
+            tools:text="3000.10"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            style="@style/mine_outstanding_font"
+            android:gravity="center"
+            android:paddingRight="12dp"
+            android:layout_gravity="center" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey_break_line"/>
+
+        <TextView
+            android:id="@+id/item3"
+            android:layout_gravity="center"
+            tools:text="8000.00"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            style="@style/mine_outstanding_font"
+            android:gravity="center"
+            android:paddingRight="12dp"/>
+    </LinearLayout>
+
+    <!--<android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>-->
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

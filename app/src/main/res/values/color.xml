@@ -172,7 +172,6 @@
 
     <color name="toolbar_color">#a40000</color>
 
-
     <color name ="base_frame_stroke">#DCDCDC</color>
     <color name="next_step">#f75555</color>
 
@@ -254,4 +253,7 @@
     <color name="result_view">#b0000000</color>
     <color name="viewfinder_mask">#60000000</color>
     <color name="possible_result_points">#c0ffff00</color>
+
+
+
 </resources>

@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/Users/Jack/AndroidStudioProjects/LunTongHui_main/zxing/build/intermediates/res/merged/debug/menu/history.xml",
+        "source": "/Users/Jack/AndroidStudioProjects/LunTongHui_main/zxing/src/main/res/menu/history.xml"
+    },
+    {
+        "merged": "/Users/Jack/AndroidStudioProjects/LunTongHui_main/zxing/build/intermediates/res/merged/debug/menu/capture.xml",
+        "source": "/Users/Jack/AndroidStudioProjects/LunTongHui_main/zxing/src/main/res/menu/capture.xml"
+    },
+    {
+        "merged": "/Users/Jack/AndroidStudioProjects/LunTongHui_main/zxing/build/intermediates/res/merged/debug/menu/encode.xml",
+        "source": "/Users/Jack/AndroidStudioProjects/LunTongHui_main/zxing/src/main/res/menu/encode.xml"
+    }
+]

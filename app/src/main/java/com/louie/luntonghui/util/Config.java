@@ -126,6 +126,7 @@ public class Config {
 
     public static final String RUN_COUNT = "run_count";
     public static final int DEFAULT_COUNT = 0;
+    public static final String DATE_NAME = "date";
 
 
 
@@ -177,6 +178,7 @@ public class Config {
         }
         return (lastSingInTime > adjustMillisecond);
     }
+
     public static boolean needClearRegisterTime() {
         long lastSingInTime=0;
         long adjustMillisecond=0;
@@ -216,6 +218,26 @@ public class Config {
         }
         adjustMillisecond = date.getTime() + HOUR_MILLIS;
         return adjustMillisecond;
+    }
+
+    public static String getCurrentDate(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date curDate = new Date(System.currentTimeMillis());
+        String str= format.format(curDate);
+        return str;
+    }
+
+    public static String getCurrentMonth(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+        Date curDate = new Date(System.currentTimeMillis());
+        String str = format.format(curDate);
+        return str;
+    }
+    public static String getCurrentYear(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy");
+        Date curDate = new Date(System.currentTimeMillis());
+        String str = format.format(curDate);
+        return str;
     }
 
     //秒杀开始时间
@@ -328,7 +350,8 @@ public class Config {
     }
 
     public static String getMacAddress(Context context){
-        android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager)
+                context.getSystemService(Context.WIFI_SERVICE);
 
         String mac = wifi.getConnectionInfo().getMacAddress();
         //json.put("mac", mac);
@@ -429,4 +452,28 @@ public class Config {
         return display;
     }
 
+    public static String[] getYearItems() {
+        Integer curYear = Calendar.getInstance().get(Calendar.YEAR);
+        String []result = new String[10];
+
+        for(int i =9;i >= 0;i--){
+            result[i] = curYear - i + "";
+        }
+
+        return result;
+    }
+
+    public static String[] getMonthItems(){
+        String[] result = new String[]{
+        "01","02","03","04","05","06","07","08","09","10","11","12"};
+        return result;
+    }
+
+    public static String[] getDayItems(){
+        String[] result = new String[]{
+                "01","02","03","04","05","06","07","08","09","10","11","12",
+                "13","14","15","16","17","18","19","20","21","22","23","24",
+                "25","26","27","28","29","30","31"};
+        return result;
+    }
 }

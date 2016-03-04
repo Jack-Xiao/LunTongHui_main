@@ -8,11 +8,13 @@
     <include layout="@layout/view_toolbar" />
 
     <TextView
+        android:textSize="18sp"
+        android:layout_marginTop="20dp"
         android:visibility="gone"
         android:id="@+id/empty_attention"
-        android:text="你还未关注任何商品"
+        android:text="您还未关注任何商品"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center"/>
 
     <com.louie.luntonghui.view.MultiSwipeRefreshLayout

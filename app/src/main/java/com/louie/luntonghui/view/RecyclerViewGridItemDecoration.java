@@ -18,8 +18,7 @@ public class RecyclerViewGridItemDecoration extends RecyclerView.ItemDecoration{
     private static final int[] ATTRS = new int[] { android.R.attr.listDivider };
     private Drawable mDivider;
 
-    public RecyclerViewGridItemDecoration(Context context)
-    {
+    public RecyclerViewGridItemDecoration(Context context) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         mDivider = a.getDrawable(0);
         a.recycle();

@@ -88,7 +88,6 @@ import butterknife.Optional;
 import rx.Observer;
 import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 import static android.support.v7.widget.Toolbar.OnClickListener;
@@ -267,12 +266,22 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
 
     private void initSearch() {
-        AppObservable.bindActivity(this,mApi.getHotProduct()
+        AppObservable.bindActivity(this, mApi.getHotProduct()
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .map(new Func1<HotSearch, Object>() {
+                .observeOn(AndroidSchedulers.mainThread()))
+                .subscribe(new Observer<HotSearch>() {
                     @Override
-                    public Object call(HotSearch hotSearch) {
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(HotSearch hotSearch) {
                         if (hotSearch != null && hotSearch.listallcat != null) {
                             new Delete()
                                     .from(HotSearchTable.class)
@@ -284,9 +293,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                                 table.save();
                             }
                         }
-                        return null;
                     }
-                }));
+                });
     }
 
 
@@ -299,9 +307,19 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         AppObservable.bindActivity(this, mApi.getOrderList(userId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .map(new Func1<OrderList, Object>() {
+                .subscribe(new Observer<OrderList>() {
                     @Override
-                    public Object call(OrderList orderList) {
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(OrderList orderList) {
                         List<Order> data = new ArrayList<Order>();
 
                         if (orderList != null && orderList.mysalelist != null) {
@@ -322,7 +340,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                                 data.add(order);
                             }
                         }
-                        return null;
                     }
                 });
     }
@@ -376,51 +393,57 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         AppObservable.bindActivity(this, mApi.getMineAttentionGoodsList(userId, userType))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .map(new Func1<MineAttentionResult, List<AttentionGoods>>() {
+                .subscribe(new Observer<MineAttentionResult>() {
                     @Override
-                    public List<AttentionGoods> call(MineAttentionResult list) {
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(MineAttentionResult list) {
                         List<AttentionGoods> data = new ArrayList<>();
                         new Delete().
                                 from(AttentionGoods.class)
                                 .execute();
-                        try {
-                            for (int i = 0; i < list.listallcat.size(); i++) {
-                                MineAttentionResult.ListallcatEntity entity = list.listallcat.get(i);
-                                AttentionGoods goods1 = new AttentionGoods();
-                                goods1.goodsId = entity.goods_id;
-                                goods1.goodsName = entity.goods_name;
-                                goods1.goodsImg = entity.goods_img;
-                                goods1.goodsSN = entity.goods_sn;
-                                goods1.goodsNumber = entity.goods_number;
-                                goods1.marketPrice = entity.market_price;
-                                goods1.shopPrice = entity.shop_price;
-                                goods1.gysMoney = entity.gys_money;
-                                goods1.promotePrice = entity.promote_price;
-                                goods1.goodsBrief = entity.goods_brief;
-                                goods1.goodsDesc = entity.goods_desc;
-                                goods1.sortOrder = entity.sort_order;
-                                goods1.isBest = entity.is_best;
-                                goods1.isNew = entity.is_new;
-                                goods1.isHot = entity.is_hot;
-                                goods1.display = entity.display;
-                                goods1.giveIntegral = entity.give_integral;
-                                goods1.integral = entity.integral;
-                                goods1.isPromote = entity.is_promote;
-                                goods1.discounta = entity.discounta;
-                                goods1.discount = entity.discount;
-                                goods1.discountTime = entity.discount_time;
-                                goods1.discountName = entity.discount_name;
-                                goods1.guige = entity.guige;
-                                goods1.unit = entity.danwei;
-                                goods1.recId = entity.rec_id;
-                                goods1.discount = entity.discount;
-                                goods1.discountType = entity.discount_type;
-                                goods1.save();
-                                data.add(goods1);
-                            }
-                        } finally {
+                        for (int i = 0; i < list.listallcat.size(); i++) {
+                            MineAttentionResult.ListallcatEntity entity = list.listallcat.get(i);
+                            AttentionGoods goods1 = new AttentionGoods();
+                            goods1.goodsId = entity.goods_id;
+                            goods1.goodsName = entity.goods_name;
+                            goods1.goodsImg = entity.goods_img;
+                            goods1.goodsSN = entity.goods_sn;
+                            goods1.goodsNumber = entity.goods_number;
+                            goods1.marketPrice = entity.market_price;
+                            goods1.shopPrice = entity.shop_price;
+                            goods1.gysMoney = entity.gys_money;
+                            goods1.promotePrice = entity.promote_price;
+                            goods1.goodsBrief = entity.goods_brief;
+                            goods1.goodsDesc = entity.goods_desc;
+                            goods1.sortOrder = entity.sort_order;
+                            goods1.isBest = entity.is_best;
+                            goods1.isNew = entity.is_new;
+                            goods1.isHot = entity.is_hot;
+                            goods1.display = entity.display;
+                            goods1.giveIntegral = entity.give_integral;
+                            goods1.integral = entity.integral;
+                            goods1.isPromote = entity.is_promote;
+                            goods1.discounta = entity.discounta;
+                            goods1.discount = entity.discount;
+                            goods1.discountTime = entity.discount_time;
+                            goods1.discountName = entity.discount_name;
+                            goods1.guige = entity.guige;
+                            goods1.unit = entity.danwei;
+                            goods1.recId = entity.rec_id;
+                            goods1.discount = entity.discount;
+                            goods1.discountType = entity.discount_type;
+                            goods1.save();
+                            data.add(goods1);
                         }
-                        return data;
                     }
                 });
     }

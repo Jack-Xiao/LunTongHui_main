@@ -4,7 +4,8 @@
     android:id="@+id/whole"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/list__item_selectable_background">
 
     <RelativeLayout
         android:paddingBottom="5dp"

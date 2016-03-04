@@ -7,9 +7,9 @@ public class ConstantURL {
 
     public static final String SUCCESSCODE = "000";
 
-    //public static final String HOST = "http://120.25.224.250/api/"; //测试 Ip
+    public static final String HOST = "http://120.25.224.250/api/"; //测试 Ip
 
-    public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
+    //public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
     //public static final String HOST = "http://120.25.201.114/api_new/"; //另一台正式机
 
     //public static final String HOST = "http://img.zgltong.com/api_new/"; //另一台正式机

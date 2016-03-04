@@ -67,7 +67,12 @@ public class WxLoginActivity extends BaseToolbarActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
 
+        if(getIntent().getExtras().getString(WXEntryActivity.OPEN_ID) == null){
+            ToastUtil.showLongToast(mContext,"获取微信信息失败，请重试");
+            return;
+        }
         openId = getIntent().getExtras().getString(WXEntryActivity.OPEN_ID);
+
         type = getIntent().getExtras().getString(WxUniteActivity.TYPE);
         mac = Config.getMacAddress(this);
 

@@ -178,6 +178,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(mAdapter.getData().size() == 0) return;
                 Goods goods = mAdapter.getData().get(position);
                 String goodsId = goods.goodsId;
                 Bundle bundle = new Bundle();

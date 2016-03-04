@@ -64,7 +64,19 @@ public class MineWorkActivity extends BaseNormalActivity {
     }
 
     private void initView() {
+
     }
+
+    @OnClick(R.id.mine_outstanding_statistics)
+    public void onClickOutstandingStatistics(){
+        MineOutstandingStatisticsActivity.start(mContext);
+    }
+
+    @OnClick(R.id.mine_outstanding_printer)
+    public void onClickMineOrderQuery(){
+        MineOutstandingPrinter.startActivity(mContext);
+    }
+
 
 
     @Override

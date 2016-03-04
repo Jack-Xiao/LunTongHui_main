@@ -63,8 +63,6 @@ public class MyPullUpListView extends ListView implements AbsListView.OnScrollLi
         this.firstVisibleItem = firstVisibleItem;
         if(footerView !=null){
             if(getLastVisiblePosition() == totalItemCount - 1){
-                footerView.setVisibility(View.VISIBLE);//显示底部布局
-                footerView.setPadding(0,0,0,0);
                 footerViewHeight = footerView.getMeasuredHeight();
                 isLoadingMore = false;
             }else{

@@ -66,7 +66,6 @@ import butterknife.Optional;
 import rx.Observer;
 import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func1;
 
 import static com.louie.luntonghui.ui.category.GoodsDetailActivity.GOODSDETAILID;
@@ -232,9 +231,19 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements
                         }
                         return null;
                     }})
-                .subscribe(new Action1<List<GoodsDetail>>() {
+                .subscribe(new Observer<List<GoodsDetail>>() {
                     @Override
-                    public void call(List<GoodsDetail> goodsDetails) {
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        ToastUtil.showLongToast(mContext,"网络连接错误");
+                    }
+
+                    @Override
+                    public void onNext(List<GoodsDetail> goodsDetails) {
                         if (goodsDetails != null) {
                             GoodsDetail goods = goodsDetails.get(0);
                             currentGoodsDetail = goods;
@@ -262,13 +271,13 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements
                                 lineSalesPromotion.setVisibility(View.GONE);
                             }
 
-
                             //showGoodsPicture();
                             initViewPager();
                             initInventory(goods);
                         }
-                     }
+                    }
                 });
+
     }
 
     private void initInventory(GoodsDetail goods) {

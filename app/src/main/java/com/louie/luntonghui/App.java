@@ -183,7 +183,13 @@ public class App extends Application {
                 provinceName = location.getProvince().replace("省", "");
 
             } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+                if(location.getCity() == null){
+                    cityName = DEFAULT_CITY;
+                }
 
+                if(location.getProvince() == null){
+                    provinceName = DEFAULT_PROVINCE;
+                }
                 cityName = location.getCity().replace("市", "");
                 provinceName = location.getProvince().replace("省", "");
             }

@@ -11,9 +11,14 @@ import com.louie.luntonghui.model.result.HomeAdversion;
 import com.louie.luntonghui.model.result.HotSearch;
 import com.louie.luntonghui.model.result.MineAttentionResult;
 import com.louie.luntonghui.model.result.OrderList;
+import com.louie.luntonghui.model.result.PrinterDay;
+import com.louie.luntonghui.model.result.PrinterMonth;
 import com.louie.luntonghui.model.result.ProduceOrder;
 import com.louie.luntonghui.model.result.Result;
 import com.louie.luntonghui.model.result.RetrivePasswordResult;
+import com.louie.luntonghui.model.result.SalesmanStaticDay;
+import com.louie.luntonghui.model.result.SalesmanStaticMonth;
+import com.louie.luntonghui.model.result.SalesmanStaticYear;
 
 import java.util.Map;
 
@@ -143,6 +148,26 @@ public class ServiceManager {
         @GET("/mobile.php?act=generateorders&mode=test")
         Observable<ProduceOrder> getProduceOrder(@Query("user_id") String userId,
                                                  @Query("new_number") String newNumber);
+
+        //查询某天所有订单
+        @GET("/mobile.php?act=get_salesman_order")
+        Observable<SalesmanStaticDay> getSalesDay(@Query("salesman_id") String salesmanId,
+                                                  @Query("date") String date);
+        //查询某月所有订单
+        @GET("/mobile.php?act=get_salesman_static_by_day")
+        Observable<SalesmanStaticMonth> getSaleMonth(@Query("salesman_id") String salesmanId,
+                                                     @Query("select_month") String date);
+        //查询当年
+        @GET("/mobile.php?act=get_salesman_static_by_month")
+        Observable<SalesmanStaticYear> getSaleYear(@Query("salesman_id") String salesmanId);
+
+        //查询日期排行榜
+        @GET("/mobile.php?act=salesman_ranking_by_day")
+        Observable<PrinterDay> getPrinterDay(@Query("select_day") String day);
+        //查询月排行榜
+        @GET("/mobile.php?act=salesman_ranking_by_month")
+        Observable<PrinterMonth> getPrinterMonth(@Query("select_month") String month);
+
     }
 
 }

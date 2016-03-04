@@ -124,7 +124,8 @@
                 android:layout_centerInParent="true"
                 android:background="@color/white"
                 android:divider="@color/grey_other"
-                android:dividerHeight="@dimen/category_break_line_height" />
+                android:dividerHeight="@dimen/category_break_line_height"
+                android:listSelector="@android:color/transparent"/>
         </RelativeLayout>
     </LinearLayout>
 

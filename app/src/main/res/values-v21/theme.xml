@@ -3,5 +3,6 @@
 
     <style name="LunTongHui" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimary">@color/red</item>
+        <item name="android:listDivider">@drawable/divider_bg</item>
     </style>
 </resources>

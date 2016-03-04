@@ -23,7 +23,7 @@ public abstract class SwipeRefreshBaseActivity extends BaseToolbarActivity {
     private void setupSwipeRefresh() {
         mMultiSwipeRefreshLayout = (MultiSwipeRefreshLayout)findViewById(R.id.swipe_refresh_layout);
         if(mMultiSwipeRefreshLayout !=null){
-            mMultiSwipeRefreshLayout.setColorSchemeColors(
+            mMultiSwipeRefreshLayout.setColorScheme(
                     android.R.color.holo_blue_bright,
                     android.R.color.holo_green_light,
                     android.R.color.holo_orange_light,

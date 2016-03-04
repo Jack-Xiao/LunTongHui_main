@@ -562,7 +562,6 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-
         @InjectView(R.id.checked)
         CheckBox checked;
         @InjectView(R.id.goods_img)

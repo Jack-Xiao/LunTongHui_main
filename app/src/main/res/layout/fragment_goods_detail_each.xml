@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
+    android:background="@drawable/list__item_selectable_background"
     android:orientation="vertical">
 
     <ImageView

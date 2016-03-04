@@ -25,6 +25,12 @@ public class IntentUtil {
 		activity.startActivity(intent);
 		activity.overridePendingTransition(R.anim.activity_push_left_in, R.anim.activity_push_left_out);
 	}
+	/*public static void startActivity(Context activity, Class<?> cls){
+		Intent intent=new Intent();
+		intent.setClass(activity,cls);
+		activity.startActivity(intent);
+		activity.overridePendingTransition(R.anim.activity_push_left_in, R.anim.activity_push_left_out);
+	}*/
 
 	/**
  	 * @param activity
