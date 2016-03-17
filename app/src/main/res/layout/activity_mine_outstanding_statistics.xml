@@ -36,11 +36,15 @@
             style="@style/order_home_font_style"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:drawableRight="@drawable/order_break_line"
+            android:drawableBottom="@layout/view_drawable_layout1"
             android:layout_weight="1"
             android:text="@string/mine_order_query" />
+
     </LinearLayout>
 
     <RelativeLayout
+        android:layout_marginTop="20dp"
         android:id="@+id/search_order"
         android:orientation="horizontal"
         android:layout_width="match_parent"

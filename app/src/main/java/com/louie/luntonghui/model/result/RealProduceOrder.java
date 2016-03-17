@@ -1,13 +1,14 @@
 package com.louie.luntonghui.model.result;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by Administrator on 2015/6/24.
+ * Created by Jack on 16/3/16.
  */
-public class Test {
-
-
+public class RealProduceOrder implements Serializable{
     /**
      * real_goods_count : 2
      * gift_amount : 0
@@ -226,13 +227,20 @@ public class Test {
         public String best_time;
     }
 
-    public static class CartGoodsEntity {
+    public static class CartGoodsEntity implements Serializable{
+        @SerializedName("goods_thumb")
         public String goods_thumb;
+        @SerializedName("danwei")
         public String danwei;
+        @SerializedName("guige")
         public String guige;
+        @SerializedName("gysmoney")
         public String gysmoney;
+        @SerializedName("rec_id")
         public String rec_id;
+        @SerializedName("rid")
         public String rid;
+        @SerializedName("user_id")
         public String user_id;
         public String goods_id;
         public String goods_name;

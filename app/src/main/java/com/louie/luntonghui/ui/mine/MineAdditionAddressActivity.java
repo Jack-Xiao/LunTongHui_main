@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -266,6 +267,15 @@ public class MineAdditionAddressActivity extends SecondLevelBaseActivity impleme
         sourcePhone = EncoderURL.encode(mobileValue.getText().toString().trim());
         sourcePlace = EncoderURL.encode(streeValue.getText().toString());
 
+        if(TextUtils.isEmpty(sourcePhone)){
+            ToastUtil.showShortToast(mContext,"请输入电话号码");
+            return;
+        }
+
+        if(TextUtils.isEmpty(sourcePlace)){
+            ToastUtil.showShortToast(mContext,"请输入详细地址");
+            return;
+        }
 
         //strPlace = cityPlaceValue.getText().toString().replace(" ", "");
         strPlace = EncoderURL.encode(streeValue.getText().toString().replace(" ", ""));

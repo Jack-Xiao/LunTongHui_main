@@ -1,5 +1,6 @@
 package com.louie.luntonghui.ui.mine.MineService;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -74,6 +75,7 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
 
     @InjectView(R.id.recycler_view)
     RecyclerView mRecyclerView;
+    ProgressDialog mProgress;
 
     private ArrayList<TextView> tvList;
     private int type;
@@ -142,6 +144,7 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         mRecyclerView.setAdapter(mAdapter);
+        mProgress = new ProgressDialog(mContext);
 
         initData();
 
@@ -176,7 +179,7 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
         searchOrder.setVisibility(View.VISIBLE);
         type = 2;
         mAdapter.clear();
-        onClickOrderNavigation(2);
+        onClickOrderNavigation(type);
         //spinnerDay.setVisibility(View.VISIBLE);1
         spinnerDay.setVisibility(View.VISIBLE);
         tvDay.setVisibility(View.VISIBLE);
@@ -187,7 +190,7 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
         searchOrder.setVisibility(View.VISIBLE);
         type = 1; //
         mAdapter.clear();
-        onClickOrderNavigation(1);
+        onClickOrderNavigation(type);
         spinnerDay.setVisibility(View.GONE);
         tvDay.setVisibility(View.GONE);
 
@@ -269,23 +272,29 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
     }
 
     private void searchMonth(String date1) {
+        showProgress();
         AppObservable.bindActivity(this,mApi.getPrinterMonth(date1))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<PrinterMonth>() {
                     @Override
                     public void onCompleted() {
-
+                        hideProgress();
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        hideProgress();
+                        mAdapter.clear();
                         ToastUtil.showShortToast(mContext,"获取排行榜信息失败");
                     }
 
                     @Override
                     public void onNext(PrinterMonth printerDay) {
-                        if(printerDay == null) return;
+                        if(printerDay == null){
+                            mAdapter.clear();
+                            return;
+                        }
                         ArrayList list = new ArrayList();
                         for(int i =0;i<printerDay.list.size();i++){
                             PrinterData entity = new PrinterData();
@@ -302,18 +311,34 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
 
     }
 
+    public void showProgress(){
+        if(mProgress !=null ){
+            mProgress.show();
+        }
+    }
+
+    public void hideProgress(){
+        if(mProgress !=null && mProgress.isShowing()){
+            mProgress.hide();
+        }
+    }
+
+
     private void searchDay(String date) {
+        showProgress();
         AppObservable.bindActivity(this,mApi.getPrinterDay(date))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<PrinterDay>() {
                     @Override
                     public void onCompleted() {
-
+                        hideProgress();
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        hideProgress();
+                        mAdapter.clear();
                         ToastUtil.showShortToast(mContext,"获取排行榜信息失败");
                     }
 
@@ -323,6 +348,7 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
 
                         if(printerDay.list == null){
                             ToastUtil.showShortToast(mContext,"还没有数据");
+                            mAdapter.clear();
                             return;
                         }
 

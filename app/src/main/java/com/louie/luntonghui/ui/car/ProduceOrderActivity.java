@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -29,6 +30,7 @@ import com.louie.luntonghui.adapter.ProduceOrderAdapter;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.OrderConfirmEvent;
 import com.louie.luntonghui.fragment.CarFragment;
+import com.louie.luntonghui.fragment.FixGoodsDialogFragment;
 import com.louie.luntonghui.model.db.Goods;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.OrderConfirm;
@@ -51,6 +53,7 @@ import com.umeng.analytics.MobclickAgent;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,7 +67,7 @@ import butterknife.OnClick;
  */
 public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwitch.SlideListener
                             ,BaseAlertDialogUtil.BaseAlertDialogListener,BaseMainAlertDialogUtil.BaseMainAlertDialogListener,
-                                ProduceOrderAdapter.FixOrderListener{
+                                ProduceOrderAdapter.FixOrderListener,FixGoodsDialogFragment.OnClickFinishListener{
 
     @InjectView(R.id.toolbar_navigation)
     ImageView toolbarNavigation;
@@ -160,6 +163,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
 
     private View view;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,7 +186,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         userFeedback.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
 
         view = getLayoutInflater().inflate(R.layout.commit_order, null);
-        toast = Toast.makeText(mContext, "", Toast.LENGTH_LONG);
+        toast = Toast.makeText(mContext, "", Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.setView(view);
 
@@ -191,7 +195,6 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         initOrderInfo(order);
         focusable();//获取焦点
         progress.setVisibility(View.GONE);
-
     }
 
     private void focusable() {
@@ -293,7 +296,6 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         }else{
             giftPrompt.setVisibility(View.GONE);
         }
-
     }
 
     @Override
@@ -463,18 +465,23 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
 
             return;
         }
-        BaseMainAlertDialogUtil.getInstance()
+
+        /*BaseMainAlertDialogUtil.getInstance()
                 .setCanceledOnTouchOutside(true)
                 .setNegativeContent(R.string.cancel)
                 .setPositiveContent(R.string.sure);
 
-        BaseMainAlertDialogUtil.getInstance().show(mContext, ProduceOrderActivity.this);
-    }
+        BaseMainAlertDialogUtil.getInstance().show(mContext, ProduceOrderActivity.this);*/
 
+        //progress.setVisibility(View.VISIBLE);
+
+        submitConfirm();
+    }
+    public ListView mListView;
     private Response.Listener<OrderConfirm> confirmOrderListener(){
         return new Response.Listener<OrderConfirm>(){
             @Override
-            public void onResponse(OrderConfirm orderConfirm) {
+            public void onResponse(final OrderConfirm orderConfirm) {
                 if(orderConfirm.rsgcode.equals(SUCCESSCODE)){
                     TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
                         @Override
@@ -491,9 +498,17 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                         @Override
                         protected void onPostExecute(Object o) {
                             //ToastUtil.showLongToast(ProduceOrderActivity.this, R.string.order_confirm_success);
-                            toast.show();
-                            App.getBusInstance().post(new OrderConfirmEvent());
-                            finish();
+                            if(orderConfirm.msg !=null && orderConfirm.msg.size() > 0){
+                                ArrayList<OrderConfirm.FixGoods> goodses = (ArrayList<OrderConfirm.FixGoods>) orderConfirm.msg;
+
+                                FixGoodsDialogFragment fragment = FixGoodsDialogFragment.newInstance(goodses);
+                                fragment.show(getSupportFragmentManager(),"load");
+
+                            }else{
+                                toast.show();
+                                App.getBusInstance().post(new OrderConfirmEvent());
+                                finish();
+                            }
                         }
                     });
                 }else{
@@ -559,6 +574,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         String payId = CACHPLAY;
 
         String display = Config.getRenamePlace();
+
         try {
             strUserFeedback = URLEncoder.encode(strUserFeedback, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -567,6 +583,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
 
         String url = String.format(ConstantURL.CONFIRM_ORDER,uid,addressId,payId,strUserFeedback,integral,display);
         executeRequest(new GsonRequest(url, OrderConfirm.class, confirmOrderListener(), errorListener()));
+
     }
 
     @Override
@@ -592,11 +609,19 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         intent.setClass(ProduceOrderActivity.this, MineReceiverAddressActivity.class);
         startActivityForResult(intent, REQUESTCODE);
     }
+
     @OnClick(R.id.input_address_present)
     public void addressPresent(){
         Intent intent = new Intent();
         intent.putExtra(ADDRESS_ADD,isAddressAdd);
         intent.setClass(ProduceOrderActivity.this, MineAdditionAddressActivity.class);
         startActivityForResult(intent,REQUEST_ADD);
+    }
+
+    @Override
+    public void onClickFinish() {
+        toast.show();
+        App.getBusInstance().post(new OrderConfirmEvent());
+        finish();
     }
 }

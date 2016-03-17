@@ -496,7 +496,7 @@ public class HomeFragment extends BaseFragment implements
 
 
     @Optional
-    @OnClick({R.id.search,R.id.search_text})
+    @OnClick({R.id.search,R.id.search_text,R.id.search_content,R.id.search_1,R.id.search_text_1,R.id.search_content_1})
     public void OnSearch() {
         //mSearchListener.beginSearch();
         /*getActivity().getSupportFragmentManager().beginTransaction()

@@ -166,13 +166,13 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
         listView.setAdapter(mAdapter);
 
 
-        mProgressDialog.show();
+        //mProgressDialog.show();
         //listView.setOnTouchListener(new ShowHideOnScroll(mainFab));
         initBadgeView();
 
         initSorting();
 
-        mProgressDialog.hide();
+        //mProgressDialog.hide();
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

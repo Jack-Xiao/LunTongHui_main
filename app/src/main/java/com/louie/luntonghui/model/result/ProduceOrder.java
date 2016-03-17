@@ -146,6 +146,8 @@ public class ProduceOrder extends Result implements Parcelable {
 
     public List<PaymentListEntity> payment_list;
 
+    //public List<FixGoods> msg;
+
     public static class TotalEntity implements Parcelable {
         public String real_goods_count;
         public String gift_amount;
@@ -590,6 +592,39 @@ public class ProduceOrder extends Result implements Parcelable {
         };
     }
 
+    /*public static class FixGoods implements Parcelable{
+        public String title;
+        public String amount;
+
+        protected FixGoods(Parcel in) {
+            title = in.readString();
+            amount = in.readString();
+        }
+
+        public static final Creator<FixGoods> CREATOR = new Creator<FixGoods>() {
+            @Override
+            public FixGoods createFromParcel(Parcel in) {
+                return new FixGoods(in);
+            }
+
+            @Override
+            public FixGoods[] newArray(int size) {
+                return new FixGoods[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.title);
+            dest.writeString(this.amount);
+        }
+    }*/
+
     @Override
     public int describeContents() {
         return 0;
@@ -602,7 +637,10 @@ public class ProduceOrder extends Result implements Parcelable {
         dest.writeList(this.cart_goods);
         dest.writeList(this.shipping_list);
         dest.writeList(this.payment_list);
+        //dest.writeList(this.msg);
     }
+
+
 
     public ProduceOrder() {
     }
@@ -614,7 +652,9 @@ public class ProduceOrder extends Result implements Parcelable {
         //in.readList(this.consignee, ArrayList.class.getClassLoader()); // 插件生成
 
         //this.cart_goods = new ArrayList<CartGoodsEntity>();
+
         //in.readList(this.cart_goods, ArrayList.class.getClassLoader());
+
         this.cart_goods = in.readArrayList(CartGoodsEntity.class.getClassLoader());
         //this.shipping_list = new ArrayList<>();
         //in.readList(this.shipping_list, List.class.getClassLoader());
@@ -622,9 +662,14 @@ public class ProduceOrder extends Result implements Parcelable {
         this.payment_list = in.readArrayList(PaymentListEntity.class.getClassLoader());
         //this.payment_list = new ArrayList<PaymentListEntity>();
         //in.readList(this.payment_list, ArrayList.class.getClassLoader());
+        //this.msg = in.readArrayList(FixGoods.class.getClassLoader());
+        //this.msg = new ArrayList<FixGoods>();
+        //in.readList(this.msg,List.class.getClassLoader());
+        //this.msg = in.readTypedList(msg,FixGoods.CREATOR);
     }
 
-    public static final Parcelable.Creator<ProduceOrder> CREATOR = new Parcelable.Creator<ProduceOrder>() {
+
+    public static final Creator<ProduceOrder> CREATOR = new Creator<ProduceOrder>() {
         public ProduceOrder createFromParcel(Parcel source) {
             return new ProduceOrder(source);
         }

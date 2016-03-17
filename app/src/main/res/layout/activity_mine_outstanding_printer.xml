@@ -155,7 +155,7 @@
             android:background="@color/grey_break_line"/>
 
         <TextView
-            android:text="A"
+            android:text="电池"
             android:id="@+id/item3"
             android:layout_gravity="center"
             android:layout_width="0dp"
@@ -171,7 +171,7 @@
             android:background="@color/grey_break_line"/>
 
         <TextView
-            android:text="B"
+            android:text="单车"
             android:id="@+id/item4"
             android:layout_gravity="center"
             android:layout_width="0dp"

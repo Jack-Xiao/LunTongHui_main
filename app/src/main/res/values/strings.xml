@@ -475,4 +475,7 @@
     <string name="cur_month_outstanding_statistics">本月业绩统计</string>
     <string name="outstanding_statistics">业绩统计</string>
     <string name="mine_outstanding_printer">排行榜</string>
+
+    <string name="order_fix_goods">亲!订单已生成，有事先Call</string>
+
 </resources>

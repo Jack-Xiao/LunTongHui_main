@@ -250,7 +250,7 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
         searchOrder.setVisibility(View.GONE);
         item1.setText("日期");
         item2.setText("订单总额");
-        item3.setText("订单查看");
+        item3.setText("总额");
         type = MineRecyclerViewAdapter.OUTSTANDING_STATISTICS_MONTH;
         onClickCurrentItem(type);
         mProgressDialog.dismiss();
@@ -399,6 +399,9 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
                     @Override
                     public void onNext(SalesmanStaticDay data) {
                         ArrayList list = new ArrayList();
+                        if(data !=null && data.list.size() == 0){
+                            ToastUtil.showLongToast(mContext, "该日没有数据");
+                        }
                         for (int i = 0; i < data.list.size(); i++) {
                             MineWorkQueryDay day = new MineWorkQueryDay();
                             day.goods_amount = data.list.get(i).goods_amount;
@@ -441,6 +444,7 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
                     @Override
                     public void onNext(SalesmanStaticMonth salesmanStaticMonth) {
                         if(salesmanStaticMonth.list == null || salesmanStaticMonth.list.size() == 0){
+                            ToastUtil.showShortToast(mContext,"该月没有数据");
                             return;
                         }
 
@@ -486,6 +490,9 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
                     @Override
                     public void onNext(SalesmanStaticYear data) {
                         ArrayList list = new ArrayList();
+                        if(data !=null && data.list.size() == 0){
+                            ToastUtil.showShortToast(mContext,"该年没有数据");
+                        }
                         for (int i = 0; i < data.list.size(); i++) {
                             MineWorkQueryYear year = new MineWorkQueryYear();
                             year.date = data.list.get(i).date;
