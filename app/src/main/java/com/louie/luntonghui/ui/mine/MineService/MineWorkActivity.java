@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.ui.BaseNormalActivity;
+import com.louie.luntonghui.ui.mine.dispatch.DispatchTodayActivity;
 import com.louie.luntonghui.ui.register.ProxyRegisterActivity;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.IntentUtil;
@@ -132,5 +133,10 @@ public class MineWorkActivity extends BaseNormalActivity {
         // 启动分享GUI
         oks.show(this);
 
+    }
+
+    @OnClick(R.id.mine_dispatch)
+    public void onClickDispatch(){
+        IntentUtil.startActivity(MineWorkActivity.this, DispatchTodayActivity.class);
     }
 }

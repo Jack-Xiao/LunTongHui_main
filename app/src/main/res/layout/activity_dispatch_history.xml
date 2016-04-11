@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar_center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/dispatch_none"
+                style="@style/order_home_font_style"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:drawableRight="@drawable/order_break_line"
+                android:text="未送货" />
+
+            <ImageView
+                android:id="@+id/iv_item1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selected_item"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/dispatch_has"
+                style="@style/order_home_font_style"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:drawableRight="@drawable/order_break_line"
+                android:text="已送货" />
+
+            <ImageView
+                android:id="@+id/iv_item2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selected_item"
+                android:visibility="gone" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/dispatch_whole"
+                style="@style/order_home_font_style"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:drawableRight="@drawable/order_break_line"
+                android:text="全部" />
+
+            <ImageView
+                android:id="@+id/iv_item3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selected_item"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/dispatch_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:id="@+id/date_start"
+            android:padding="10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/base_frame"
+            tools:text="2015/10/12"/>
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:id="@+id/date_break_line"
+            android:layout_toRightOf="@id/date_start"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="25dp"
+            android:layout_height="1dp"
+            android:background="@color/base_frame_stroke"/>
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/date_break_line"
+            android:padding="10dp"
+            android:id="@+id/date_end"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/base_frame"
+            tools:text="2016/10/11"/>
+
+        <Button
+            android:id="@+id/btn_search"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/white"
+            android:text="搜索"
+            android:background="@drawable/next_step"
+            android:layout_width="75dp"
+            android:layout_height="40dp" />
+    </RelativeLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</LinearLayout>

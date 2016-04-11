@@ -8,4 +8,8 @@
     <color name = "item_normal">@color/white</color>
     <color name = "item_press">#f0f1f1</color>
 
+    <color name="yellow_backgrounds">#FDF9DD</color>
+    <color name="dispatch_font_color">#DE2E1F</color>
+
+    <color name="break_line_useful_normal">#F2F6F9</color>
 </resources>

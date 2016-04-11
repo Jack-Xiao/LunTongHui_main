@@ -59,6 +59,7 @@ public class FixGoodsDialogFragment extends DialogFragment {
         });
         return view;
     }
+
     public interface OnClickFinishListener{
         public void onClickFinish();
     }

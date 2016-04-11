@@ -4,6 +4,8 @@ import com.louie.luntonghui.model.result.AddtionAttentionResult;
 import com.louie.luntonghui.model.result.CarList;
 import com.louie.luntonghui.model.result.CheckCode;
 import com.louie.luntonghui.model.result.DetailItem;
+import com.louie.luntonghui.model.result.DispatchDetail;
+import com.louie.luntonghui.model.result.DispatchToday;
 import com.louie.luntonghui.model.result.GoodsList;
 import com.louie.luntonghui.model.result.GoodsThinkSearchList;
 import com.louie.luntonghui.model.result.HomeAdver;
@@ -167,6 +169,30 @@ public class ServiceManager {
         //查询月排行榜
         @GET("/mobile.php?act=salesman_ranking_by_month")
         Observable<PrinterMonth> getPrinterMonth(@Query("select_month") String month);
+        //今天的订单
+        @GET("/mobile.php?act=get_dman_order")
+        Observable<DispatchToday> getTodayDispatchDate(@Query("user_id") String userId);
+
+        //历史订单
+        @GET("/mobile.php?act=get_dman_order")
+        Observable<DispatchToday> getHistoryDispatchDate(@Query("user_id") String userId,
+                                                         @Query("start_time") String startTime,
+                                                         @Query("end_time") String endTime,
+                                                         @Query("page") int page,
+                                                         @Query("page_size") int pageSize,
+                                                         @QueryMap Map<String, Integer> status);
+
+        //订单详细 example: http://120.25.224.250/api/mobile.php?act=view_delivery_detail&user_id=267&order_id=342
+        @GET("/mobile.php?act=view_delivery_detail")
+        Observable<DispatchDetail> getDispatchDetail(@Query("user_id") String userId,
+                                             @Query("order_id") String orderId);
+        //确认收款 http://120.25.224.250/api/mobile.php?act=confirm_delivery&user_id=267&order_id=287
+        @GET("/mobile.php?act=confirm_recieve")
+        Observable<Result> confirmDelivery(@Query("user_id") String userId,
+                                           @Query("order_id") String orderId,
+                                           @Query("r_money") String rMoney,
+                                           @Query("r_type") String tType,
+                                           @QueryMap Map<String,String> maps);
 
     }
 

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:textSize="18sp"
+        tools:text="出仓单号: 20150112200" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/tinge_break_link" />
+
+    <TextView
+        android:id="@+id/consignee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        tools:text="收货人: 张三" />
+
+    <TextView
+        android:id="@+id/apply_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        android:inputType="number"
+        tools:text="应收金额: 99.00" />
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="实收金额: "
+            android:textSize="15sp" />
+
+
+        <EditText
+            android:textColor="@color/mine_font_main_color"
+            android:id="@+id/need_money"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/base_frame"
+            android:gravity="center"
+            android:textColorHint="@color/tinge_break_link"
+            tools:hint="99.00" />
+
+    </LinearLayout>
+
+    <RadioGroup
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:textSize="15sp"
+            android:id="@+id/cash_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="现金支付"
+            android:checked="true"/>
+
+        <RadioButton
+            android:textSize="15sp"
+            android:layout_marginLeft="20dp"
+            android:id="@+id/card_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="刷卡支付"/>
+    </RadioGroup>
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="收货说明: "/>
+
+
+    <EditText
+        android:inputType="textMultiLine"
+        android:gravity="left|top"
+        android:textColor="@color/mine_font_main_color"
+        android:id="@+id/consignee_explain"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/base_frame"/>
+
+
+    <LinearLayout
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:id="@+id/cancel"
+            android:text="取消收款"
+            android:background="@drawable/base_frame"/>
+
+        <Button
+            android:layout_marginLeft="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:id="@+id/confirm"
+            android:text="确认收款"
+            android:background="@drawable/base_frame"/>
+
+    </LinearLayout>
+
+</LinearLayout>

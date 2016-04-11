@@ -46,14 +46,21 @@ public class MineRecyclerViewAdapter extends RecyclerView.Adapter<MineRecyclerVi
 
     @Override
     public MineRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
+        View view = null;
         if(mType == MINE_PRINTER){
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.mine_work_printer_item,null);
-
-        }else {
+        }else if(mType == OUTSTANDING_STATISTICS_MONTH){
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.mine_outstanding_statistics_item,null);
+                    .inflate(R.layout.mine_outstanding_statistics_item1,null);
+
+        }else if(mType == OUTSTANDING_STATISTICS){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.mine_outstanding_statistics_item1,null);
+
+        }else if(mType == ORDER_QUERY){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.mine_outstanding_statistics_item1,null);
         }
         return new MineRecyclerViewAdapter.ViewHolder(view);
     }
@@ -111,17 +118,29 @@ public class MineRecyclerViewAdapter extends RecyclerView.Adapter<MineRecyclerVi
         TextView v1 = holder.findViewById(R.id.item1);
         TextView v2 = holder.findViewById(R.id.item2);
         TextView v3 = holder.findViewById(R.id.item3);
-        if(position == 0){
+        TextView v4 = holder.findViewById(R.id.item4);
+        /*if(position == 0){
             v1.setText("合计");
             v2.setText(data.total_order_amount + "");
             v3.setText(data.total_no_amount + "");
             return;
-        }
+        }*/
 
-
+        v4.setVisibility(View.VISIBLE);
         v1.setText(data.date +"");
         v2.setText(data.order_amount + "");
-        v3.setText(data.no_amount + "");
+        v3.setText(data.no_amount_a + "");
+        v4.setText(data.no_amount_b + "");
+        if(position == 0){
+            v1.setBackgroundResource(R.color.background_main_grey);
+            v2.setBackgroundResource(R.color.background_main_grey);
+            v3.setBackgroundResource(R.color.background_main_grey);
+            v4.setBackgroundResource(R.color.background_main_grey);
+        }else{
+            v2.setBackgroundResource(R.color.white);
+            v3.setBackgroundResource(R.color.white);
+            v4.setBackgroundResource(R.color.white);
+        }
     }
 
     private void loadingOrderQueryDay(ViewHolder holder, int position) {
@@ -135,10 +154,21 @@ public class MineRecyclerViewAdapter extends RecyclerView.Adapter<MineRecyclerVi
         TextView v1 = holder.findViewById(R.id.item1);
         TextView v2 = holder.findViewById(R.id.item2);
         TextView v3 = holder.findViewById(R.id.item3);
+        TextView v4 = holder.findViewById(R.id.item4);
+
+        v4.setVisibility(View.GONE);
 
         v1.setText(data.user_name);
         v2.setText(data.order_sn);
         v3.setText(data.goods_amount);
+        if(position == 0){
+            v1.setBackgroundResource(R.color.background_main_grey);
+            v2.setBackgroundResource(R.color.background_main_grey);
+            v3.setBackgroundResource(R.color.background_main_grey);
+        }else{
+            v2.setBackgroundResource(R.color.white);
+            v3.setBackgroundResource(R.color.white);
+        }
     }
 
     private void loadingOutstandingYear(ViewHolder holder, int position) {
@@ -151,10 +181,24 @@ public class MineRecyclerViewAdapter extends RecyclerView.Adapter<MineRecyclerVi
         TextView v1 = holder.findViewById(R.id.item1);
         TextView v2 = holder.findViewById(R.id.item2);
         TextView v3 = holder.findViewById(R.id.item3);
+        TextView v4 = holder.findViewById(R.id.item4);
 
+        v4.setVisibility(View.VISIBLE);
         v1.setText(data.date);
         v2.setText(data.order_amount + "");
-        v3.setText(data.no_amount + "");
+        v3.setText(data.no_amount_a + "");
+        v4.setText(data.no_amount_b + "");
+
+        if(position == 0){
+            v1.setBackgroundResource(R.color.background_main_grey);
+            v2.setBackgroundResource(R.color.background_main_grey);
+            v3.setBackgroundResource(R.color.background_main_grey);
+            v4.setBackgroundResource(R.color.background_main_grey);
+        }else{
+            v2.setBackgroundResource(R.color.white);
+            v3.setBackgroundResource(R.color.white);
+            v4.setBackgroundResource(R.color.white);
+        }
     }
 
     @Override
@@ -173,7 +217,6 @@ public class MineRecyclerViewAdapter extends RecyclerView.Adapter<MineRecyclerVi
     public void clear() {
         mArrayList.clear();
         notifyDataSetChanged();
-
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
@@ -204,5 +247,4 @@ public class MineRecyclerViewAdapter extends RecyclerView.Adapter<MineRecyclerVi
         mArrayList.addAll(list);
         notifyDataSetChanged();
     }
-
 }

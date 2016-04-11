@@ -123,6 +123,7 @@
     <string name="mine_deliver_manager">收货地址管理</string>
     <string name="mine_service_phone">客服电话</string>
     <string name="mine_work">我的工作</string>
+    <string name="dispatch_total">配送总览</string>
 
     <string name="car_empty_front">您还未登录,请立即 </string>
     <string name="car_empty_behind"> 享受购物过程</string>
@@ -475,7 +476,11 @@
     <string name="cur_month_outstanding_statistics">本月业绩统计</string>
     <string name="outstanding_statistics">业绩统计</string>
     <string name="mine_outstanding_printer">排行榜</string>
+    <string name="mine_dispatch">配送总览</string>
 
     <string name="order_fix_goods">亲!订单已生成，有事先Call</string>
+
+    <string name="today_dispatch">今日配送</string>
+    <string name="history_dispatch">历史配送</string>
 
 </resources>

@@ -136,14 +136,13 @@
             android:value="luntonghui.db" />
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="19" />
+            android:value="20" />
         <!-- options  default to 1-->
 
        <!--  修改Glide 默认解析图片，改为AGR8888 -->
         <meta-data
             android:name="com.louie.luntonghui.view.GlideConfiguration"
-            android:value="GlideModule"/>-
-
+            android:value="GlideModule"/>
         <activity
             android:name=".ui.StartActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -195,6 +194,7 @@
         <activity
             android:name=".ui.register.RegisterLogin"
             android:configChanges="orientation|keyboardHidden"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
@@ -636,6 +636,21 @@
 
         <activity android:name=".ui.mine.MineService.MineOutstandingStatisticsActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.mine.dispatch.DispatchHistoryActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+
+        <activity android:name=".ui.mine.dispatch.DispatchTodayActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+
+        <activity android:name=".ui.mine.dispatch.DispatchTotalActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+        <activity android:name=".ui.mine.dispatch.DispatchDetailActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
 
     </application>
 </manifest>

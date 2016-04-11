@@ -5,17 +5,17 @@
     android:layout_height="40dp"
     android:orientation="horizontal"
     android:background="@drawable/list_item_selectable_background1"
-    android:id="@+id/item_parent">
+    android:id="@+id/item_parent1">
 
     <TextView
         android:padding="10dp"
-        android:id="@+id/item1"
+        android:id="@+id/item_q1"
         tools:text="2016年"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         style="@style/mine_outstanding_font"
-        android:background="@color/grey"/>
+        android:background="@color/background_main_grey"/>
 
     <View
         android:layout_width="1dp"
@@ -24,7 +24,7 @@
 
 
     <TextView
-        android:id="@+id/item2"
+        android:id="@+id/item_q2"
         tools:text="3000.10"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -40,7 +40,23 @@
         android:background="@color/grey_break_line"/>
 
     <TextView
-        android:id="@+id/item3"
+        android:id="@+id/item_q3"
+        android:layout_gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        style="@style/mine_outstanding_font"
+        android:gravity="center_vertical|center"
+        android:background="@color/white"
+        tools:text="8000.00"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/grey_break_line"/>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/item_q4"
         android:layout_gravity="center"
         android:layout_width="0dp"
         android:layout_height="match_parent"

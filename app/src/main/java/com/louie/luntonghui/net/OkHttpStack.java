@@ -39,8 +39,7 @@ public class OkHttpStack implements HttpStack {
 
     @Override
     public HttpResponse performRequest(Request<?> request, Map<String, String> additionalHeaders)
-            throws IOException, AuthFailureError
-    {
+            throws IOException, AuthFailureError {
         OkHttpClient client = mClient.clone();
         int timeoutMs = request.getTimeoutMs();
 

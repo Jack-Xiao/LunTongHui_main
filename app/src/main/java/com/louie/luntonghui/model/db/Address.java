@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.activeandroid.Model;
-import com.activeandroid.TableInfo;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 
@@ -13,6 +12,8 @@ import com.activeandroid.annotation.Table;
  */
 @Table(name = "Address")
 public class Address extends Model implements Parcelable {
+    public static final String DEFAULT_SELECTED = "1";
+    public static final String NOT_SELECT = "0";
     @Column(name = "uid")
     public String uid;
     //服务器address id

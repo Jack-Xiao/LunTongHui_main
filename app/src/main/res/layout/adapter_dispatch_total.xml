@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:background="@color/white">
+
+    <TextView
+        android:layout_centerVertical="true"
+        android:textSize="14sp"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/order_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="1、201604030031"/>
+
+    <ImageView
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:id="@+id/dispatch_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:src="@drawable/dispatch_done"/>
+
+    <TextView
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:textSize="14sp"
+        android:layout_toLeftOf="@id/dispatch_state"
+        android:id="@+id/total_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="390.00"/>
+</RelativeLayout>

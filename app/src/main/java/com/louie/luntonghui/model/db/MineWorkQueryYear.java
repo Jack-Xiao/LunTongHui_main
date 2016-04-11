@@ -18,4 +18,9 @@ public class MineWorkQueryYear extends Model {
     @Column(name = "no_amount")
     public String no_amount;
 
+    @Column(name = "no_amount_a")
+    public String no_amount_a;
+
+    @Column(name = "no_amount_b")
+    public String no_amount_b;
 }

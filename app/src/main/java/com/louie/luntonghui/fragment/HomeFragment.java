@@ -388,6 +388,8 @@ public class HomeFragment extends BaseFragment implements
         AppObservable.bindFragment(this, mApi.getHomeAdvArray(sourceDisplay, userId))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(arrayServer);
+
+        //Observable.zip()
     }
 
     Observer<HomeAdver> advServer = new Observer<HomeAdver>() {

@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ToastUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -76,6 +78,12 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
     @InjectView(R.id.recycler_view)
     RecyclerView mRecyclerView;
     ProgressDialog mProgress;
+    @InjectView(R.id.iv_item1)
+    ImageView ivItem1;
+    @InjectView(R.id.iv_item2)
+    ImageView ivItem2;
+    @InjectView(R.id.iv_item3)
+    ImageView ivItem3;
 
     private ArrayList<TextView> tvList;
     private int type;
@@ -90,6 +98,8 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
     private String[] months;
     private String[] days;
     private boolean isRunning = false;
+    private List<ImageView> ivList;
+
     @Override
     protected int getToolBarTitle() {
         return R.string.mine_outstanding_printer;
@@ -111,11 +121,16 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
 
-        mAdapter = new MineRecyclerViewAdapter(this,MineRecyclerViewAdapter.MINE_PRINTER);
+        mAdapter = new MineRecyclerViewAdapter(this, MineRecyclerViewAdapter.MINE_PRINTER);
         tvList = new ArrayList<TextView>();
         tvList.add(minePrinterToday);
         tvList.add(minePrinterMonth);
         tvList.add(minePrinterDay);
+
+        ivList = new ArrayList<>();
+        ivList.add(ivItem1);
+        ivList.add(ivItem2);
+        ivList.add(ivItem3);
 
         years = Config.getYearItems();
         months = Config.getMonthItems();
@@ -159,14 +174,16 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
         for (int i = 0; i < tvList.size(); i++) {
             if (type == i) {
                 tvList.get(i).setTextColor(getResources().getColor(R.color.order_font_choose));
+                ivList.get(i).setVisibility(View.VISIBLE);
             } else {
                 tvList.get(i).setTextColor(getResources().getColor(R.color.order_font_normal));
+                ivList.get(i).setVisibility(View.GONE);
             }
         }
     }
 
     @OnClick(R.id.mine_printer_today)
-    public void onClickPrinterToday(){
+    public void onClickPrinterToday() {
         String todayDate = Config.getCurrentDate();
         searchOrder.setVisibility(View.GONE);
         onClickOrderNavigation(0);
@@ -175,7 +192,7 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
     }
 
     @OnClick(R.id.mine_printer_day)
-    public void onClickPrinterDay(){
+    public void onClickPrinterDay() {
         searchOrder.setVisibility(View.VISIBLE);
         type = 2;
         mAdapter.clear();
@@ -186,7 +203,7 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
     }
 
     @OnClick(R.id.mine_printer_month)
-    public void onClickPrinterMonth(){
+    public void onClickPrinterMonth() {
         searchOrder.setVisibility(View.VISIBLE);
         type = 1; //
         mAdapter.clear();
@@ -211,7 +228,7 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
         }
     }
 
-    private void setDay(String date){
+    private void setDay(String date) {
         try {
             String[] args = date.split("-");
             String year = args[0];
@@ -227,39 +244,39 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
 
     private void setSpinnerDay(String day) {
         String[] resource = Config.getDayItems();
-        for(int i = 0;i<resource.length - 1;i++){
-            if(day.equals(resource[i])){
-                spinnerDay.setSelection(i,true);
+        for (int i = 0; i < resource.length - 1; i++) {
+            if (day.equals(resource[i])) {
+                spinnerDay.setSelection(i, true);
             }
         }
     }
 
     private void setSpinnerMonth(String month) {
         String[] resource = Config.getMonthItems();
-        for(int i = 0; i<resource.length - 1;i++){
-            if(month.equals(resource[i])){
-                spinnerMonth.setSelection(i,true);
+        for (int i = 0; i < resource.length - 1; i++) {
+            if (month.equals(resource[i])) {
+                spinnerMonth.setSelection(i, true);
             }
         }
     }
 
     private void setSpinnerYear(String year) {
-        String [] resource = Config.getYearItems();
-        for(int i =0;i<resource.length-1;i++){
-            if(year.equals(resource[i])){
-                spinnerYear.setSelection(i,true);
+        String[] resource = Config.getYearItems();
+        for (int i = 0; i < resource.length - 1; i++) {
+            if (year.equals(resource[i])) {
+                spinnerYear.setSelection(i, true);
                 return;
             }
         }
     }
 
     @OnClick(R.id.btn_search)
-    public void onClickSearch(){
+    public void onClickSearch() {
         String year = spinnerYear.getSelectedItem().toString();
         String month = spinnerMonth.getSelectedItem().toString();
         String day = spinnerDay.getSelectedItem().toString();
 
-        switch (type){
+        switch (type) {
             case SELECT_DAY:
                 String date = year + "-" + month + "-" + day;
                 searchDay(date);
@@ -273,7 +290,7 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
 
     private void searchMonth(String date1) {
         showProgress();
-        AppObservable.bindActivity(this,mApi.getPrinterMonth(date1))
+        AppObservable.bindActivity(this, mApi.getPrinterMonth(date1))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<PrinterMonth>() {
@@ -286,20 +303,20 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
                     public void onError(Throwable e) {
                         hideProgress();
                         mAdapter.clear();
-                        ToastUtil.showShortToast(mContext,"获取排行榜信息失败");
+                        ToastUtil.showShortToast(mContext, "获取排行榜信息失败");
                     }
 
                     @Override
                     public void onNext(PrinterMonth printerDay) {
-                        if(printerDay == null){
+                        if (printerDay == null) {
                             mAdapter.clear();
                             return;
                         }
                         ArrayList list = new ArrayList();
-                        for(int i =0;i<printerDay.list.size();i++){
+                        for (int i = 0; i < printerDay.list.size(); i++) {
                             PrinterData entity = new PrinterData();
                             entity.username = printerDay.list.get(i).user_name;
-                            entity.totalOrder = printerDay.total.order_amount + "";
+                            entity.totalOrder = printerDay.list.get(i).order_amount + "";
                             entity.orderA = printerDay.list.get(i).goods_amount2_a + "";
                             entity.orderB = printerDay.list.get(i).goods_amount2_b + "";
                             entity.money = printerDay.list.get(i).amount_diff + "";
@@ -311,14 +328,14 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
 
     }
 
-    public void showProgress(){
-        if(mProgress !=null ){
+    public void showProgress() {
+        if (mProgress != null) {
             mProgress.show();
         }
     }
 
-    public void hideProgress(){
-        if(mProgress !=null && mProgress.isShowing()){
+    public void hideProgress() {
+        if (mProgress != null && mProgress.isShowing()) {
             mProgress.hide();
         }
     }
@@ -326,7 +343,7 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
 
     private void searchDay(String date) {
         showProgress();
-        AppObservable.bindActivity(this,mApi.getPrinterDay(date))
+        AppObservable.bindActivity(this, mApi.getPrinterDay(date))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<PrinterDay>() {
@@ -339,24 +356,24 @@ public class MineOutstandingPrinter extends BaseToolbarActivity1 {
                     public void onError(Throwable e) {
                         hideProgress();
                         mAdapter.clear();
-                        ToastUtil.showShortToast(mContext,"获取排行榜信息失败");
+                        ToastUtil.showShortToast(mContext, "获取排行榜信息失败");
                     }
 
                     @Override
                     public void onNext(PrinterDay printerDay) {
-                        if(printerDay == null) return;
+                        if (printerDay == null) return;
 
-                        if(printerDay.list == null){
-                            ToastUtil.showShortToast(mContext,"还没有数据");
+                        if (printerDay.list == null) {
+                            ToastUtil.showShortToast(mContext, "还没有数据");
                             mAdapter.clear();
                             return;
                         }
 
                         ArrayList list = new ArrayList();
-                        for(int i =0;i<printerDay.list.size();i++){
+                        for (int i = 0; i < printerDay.list.size(); i++) {
                             PrinterData entity = new PrinterData();
                             entity.username = printerDay.list.get(i).user_name;
-                            entity.totalOrder = printerDay.total.order_amount + "";
+                            entity.totalOrder = printerDay.list.get(i).order_amount + "";
                             entity.orderA = printerDay.list.get(i).goods_amount2_a + "";
                             entity.orderB = printerDay.list.get(i).goods_amount2_b + "";
                             entity.money = printerDay.list.get(i).amount_diff + "";

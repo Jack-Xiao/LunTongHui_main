@@ -37,15 +37,15 @@ public class PrinterMonth {
     public List<ListEntity> list;
 
     public static class TotalEntity {
-        public double new_user_amount;
-        public double new_user_order_amount;
-        public double order_amount;
-        public double order_user_amount;
-        public double total_amount0;
-        public double total_amount2;
-        public double total_amount2_a;
-        public double total_amount2_b;
-        public double diff;
+        public String new_user_amount;
+        public String new_user_order_amount;
+        public String order_amount;
+        public String order_user_amount;
+        public String total_amount0;
+        public String total_amount2;
+        public String total_amount2_a;
+        public String total_amount2_b;
+        public String diff;
     }
 
     public static class ListEntity {
@@ -53,12 +53,12 @@ public class PrinterMonth {
         public String new_user_amount;
         public String new_user_order_amount;
         public String order_amount;
-        public double order_user_amount;
+        public String order_user_amount;
         public String goods_amount0;
         public String goods_amount2;
         public String goods_amount2_a;
         public String goods_amount2_b;
-        public double amount_diff;
+        public String amount_diff;
     }
 /*
     *

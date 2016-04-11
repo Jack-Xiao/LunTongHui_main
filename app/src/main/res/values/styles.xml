@@ -238,5 +238,11 @@
         <item name="android:background">@drawable/base_frame</item>
         <item name="android:spinnerMode">dropdown</item>
         <item name="android:gravity">center</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+
+    <style name="detail_child_font_style">
+
+
     </style>
  </resources>

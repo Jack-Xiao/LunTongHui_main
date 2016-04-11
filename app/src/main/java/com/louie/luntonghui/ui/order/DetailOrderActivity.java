@@ -81,6 +81,8 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
             hasPayValueValue, payStateValue, consigneeValue, deliveryAddressValue, phoneNumberValue;
 
     private TextView businessMessage;
+    public static final String DISPATCH_ORDER = "dispatch_order";
+    private int dispatchType = Order.DISPATCH_DEFAULT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +96,14 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
             orderId = bundle.getString(Order.ORDERID);
             queryType = bundle.getInt(Order.QUERY_TYPE);
             queryUserId = bundle.getString(Order.USER_ID);
+            dispatchType = bundle.getInt(Order.DISPATCH_QUERY);
             if(queryUserId != null){
                 userId = queryUserId;
             }
+        }
+
+        if (dispatchType == Order.DISPATCH_NORMAL){
+            fixOrder.setVisibility(View.GONE);
         }
 
         regions = ((App) getApplication()).idNList;

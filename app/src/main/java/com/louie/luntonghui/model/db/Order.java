@@ -14,6 +14,9 @@ public class Order extends Model{
     public static final int DEFAULT_QUERY_TYPE = 0;
     public static final int SERVICE_TYPE = 1;
     public static final String USER_ID = "user_id";
+    public static final String DISPATCH_QUERY = "dispatch_query";
+    public static final int DISPATCH_DEFAULT = 0;
+    public static final int DISPATCH_NORMAL = 1;
 
     @Column(name = "allow_to_modify")
     public String allowToModify;

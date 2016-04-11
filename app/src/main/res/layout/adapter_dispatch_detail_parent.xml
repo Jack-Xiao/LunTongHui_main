@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/yellow_backgrounds"
+    android:paddingBottom="10dp"
+    android:paddingLeft="15dp"
+    android:paddingTop="10dp"
+    android:paddingRight="15dp">
+
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:id="@+id/order_sn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        tools:text="订单号 : 2016030411"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="15dp"/>
+
+    <TextView
+        android:layout_toRightOf="@id/order_sn"
+        android:id="@+id/order_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="2016/03/04"
+        android:layout_centerVertical="true"/>
+
+    <TextView
+        android:layout_alignParentRight="true"
+        android:id="@+id/order_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="金额 : 1100.00"
+        android:textColor="@color/red_primary_dark"
+        android:layout_centerVertical="true"/>
+</RelativeLayout>

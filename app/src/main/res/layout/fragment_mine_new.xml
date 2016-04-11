@@ -368,6 +368,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:visibility="gone"
                     android:id="@+id/mine_group"
                     style="@style/mine_order_list_item"
                     android:layout_width="wrap_content"

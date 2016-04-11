@@ -33,10 +33,10 @@
                 android:paddingTop="10dp">
 
                 <TextView
-                    android:textSize="14sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/address_consignee" />
+                    android:text="@string/address_consignee"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/consignee_value"
@@ -54,20 +54,20 @@
                 android:paddingTop="10dp">
 
                 <TextView
-                    android:textSize="14sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:maxLength="11"
-                    android:text="@string/address_mobile" />
+                    android:text="@string/address_mobile"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/mobile_value"
                     style="@style/base_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="11"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:maxLength="11" />
             </LinearLayout>
 
 
@@ -84,22 +84,21 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:textSize="14sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/city_place" />
+                        android:text="@string/city_place"
+                        android:textSize="14sp" />
 
                     <LinearLayout
-                        android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/city_place_value"
                             style="@style/base_style"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:drawableRight="@drawable/login_more_large"
                             android:onClick="onSelectRegionClick"
                             android:paddingLeft="3dp"
                             android:textSize="16sp" />
@@ -117,6 +116,8 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginRight="2dp"
                             android:background="@color/useful_grey" />
                     </LinearLayout>
                 </LinearLayout>
@@ -156,10 +157,10 @@
                 android:paddingTop="10dp">
 
                 <TextView
-                    android:textSize="14sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/street_place" />
+                    android:text="@string/street_place"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/stree_value"

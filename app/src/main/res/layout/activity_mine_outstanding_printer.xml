@@ -10,17 +10,82 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
-        <TextView
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/mine_printer_today"
+                style="@style/order_home_font_style"
+                android:drawableRight="@drawable/order_break_line"
+                android:text="今日排行榜" />
+            <ImageView
+                android:id="@+id/iv_item1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selected_item"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/mine_printer_month"
+                style="@style/order_home_font_style"
+                android:drawableRight="@drawable/order_break_line"
+                android:text="月排行榜" />
+            <ImageView
+                android:id="@+id/iv_item2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selected_item"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/mine_printer_day"
+                style="@style/order_home_font_style"
+                android:drawableRight="@drawable/order_break_line"
+                android:text="日期排行榜"
+                />
+            <ImageView
+                android:id="@+id/iv_item3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selected_item"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <!--<TextView
             android:id="@+id/mine_printer_today"
             style="@style/order_home_font_style"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableRight="@drawable/order_break_line"
-            android:text="今日排行榜" />
+            android:text="今日排行榜" />-->
 
-        <TextView
+        <!--<TextView
             android:id="@+id/mine_printer_month"
             style="@style/order_home_font_style"
             android:layout_width="0dp"
@@ -36,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="日期排行榜" />
-
+-->
     </LinearLayout>
 
     <RelativeLayout
@@ -89,6 +154,7 @@
             android:text="月"/>
 
         <Spinner
+            android:layout_centerVertical="true"
             android:layout_toRightOf="@id/tv_month"
             tools:text="15"
             android:id="@+id/spinner_day"

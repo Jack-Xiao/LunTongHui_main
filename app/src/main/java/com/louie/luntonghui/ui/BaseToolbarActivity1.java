@@ -52,7 +52,6 @@ public abstract class BaseToolbarActivity1 extends AppCompatActivity {
     }
 
     private void initView() {
-
         this.setSupportActionBar(mToolbar);
         mActionBar = this.getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);

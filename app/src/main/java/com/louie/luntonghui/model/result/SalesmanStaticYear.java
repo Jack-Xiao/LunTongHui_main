@@ -16,7 +16,9 @@ public class SalesmanStaticYear {
 
     public static class ListEntity {
         public String date;
-        public double order_amount;
-        public double no_amount;
+        public String order_amount;
+        public String no_amount;
+        public String no_amount_a;
+        public String no_amount_b;
     }
 }

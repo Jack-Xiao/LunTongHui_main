@@ -3,6 +3,7 @@ package com.louie.luntonghui.ui.mine.MineService;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,6 +13,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -48,7 +50,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Jack on 16/2/29.
  */
-public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
+public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1 {
     @InjectView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
     @InjectView(R.id.mine_month_outstanding_statistics)
@@ -71,14 +73,15 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
     RecyclerView mRecyclerView;
 
     MineRecyclerViewAdapter mAdapter;
-    @InjectView(R.id.item1)
-    TextView item1;
-    @InjectView(R.id.item2)
-    TextView item2;
-    @InjectView(R.id.item3)
-    TextView item3;
+
     @InjectView(R.id.search_order)
     RelativeLayout searchOrder;
+    @InjectView(R.id.iv_item1)
+    ImageView ivItem1;
+    @InjectView(R.id.iv_item2)
+    ImageView ivItem2;
+    @InjectView(R.id.iv_item3)
+    ImageView ivItem3;
     private int type;
     private List<TextView> tvList;
     private ArrayAdapter<String> mYearAdapter;
@@ -90,7 +93,8 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
     private ProgressDialog mProgressDialog;
     private boolean isRunning = false;
     private boolean isArgument = false;
-
+    private Drawable drawableBottom;
+    private List<ImageView> ivList;
 
     @Override
     protected int getToolBarTitle() {
@@ -112,6 +116,10 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
         tvList.add(mineMonthOutstandingStatistics);
         tvList.add(mineOutstandingStatistics);
         tvList.add(mineOrderQuery);
+        ivList = new ArrayList<>();
+        ivList.add(ivItem1);
+        ivList.add(ivItem2);
+        ivList.add(ivItem3);
 
         years = Config.getYearItems();
         months = Config.getMonthItems();
@@ -133,6 +141,7 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
         spinnerMonth.setAdapter(mMonthAdapter);
         spinnerDay.setAdapter(mDayAdapter);
         mProgressDialog = new ProgressDialog(mContext);
+
 
         initData();
     }
@@ -156,6 +165,7 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
                 new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void OnItemClick(View view, int position) {
+                        if (position == 0) return;//标题item
                         int curType = type;
                         ArrayList list = mAdapter.getList();
                         switch (curType) {
@@ -165,28 +175,29 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
                                 bundle.putString(Order.ORDERID, entityDay.order_id);
                                 bundle.putInt(Order.QUERY_TYPE, Order.SERVICE_TYPE);
                                 bundle.putString(Order.USER_ID, entityDay.user_id);
+                                bundle.putInt(Order.DISPATCH_QUERY,Order.DISPATCH_NORMAL);
 
                                 IntentUtil.startActivity(MineOutstandingStatisticsActivity.this,
                                         DetailOrderActivity.class, bundle);
                                 break;
                             case MineRecyclerViewAdapter.OUTSTANDING_STATISTICS_MONTH:
-                                if(position == 0){
-                                    ToastUtil.showShortToast(mContext,"请选择日期");
+                                if (position == 1) {
+                                    ToastUtil.showShortToast(mContext, "请选择日期");
                                     return;
                                 }
                                 MineWorkQueryMonth entityMonth = (MineWorkQueryMonth) list.get(position);
                                 String date = getTypeDay(entityMonth.date);
-                                if(TextUtils.isEmpty(date)){
-                                    ToastUtil.showShortToast(mContext,"请选择有效时间查看");
+                                if (TextUtils.isEmpty(date)) {
+                                    ToastUtil.showShortToast(mContext, "请选择有效时间查看");
                                     return;
                                 }
                                 onClickDay(date);
                                 break;
                             case MineRecyclerViewAdapter.OUTSTANDING_STATISTICS:
                                 MineWorkQueryYear entityYear = (MineWorkQueryYear) list.get(position);
-                                String date1 = getTypeMonth(entityYear.date);
-                                if(TextUtils.isEmpty(date1)){
-                                    ToastUtil.showShortToast(mContext,"请选择有效时间查看");
+                                String date1 = getTypeMonth1(entityYear.date);
+                                if (TextUtils.isEmpty(date1)) {
+                                    ToastUtil.showShortToast(mContext, "请选择有效时间查看");
                                     return;
                                 }
                                 onClickMonth(date1);
@@ -194,21 +205,17 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
                         }
                     }
                 }));
-
-
         onCLickMonth();
-
     }
 
     public String getTypeDay(String curDate) {
         curDate = Config.getCurrentYear() + "年" + curDate;
-
         SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日");
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date date = format.parse(curDate);
             Date date2 = new Date(System.currentTimeMillis());
-            if(date.after(date2)){
+            if (date.after(date2)) {
                 return "";
             }
             return format1.format(date);
@@ -231,12 +238,26 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
         return null;
     }
 
+    public String getTypeMonth1(String curDate) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM");
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM");
+        try {
+            Date date = format.parse(curDate);
+            return format1.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private void onClickOrderNavigation(int type) {
         for (int i = 0; i < tvList.size(); i++) {
             if (type == i) {
                 tvList.get(i).setTextColor(getResources().getColor(R.color.order_font_choose));
+                ivList.get(i).setVisibility(View.VISIBLE);
             } else {
                 tvList.get(i).setTextColor(getResources().getColor(R.color.order_font_normal));
+                ivList.get(i).setVisibility(View.GONE);
             }
         }
     }
@@ -244,13 +265,10 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
 
     @OnClick(R.id.mine_month_outstanding_statistics)
     public void onCLickMonth() {
-
-        if(isRunning) return;
+        if (isRunning) return;
 
         searchOrder.setVisibility(View.GONE);
-        item1.setText("日期");
-        item2.setText("订单总额");
-        item3.setText("总额");
+
         type = MineRecyclerViewAdapter.OUTSTANDING_STATISTICS_MONTH;
         onClickCurrentItem(type);
         mProgressDialog.dismiss();
@@ -261,32 +279,24 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
         if (isRunning) return;
 
         searchOrder.setVisibility(View.GONE);
-        item1.setText("日期");
-        item2.setText("订单总额");
-        item3.setText("总额");
         type = MineRecyclerViewAdapter.OUTSTANDING_STATISTICS;
         onClickCurrentItem(type);
     }
 
     @OnClick(R.id.mine_order_query)
     public void onClickDay() {
-        if(isRunning) return;
+        if (isRunning) return;
 
         searchOrder.setVisibility(View.VISIBLE);
-        item1.setText("用户");
-        item2.setText("订单号");
-        item3.setText("金额");
         type = MineRecyclerViewAdapter.ORDER_QUERY;
+        setSpinner(Config.getCurrentDate());
         onClickCurrentItem(type);
     }
 
-    public void onClickDay(String date){
+    public void onClickDay(String date) {
         isArgument = true;
 
         searchOrder.setVisibility(View.VISIBLE);
-        item1.setText("用户");
-        item2.setText("订单号");
-        item3.setText("金额");
         type = MineRecyclerViewAdapter.ORDER_QUERY;
         onClickOrderNavigation(type);
         mAdapter.setType(type);
@@ -312,39 +322,37 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
 
     private void setSpinnerDay(String day) {
         String[] resource = Config.getDayItems();
-        for(int i = 0;i<resource.length - 1;i++){
-            if(day.equals(resource[i])){
-                spinnerDay.setSelection(i,true);
+        for (int i = 0; i < resource.length - 1; i++) {
+            if (day.equals(resource[i])) {
+                spinnerDay.setSelection(i, true);
             }
         }
     }
 
     private void setSpinnerMonth(String month) {
         String[] resource = Config.getMonthItems();
-        for(int i = 0; i<resource.length - 1;i++){
-            if(month.equals(resource[i])){
-                spinnerMonth.setSelection(i,true);
+        for (int i = 0; i < resource.length - 1; i++) {
+            if (month.equals(resource[i])) {
+                spinnerMonth.setSelection(i, true);
             }
         }
     }
 
     private void setSpinnerYear(String year) {
-        String [] resource = Config.getYearItems();
-        for(int i =0;i<resource.length-1;i++){
-            if(year.equals(resource[i])){
-                spinnerYear.setSelection(i,true);
+        String[] resource = Config.getYearItems();
+        for (int i = 0; i < resource.length - 1; i++) {
+            if (year.equals(resource[i])) {
+                spinnerYear.setSelection(i, true);
                 return;
             }
         }
     }
 
-    public void onClickMonth(String date){
+    public void onClickMonth(String date) {
         isArgument = true;
 
         searchOrder.setVisibility(View.GONE);
-        item1.setText("日期");
-        item2.setText("订单总额");
-        item3.setText("订单查看");
+
         type = MineRecyclerViewAdapter.OUTSTANDING_STATISTICS_MONTH;
         //onClickCurrentItem(type);
         onClickOrderNavigation(type);
@@ -356,12 +364,14 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
         isRunning = true;
         onClickOrderNavigation(type);
         mAdapter.setType(type);
+        mAdapter.clear();
         //mAdapter = new MineRecyclerViewAdapter(this,type);
         switch (type) {
             case MineRecyclerViewAdapter.OUTSTANDING_STATISTICS:
                 queryYear(Config.getCurrentYear());
                 break;
             case MineRecyclerViewAdapter.ORDER_QUERY:
+
                 queryDay(Config.getCurrentDate());
                 break;
             case MineRecyclerViewAdapter.OUTSTANDING_STATISTICS_MONTH:
@@ -371,7 +381,6 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
     }
 
     private void queryDay(String currentDate) {
-
         AppObservable.bindActivity(this, mApi.getSalesDay(userId, currentDate))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -385,23 +394,31 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
                     public void onError(Throwable e) {
                         ToastUtil.showLongToast(mContext, "获取数据失败");
                         isRunning = false;
-                        if(isArgument){
-                            item1.setText("日期");
-                            item2.setText("订单总额");
-                            item3.setText("订单查看");
+                        if (isArgument) {
+
                             type = MineRecyclerViewAdapter.OUTSTANDING_STATISTICS_MONTH;
                             onClickOrderNavigation(type);
                             mAdapter.setType(type);
                         }
                         isArgument = false;
+                        mAdapter.clear();
                     }
 
                     @Override
                     public void onNext(SalesmanStaticDay data) {
                         ArrayList list = new ArrayList();
-                        if(data !=null && data.list.size() == 0){
+                        if (data != null && data.list.size() == 0) {
                             ToastUtil.showLongToast(mContext, "该日没有数据");
+                            mAdapter.clear();
+                            return;
                         }
+                        MineWorkQueryDay day1 = new MineWorkQueryDay();
+                        day1.user_name = "用户";
+                        day1.order_sn = "订单号";
+                        day1.goods_amount = "金额";
+                        day1.user_id = "";
+                        day1.order_id = "";
+                        list.add(day1);
                         for (int i = 0; i < data.list.size(); i++) {
                             MineWorkQueryDay day = new MineWorkQueryDay();
                             day.goods_amount = data.list.get(i).goods_amount;
@@ -429,41 +446,44 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
                     @Override
                     public void onError(Throwable e) {
                         ToastUtil.showLongToast(mContext, "获取数据失败");
-                        if(isArgument){
+                        if (isArgument) {
                             isRunning = false;
-                            item1.setText("日期");
-                            item2.setText("订单总额");
-                            item3.setText("总额");
+
                             type = MineRecyclerViewAdapter.OUTSTANDING_STATISTICS;
                             onClickCurrentItem(type);
                             mAdapter.setType(type);
                             isArgument = false;
                         }
+                        mAdapter.clear();
                     }
 
                     @Override
                     public void onNext(SalesmanStaticMonth salesmanStaticMonth) {
-                        if(salesmanStaticMonth.list == null || salesmanStaticMonth.list.size() == 0){
-                            ToastUtil.showShortToast(mContext,"该月没有数据");
+                        if (salesmanStaticMonth.list == null || salesmanStaticMonth.list.size() == 0) {
+                            ToastUtil.showShortToast(mContext, "该月没有数据");
+                            mAdapter.clear();
                             return;
                         }
 
                         ArrayList list = new ArrayList();
                         MineWorkQueryMonth m = new MineWorkQueryMonth();
-                        m.order_amount = salesmanStaticMonth.list.get(0).order_amount + "";
+                        /*m.order_amount = salesmanStaticMonth.list.get(0).order_amount + "";
                         m.no_amount = salesmanStaticMonth.list.get(0).no_amount + "";
                         m.date = salesmanStaticMonth.list.get(0).date + "";
-                        m.total_no_amount = salesmanStaticMonth.total_no_amount + "";
-                        m.total_order_amount = salesmanStaticMonth.total_order_amount + "";
+                        m.no_amount_a = salesmanStaticMonth.list.get(0) + "";
+                        m.total_order_amount = salesmanStaticMonth.total_order_amount + "";*/
+                        m.date = "日期";
+                        m.order_amount = "订单总额";
+                        m.no_amount_a = "电池";
+                        m.no_amount_b = "整车";
                         list.add(m);
                         for (int i = 0; i < salesmanStaticMonth.list.size(); i++) {
                             MineWorkQueryMonth month = new MineWorkQueryMonth();
                             month.order_amount = salesmanStaticMonth.list.get(i).order_amount + "";
                             month.no_amount = salesmanStaticMonth.list.get(i).no_amount + "";
                             month.date = salesmanStaticMonth.list.get(i).date + "";
-                            month.total_no_amount = salesmanStaticMonth.total_no_amount + "";
-                            month.total_order_amount = salesmanStaticMonth.total_order_amount + "";
-
+                            month.no_amount_a = salesmanStaticMonth.list.get(i).no_amount_a + "";
+                            month.no_amount_b = salesmanStaticMonth.list.get(i).no_amount_b + "";
                             list.add(month);
                         }
                         mAdapter.setList(list);
@@ -485,19 +505,30 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
                     public void onError(Throwable e) {
                         ToastUtil.showLongToast(mContext, "获取数据失败");
                         isRunning = false;
+                        mAdapter.clear();
                     }
 
                     @Override
                     public void onNext(SalesmanStaticYear data) {
                         ArrayList list = new ArrayList();
-                        if(data !=null && data.list.size() == 0){
-                            ToastUtil.showShortToast(mContext,"该年没有数据");
+                        if (data != null && data.list.size() == 0) {
+                            ToastUtil.showShortToast(mContext, "该年没有数据");
                         }
+                        MineWorkQueryYear m = new MineWorkQueryYear();
+                        m.date = "日期";
+                        m.order_amount = "订单总额";
+                        m.no_amount_a = "电池";
+                        m.no_amount_b = "整车";
+                        list.add(m);
+
                         for (int i = 0; i < data.list.size(); i++) {
                             MineWorkQueryYear year = new MineWorkQueryYear();
-                            year.date = data.list.get(i).date;
+                            year.date = data.list.get(i).date.replace("月","");
                             year.no_amount = data.list.get(i).no_amount + "";
                             year.order_amount = data.list.get(i).order_amount + "";
+                            year.no_amount_a = data.list.get(i).no_amount_a + "";
+                            year.no_amount_b = data.list.get(i).no_amount_b + "";
+
                             list.add(year);
                         }
                         mAdapter.setList(list);
@@ -511,8 +542,8 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
     }
 
     @OnClick(R.id.btn_search)
-    public void onClickSearch(){
-        if(isRunning) return;
+    public void onClickSearch() {
+        if (isRunning) return;
 
         String year = spinnerYear.getSelectedItem().toString();
         String month = spinnerMonth.getSelectedItem().toString();
@@ -523,8 +554,9 @@ public class MineOutstandingStatisticsActivity extends BaseToolbarActivity1{
         Date date1 = new Date(System.currentTimeMillis());
         try {
             Date date2 = format.parse(date);
-            if(date2.after(date1)){
-                ToastUtil.showShortToast(mContext,"无效查询时间");
+            if (date2.after(date1)) {
+                ToastUtil.showShortToast(mContext, "无效查询时间");
+                mAdapter.clear();
                 return;
             }
 

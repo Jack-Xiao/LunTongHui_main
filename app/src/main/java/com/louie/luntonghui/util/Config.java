@@ -128,6 +128,8 @@ public class Config {
     public static final int DEFAULT_COUNT = 0;
     public static final String DATE_NAME = "date";
 
+    public static final int PAGE_SIZE = 20;
+
 
 
     public static int getCurrentVersion() {
@@ -474,6 +476,53 @@ public class Config {
                 "01","02","03","04","05","06","07","08","09","10","11","12",
                 "13","14","15","16","17","18","19","20","21","22","23","24",
                 "25","26","27","28","29","30","31"};
+        return result;
+    }
+
+    public static String getDateFormatString(Date date){
+        SimpleDateFormat format = new SimpleDateFormat(oneDateFormatter);
+
+        String result = format.format(date);
+
+        return result;
+    }
+
+    public static Date getDispatchDate(String sDate) {
+        Date result = null;
+        SimpleDateFormat format = new SimpleDateFormat(oneDateFormatter);
+
+        try {
+            result = format.parse(sDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static String getDispatchSearchDate(String s) {
+        Date date = getDispatchDate(s);
+        SimpleDateFormat format = new SimpleDateFormat(onlyDateFormatter);
+        return format.format(date);
+    }
+
+    public static String getDispatctCurrenthDate(){
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat format = new SimpleDateFormat(oneDateFormatter);
+        String result = format.format(date);
+        return result;
+    }
+
+    public static String getDispatchOrderTime(String formated_add_time) {
+        SimpleDateFormat format = new SimpleDateFormat(normalFormatter);
+        SimpleDateFormat format1 = new SimpleDateFormat(oneDateFormatter);
+        String result = "";
+        try {
+            Date date = format.parse(formated_add_time);
+            result = format1.format(date);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 }

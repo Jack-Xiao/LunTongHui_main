@@ -46,7 +46,8 @@ import static com.louie.luntonghui.view.RecyclerViewLinearLayoutViewItemDecorati
 /**
  * Created by Administrator on 2015/6/9.
  */
-public class MineReceiverAddressActivity extends SecondLevelBaseActivity {
+public class MineReceiverAddressActivity extends SecondLevelBaseActivity implements
+        MineReceiverAddressAdapter.AddressListener{
     private String uid;
     public static final String ADDRESSMESSAGE = "address_count";
     public static final int HASADDRESS = 1;
@@ -101,6 +102,7 @@ public class MineReceiverAddressActivity extends SecondLevelBaseActivity {
         data = new ArrayList<Address>();
 
         mAdapter = new MineReceiverAddressAdapter(this);
+        mAdapter = new MineReceiverAddressAdapter(this,isAddressSelect);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -268,5 +270,10 @@ public class MineReceiverAddressActivity extends SecondLevelBaseActivity {
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    public void onModify(String addressId) {
+        executeRequest(new GsonRequest(mUrl, AddressList.class, getAddressList(), errorListener()));
     }
 }
