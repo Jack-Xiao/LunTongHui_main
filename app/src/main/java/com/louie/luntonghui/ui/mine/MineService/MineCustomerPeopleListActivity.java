@@ -62,7 +62,7 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
         setContentView(R.layout.activity_mine_customer_people_list);
         ButterKnife.inject(this);
         mContext = this;
-        toolbarTitle.setText(R.string.mine_customer_order_list);
+        toolbarTitle.setText(R.string.mine_customer_people_list);
         currentWeekTime = Config.getCurrentWeekModay();
         //peopleListFormat = new SimpleDateFormat("yy/MM/dd");
         //normalDateFormat = new SimpleDateFormat(Config.normalFormatter);
@@ -76,7 +76,6 @@ public class MineCustomerPeopleListActivity extends BaseNormalActivity {
         }
 
         queryCustomerPeopleList();
-
     }
 
     @OnClick(R.id.total_peoples)

@@ -39,12 +39,12 @@ import com.louie.luntonghui.model.result.HomeAdversion;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.Home.MipcaActivityCapture;
 import com.louie.luntonghui.ui.Home.SecondKillActivity;
-import com.louie.luntonghui.ui.Home.WebActivity;
 import com.louie.luntonghui.ui.Home.WebTogetherGroupActivity;
 import com.louie.luntonghui.ui.category.GoodsDetailActivity;
 import com.louie.luntonghui.ui.mine.MineAttentionActivity;
 import com.louie.luntonghui.ui.register.RegisterLogin;
 import com.louie.luntonghui.ui.search.SearchActivity;
+import com.louie.luntonghui.ui.web.AdvertisementWebActivity;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
@@ -299,20 +299,30 @@ public class HomeFragment extends BaseFragment implements
     private View.OnClickListener onClickSpacialPrice = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String url = String.format(ConstantURL.SPECIAL_PRICE,userId);
+           /* String url = String.format(ConstantURL.SPECIAL_PRICE,userId);
             Bundle bundle = new Bundle();
             bundle.putString(WebActivity.WEB_URL,url);
-            IntentUtil.startActivity(getActivity(),WebActivity.class,bundle);
+            IntentUtil.startActivity(getActivity(),WebActivity.class,bundle);*/
+
+            String url = String.format(ConstantURL.SPECIAL_PRICE,userId);
+            Bundle bundle = new Bundle();
+            bundle.putString(AdvertisementWebActivity.URL, url);
+            IntentUtil.startActivity(getActivity(), AdvertisementWebActivity.class, bundle);
         }
     };
 
     private View.OnClickListener onClickBrandStreet = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String url = ConstantURL.BRAND_STREET;
+            /*String url = ConstantURL.BRAND_STREET;
             Bundle bundle = new Bundle();
             bundle.putString(WebActivity.WEB_URL,url);
-            IntentUtil.startActivity(getActivity(),WebActivity.class,bundle);
+            IntentUtil.startActivity(getActivity(),WebActivity.class,bundle);*/
+
+            String url = ConstantURL.BRAND_STREET;
+            Bundle bundle = new Bundle();
+            bundle.putString(AdvertisementWebActivity.URL, url);
+            IntentUtil.startActivity(getActivity(), AdvertisementWebActivity.class, bundle);
         }
     };
 

@@ -1,85 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_parent"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-    android:orientation="horizontal"
     android:background="@drawable/list_item_selectable_background1"
-    android:id="@+id/item_parent">
+    android:orientation="horizontal">
 
     <TextView
-        android:padding="10dp"
         android:id="@+id/item1"
-        tools:text="2016年"
+        style="@style/mine_outstanding_font"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        style="@style/mine_outstanding_font"
-        android:background="@color/grey"/>
+        android:background="@color/background_main_grey"
+        android:padding="10dp"
+        tools:text="2016年" />
 
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@color/grey_break_line"/>
+        android:background="@color/grey_break_line" />
 
 
     <TextView
         android:id="@+id/item2"
-        tools:text="3000.10"
+        style="@style/mine_outstanding_font"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        style="@style/mine_outstanding_font"
-        android:gravity="center_vertical|center"
         android:background="@color/white"
-        />
+        android:gravity="center_vertical|center"
+        tools:text="3000.10" />
 
     <View
-    android:layout_width="1dp"
-    android:layout_height="match_parent"
-    android:background="@color/grey_break_line"/>
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/grey_break_line" />
 
     <TextView
         android:id="@+id/item3"
-        android:layout_gravity="center"
+        style="@style/mine_outstanding_font"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_weight="1"
-        style="@style/mine_outstanding_font"
-        android:gravity="center_vertical|center"
         android:background="@color/white"
-        tools:text="8000.00"/>
+        android:gravity="center_vertical|center"
+        tools:text="8000.00" />
 
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@color/grey_break_line"/>
+        android:background="@color/grey_break_line" />
 
     <TextView
         android:id="@+id/item4"
-        android:layout_gravity="center"
+        style="@style/mine_outstanding_font"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_weight="1"
-        style="@style/mine_outstanding_font"
-        android:gravity="center_vertical|center"
         android:background="@color/white"
-        tools:text="8000.00"/>
+        android:gravity="center_vertical|center"
+        tools:text="8000.00" />
 
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@color/grey_break_line"/>
+        android:background="@color/grey_break_line" />
 
     <TextView
         android:id="@+id/item5"
-        android:layout_gravity="center"
+        style="@style/mine_outstanding_font"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_weight="1"
-        style="@style/mine_outstanding_font"
-        android:gravity="center_vertical|center"
         android:background="@color/white"
-        tools:text="8000.00"/>
+        android:gravity="center_vertical|center"
+        tools:text="8000.00" />
 
 </LinearLayout>

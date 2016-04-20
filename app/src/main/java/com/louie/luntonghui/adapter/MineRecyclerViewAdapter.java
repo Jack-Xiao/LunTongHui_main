@@ -104,6 +104,24 @@ public class MineRecyclerViewAdapter extends RecyclerView.Adapter<MineRecyclerVi
         v3.setText(entity.orderA);
         v4.setText(entity.orderB);
         v5.setText(entity.money);
+
+        /*if(position == 0){
+            v1.setBackgroundResource(R.color.background_main_grey);
+            v2.setBackgroundResource(R.color.background_main_grey);
+            v3.setBackgroundResource(R.color.background_main_grey);
+            v4.setBackgroundResource(R.color.background_main_grey);
+            v5.setBackgroundResource(R.color.background_main_grey);
+        }else{
+            v2.setBackgroundResource(R.color.white);
+            v3.setBackgroundResource(R.color.white);
+            v4.setBackgroundResource(R.color.white);
+            v5.setBackgroundResource(R.color.white);
+        }*/
+        /*v1.setBackgroundResource(R.color.white);
+        v2.setBackgroundResource(R.color.white);
+        v3.setBackgroundResource(R.color.white);
+        v4.setBackgroundResource(R.color.white);
+        v5.setBackgroundResource(R.color.white);*/
     }
 
     private void loadingOutstandingMonth(ViewHolder holder, int position) {

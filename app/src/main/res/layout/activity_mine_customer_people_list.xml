@@ -119,15 +119,6 @@
                         tools:text="jack"/>
 
                     <TextView
-                        android:text="@string/customer_register_date"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:drawableRight="@drawable/order_break_line" />
-
-                    <TextView
                         android:text="备注"
                         android:layout_gravity="center"
                         android:gravity="center"
@@ -136,6 +127,17 @@
                         android:layout_height="wrap_content"
                         android:drawableRight="@drawable/order_break_line"
                         />
+
+                    <TextView
+                        android:text="@string/customer_register_date"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:drawableRight="@drawable/order_break_line" />
+
+
                 </LinearLayout>
                 <View
                     android:layout_width="match_parent"

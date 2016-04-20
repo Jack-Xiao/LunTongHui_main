@@ -34,6 +34,7 @@ public class BaseNormalActivity extends AppCompatActivity implements View.OnClic
     protected ServiceManager.LunTongHuiApi mApi;
     protected String userId;
     protected String userType;
+    protected boolean isRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class BaseNormalActivity extends AppCompatActivity implements View.OnClic
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                isRunning = false;
                 if(error.networkResponse == null){
                     ToastUtil.showShortToast(mContext,R.string.error_network);
                     return;

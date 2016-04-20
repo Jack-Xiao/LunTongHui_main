@@ -12,6 +12,8 @@ import com.louie.luntonghui.model.result.DispatchDetail;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.view.MyListView;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by Jack on 16/4/8.
  */
@@ -21,6 +23,7 @@ public class DispatchDetailAdapter extends BaseExpandableListAdapter {
     public static final int LAST_CHILD = 1;
     public static final int TYPE_NORMAL = 0;
     public static final int TYPE_LAST = 1;
+    private DecimalFormat format;
 
 
     public DispatchDetailAdapter(Context context){
@@ -29,6 +32,7 @@ public class DispatchDetailAdapter extends BaseExpandableListAdapter {
 
     public void setData(DispatchDetail detail){
         mDetail = detail;
+        format = new DecimalFormat("#.##");
         notifyDataSetChanged();
     }
 
@@ -172,7 +176,8 @@ public class DispatchDetailAdapter extends BaseExpandableListAdapter {
                 view2.luntongbiValue.setText("-￥"+mDetail.data.get(groupPosition).order.integral_money);
                 view2.getatbleValue.setText("￥"+mDetail.data.get(groupPosition).order.will_get_integral);
 
-                view2.primeValue.setText("-￥"+mDetail.data.get(groupPosition).order.discounts);
+                view2.primeValue.setText("-￥"+ mDetail.data.get(groupPosition).order.discounts);
+
                 view2.practice.setText("实付金额："+mDetail.data.get(groupPosition).order.formated_order_amount);
 
                 view2.orderTime.setText("下单时间: " + mDetail.data.get(groupPosition).order.formated_add_time);

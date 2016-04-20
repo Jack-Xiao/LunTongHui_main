@@ -27,7 +27,6 @@ import com.android.volley.Response;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.adapter.ProduceOrderAdapter;
-import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.OrderConfirmEvent;
 import com.louie.luntonghui.fragment.CarFragment;
 import com.louie.luntonghui.fragment.FixGoodsDialogFragment;
@@ -61,6 +60,10 @@ import java.util.regex.Pattern;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import rx.Observer;
+import rx.android.app.AppObservable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2015/7/1.
@@ -482,6 +485,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         return new Response.Listener<OrderConfirm>(){
             @Override
             public void onResponse(final OrderConfirm orderConfirm) {
+                isRunning = false;
                 if(orderConfirm.rsgcode.equals(SUCCESSCODE)){
                     TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
                         @Override
@@ -580,10 +584,59 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
+        if(isRunning){
+            ToastUtil.showShortToast(this,"请稍等...");
+            return;
+        }
+        isRunning = true;
         String url = String.format(ConstantURL.CONFIRM_ORDER,uid,addressId,payId,strUserFeedback,integral,display);
-        executeRequest(new GsonRequest(url, OrderConfirm.class, confirmOrderListener(), errorListener()));
+        //executeRequest(new GsonRequest(url, OrderConfirm.class, confirmOrderListener(), errorListener()));
 
+
+        AppObservable.bindActivity(this,mApi.submitOrder(uid,addressId,payId,strUserFeedback,integral,display))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<OrderConfirm>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        ToastUtil.showLongToast(mContext, "网络连接失败");
+                        isRunning = false;
+                    }
+
+                    @Override
+                    public void onNext(final OrderConfirm orderConfirm) {
+                        if (orderConfirm.rsgcode.equals(SUCCESSCODE)) {
+
+                            new Update(Goods.class)
+                                    .set("isChecked = ?", Goods.GOODS_IS_NOT_BUY)
+                                    .execute();
+                            new Delete()
+                                    .from(ShoppingCar.class)
+                                    .execute();
+
+                            //ToastUtil.showLongToast(ProduceOrderActivity.this, R.string.order_confirm_success);
+                            if (orderConfirm.msg != null && orderConfirm.msg.size() > 0) {
+                                ArrayList<OrderConfirm.FixGoods> goodses = (ArrayList<OrderConfirm.FixGoods>) orderConfirm.msg;
+
+                                FixGoodsDialogFragment fragment = FixGoodsDialogFragment.newInstance(goodses);
+                                fragment.show(getSupportFragmentManager(), "load");
+
+                            } else {
+                                toast.show();
+                                App.getBusInstance().post(new OrderConfirmEvent());
+                                finish();
+                            }
+                        }else {
+                            ToastUtil.showShortToast(ProduceOrderActivity.this, orderConfirm.rsgmsg);
+                        }
+                        isRunning = false;
+                    }
+                });
     }
 
     @Override

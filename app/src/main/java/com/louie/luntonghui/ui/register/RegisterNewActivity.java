@@ -180,7 +180,11 @@ public class RegisterNewActivity extends BaseNormalActivity {
 
         String url = String.format(ConstantURL.NEWREGISTER, strUsername,strPassword, strPhoneNumber,mac,type);
 
-
+        if(isRunning){
+            ToastUtil.showShortToast(mContext,"请稍等...");
+            return;
+        }
+        isRunning = true;
         mProgress.show();
         executeRequest(new GsonRequest(url,
                 Login.class, registerListener(), errorListener()));
@@ -191,6 +195,7 @@ public class RegisterNewActivity extends BaseNormalActivity {
             @Override
             public void onResponse(final Login login) {
                 mProgress.dismiss();
+                isRunning = false;
                 if (!login.rsgcode.equals(SUCCESSCODE)) {
                     ToastUtil.showLongToast(RegisterNewActivity.this, login.rsgmsg);
 

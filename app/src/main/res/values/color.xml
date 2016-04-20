@@ -254,6 +254,8 @@
     <color name="viewfinder_mask">#60000000</color>
     <color name="possible_result_points">#c0ffff00</color>
 
+    <color name="bottom_line">#7D7D7D</color>
 
+    <color name="limpidity">#00000000</color>
 
 </resources>

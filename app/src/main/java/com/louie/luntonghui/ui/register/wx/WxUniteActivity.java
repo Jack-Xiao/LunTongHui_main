@@ -112,7 +112,7 @@ public class WxUniteActivity extends BaseToolbarActivity {
             @Override
             public void onResponse(WXUserInfo response) {
 
-                 unitWelcome.setText("您好,微信用户:");
+                unitWelcome.setText("您好,微信用户:");
 
                 unitUsername.setText(response.nickname);
 
@@ -138,7 +138,7 @@ public class WxUniteActivity extends BaseToolbarActivity {
         bundle.putString(WXEntryActivity.OPEN_ID, openId);
         bundle.putString(TYPE,type);
 
-        IntentUtil.startActivity(WxUniteActivity.this, WxLoginActivity.class, bundle);
+        IntentUtil.startActivity(WxUniteActivity.this, WxLoginActivity.class,bundle);
         finish();
     }
 

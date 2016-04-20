@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/login_header_image" />-->
         <RelativeLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="180dp">
 
@@ -107,7 +108,6 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginLeft="15dp"
                     android:background="@color/link_break" />
-
             </RelativeLayout>
 
 

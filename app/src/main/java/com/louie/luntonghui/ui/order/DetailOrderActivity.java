@@ -102,9 +102,7 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
             }
         }
 
-        if (dispatchType == Order.DISPATCH_NORMAL){
-            fixOrder.setVisibility(View.GONE);
-        }
+        setDispatch();
 
         regions = ((App) getApplication()).idNList;
 
@@ -119,6 +117,13 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
         initView();
 
         queryOrderInfo();
+    }
+
+
+    public void setDispatch(){
+        if (dispatchType == Order.DISPATCH_NORMAL){
+            fixOrder.setVisibility(View.GONE);
+        }
     }
 
     private void initView() {
@@ -244,6 +249,8 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
                 if(orderState == NOT_ORDER_CONFIRM){
                     fixOrder.setVisibility(View.VISIBLE);
                 }
+
+                setDispatch();
 
                 orderStateValue.setText(orderStates[orderState]);
                 orderSnValue.setText(order.order_sn);

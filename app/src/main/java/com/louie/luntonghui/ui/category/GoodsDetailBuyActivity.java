@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -777,6 +778,11 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements
             //存在双卡的问题 等待android 5.1 修复.
             //ToastUtil.showShortToast(mContext,);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
     }
 
     @Override

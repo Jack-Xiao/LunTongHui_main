@@ -62,6 +62,7 @@ public class DispatchToday implements Parcelable {
         public List<String> address;
         public List<String> consignee;
         public List<String> mobile;
+        public String r_money;
 
         @Override
         public int describeContents() {
@@ -88,6 +89,7 @@ public class DispatchToday implements Parcelable {
             dest.writeStringList(this.address);
             dest.writeStringList(this.consignee);
             dest.writeStringList(this.mobile);
+            dest.writeString(this.r_money);
         }
 
         public ListEntity() {
@@ -112,6 +114,7 @@ public class DispatchToday implements Parcelable {
             this.address = in.createStringArrayList();
             this.consignee = in.createStringArrayList();
             this.mobile = in.createStringArrayList();
+            this.r_money = in.readString();
         }
 
         public static final Creator<ListEntity> CREATOR = new Creator<ListEntity>() {

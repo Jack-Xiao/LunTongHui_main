@@ -36,6 +36,7 @@
     </string-array>
 
     <string-array name="order_state_list">
+        <item>未知</item>
         <item>未确定</item>
         <item>已确定</item>
         <item>未发货</item>
@@ -45,6 +46,7 @@
         <item>已收货</item>
         <item>未付款</item>
         <item>已取消</item>
+        <item>添加中</item>
     </string-array>
 
 </resources>

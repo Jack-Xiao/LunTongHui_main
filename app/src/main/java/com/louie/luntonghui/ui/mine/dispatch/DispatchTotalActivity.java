@@ -105,7 +105,7 @@ public class DispatchTotalActivity extends BaseDispatchActivity {
         for(int i =0;i<mList.size();i++){
             if(mList.get(i).r_status.equals(BaseDispatchActivity.HAS_GET)){
                 finishOrder++;
-                finishOrderPrice += Double.parseDouble(mList.get(i).total_amount);
+                finishOrderPrice += Double.parseDouble(mList.get(i).r_money);
             }else{
                 notFinishOrder++;
                 notFinishOrderPrice += Double.parseDouble(mList.get(i).total_amount);

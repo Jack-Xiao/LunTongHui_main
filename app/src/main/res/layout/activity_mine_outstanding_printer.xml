@@ -190,7 +190,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
-        android:background="@drawable/base_frame_grey">
+        android:background="@drawable/base_frame_grey_other">
 
         <TextView
             android:id="@+id/item1"

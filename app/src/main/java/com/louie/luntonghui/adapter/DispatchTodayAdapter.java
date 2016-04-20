@@ -46,8 +46,15 @@ public class DispatchTodayAdapter extends RecyclerView.Adapter<DispatchTodayAdap
 
     public void setData(List<DispatchToday.ListEntity> list) {
         if(mList == null) mList = new ArrayList<>();
+
         mList.clear();
         mList.addAll(list);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        if(mList == null) mList = new ArrayList<>();
+        mList.clear();
         notifyDataSetChanged();
     }
 

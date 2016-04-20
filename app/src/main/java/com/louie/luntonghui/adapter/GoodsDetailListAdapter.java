@@ -163,7 +163,7 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
         String inventory = list.get(position).inventory;
         if(inventory.equals(Goods.NO_GOODS)){
             viewHolder.btnFastBuy.setEnabled(false);
-            viewHolder.btnFastBuy.setText("缺货");
+            viewHolder.btnFastBuy.setText("补货中");
             //@drawable/category_fast_buy;
             viewHolder.btnFastBuy.setBackgroundResource(R.drawable.category_fast_buy_grey);
         }else{

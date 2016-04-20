@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -78,8 +77,6 @@ public class DispatchTodayActivity extends BaseDispatchActivity
     @InjectView(R.id.dispatch_info)
     RelativeLayout dispatchInfo;
 
-    @InjectView(R.id.progress)
-    ProgressBar mProgress;
 
     private List<ImageView> ivList;
     private List<TextView> tvList;
@@ -107,15 +104,15 @@ public class DispatchTodayActivity extends BaseDispatchActivity
         ivList.add(ivItem2);
         ivList.add(ivItem3);
 
+        data = new DispatchToday();
         notDispatchList = new ArrayList<>();
         hasDispatchList = new ArrayList<>();
 
+
         initRecyclerView();
 
-        mProgress.setVisibility(View.VISIBLE);
         dispatchInfo.setVisibility(View.GONE);
         init();
-        if(mProgress!=null) mProgress.setVisibility(View.GONE);
     }
 
     private void init() {
@@ -161,19 +158,27 @@ public class DispatchTodayActivity extends BaseDispatchActivity
         @Override
         public void onCompleted() {
             swipeRefresh.setRefreshing(false);
-            dispatchInfo.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onError(Throwable e) {
-            ToastUtil.showShortToast(DispatchTodayActivity.this, "网络连接失败");
+            ToastUtil.showShortToast(DispatchTodayActivity.this, "没有数据");
             swipeRefresh.setRefreshing(false);
-            dispatchInfo.setVisibility(View.VISIBLE);
+
+            //dispatchInfo.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onNext(DispatchToday dispatchToday) {
-            if (dispatchToday.list.size() == 0) return;
+            if(dispatchToday.list == null){
+                ToastUtil.showShortToast(DispatchTodayActivity.this, "今日没有数据");
+                return;
+            }
+            if(dispatchToday.list.size() == 0){
+                ToastUtil.showShortToast(DispatchTodayActivity.this, "今日没有数据");
+                return;
+            }
+
             data = dispatchToday;
             filterData(data.list);
         }
@@ -222,7 +227,11 @@ public class DispatchTodayActivity extends BaseDispatchActivity
     @OnClick(R.id.dispatch_whole)
     public void dispatchWhole() {
         dispatchType = DISPATCH_WHOLE;
+
         onClickOrderNavigation(dispatchType);
+        mAdapter.clear();
+        if(data.list == null) return;
+        if(data.list.size() == 0) return;
         mAdapter.setData(data.list);
 
     }
@@ -231,6 +240,7 @@ public class DispatchTodayActivity extends BaseDispatchActivity
     public void dispatchNone() {
         dispatchType = DISPATCH_NONE;
         onClickOrderNavigation(dispatchType);
+        mAdapter.clear();
         mAdapter.setData(notDispatchList);
     }
 
@@ -238,6 +248,7 @@ public class DispatchTodayActivity extends BaseDispatchActivity
     public void dispatchHas() {
         dispatchType = DISPATCH_HAS;
         onClickOrderNavigation(dispatchType);
+        mAdapter.clear();
         mAdapter.setData(hasDispatchList);
     }
 
@@ -295,7 +306,7 @@ public class DispatchTodayActivity extends BaseDispatchActivity
 
 
     @Override
-    public void confirmGathering(String explain, String applyMoney, final String orderId,String rType) {
+    public void confirmGathering(String explain, final String applyMoney, final String orderId, String rType) {
         Map<String,String> map = new HashMap<>();
         if(!TextUtils.isEmpty(explain)){
             map.put(REMARK_EXPLAIN,explain);
@@ -322,6 +333,7 @@ public class DispatchTodayActivity extends BaseDispatchActivity
                     for(int i =0;i<data.list.size();i++){
                         if(data.list.get(i).order_id.equals(orderId)){
                             data.list.get(i).r_status  = HAS_GET;
+                            notDispatchList.get(i).r_money = applyMoney;
                             break;
                         }
                     }
@@ -329,6 +341,7 @@ public class DispatchTodayActivity extends BaseDispatchActivity
                     for(int i =0;i<notDispatchList.size();i++){
                         if(notDispatchList.get(i).order_id.equals(orderId)){
                             notDispatchList.get(i).r_status  = HAS_GET;
+                            notDispatchList.get(i).r_money = applyMoney;
                             mAdapter.setData(notDispatchList);
                             break;
                         }

@@ -116,9 +116,9 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:layout_marginLeft="2dp"
-                            android:layout_marginRight="2dp"
-                            android:background="@color/useful_grey" />
+                            android:layout_marginLeft="3dp"
+                            android:layout_marginRight="3dp"
+                            android:background="@color/bottom_line" />
                     </LinearLayout>
                 </LinearLayout>
 

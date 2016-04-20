@@ -226,6 +226,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
         view.setTextSize(textSize);
         view.setLines(1);
         view.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+
+
     }
     
     /**

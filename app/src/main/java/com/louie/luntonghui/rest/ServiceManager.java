@@ -12,6 +12,7 @@ import com.louie.luntonghui.model.result.HomeAdver;
 import com.louie.luntonghui.model.result.HomeAdversion;
 import com.louie.luntonghui.model.result.HotSearch;
 import com.louie.luntonghui.model.result.MineAttentionResult;
+import com.louie.luntonghui.model.result.OrderConfirm;
 import com.louie.luntonghui.model.result.OrderList;
 import com.louie.luntonghui.model.result.PrinterDay;
 import com.louie.luntonghui.model.result.PrinterMonth;
@@ -193,6 +194,14 @@ public class ServiceManager {
                                            @Query("r_money") String rMoney,
                                            @Query("r_type") String tType,
                                            @QueryMap Map<String,String> maps);
+        //确认收货
+        @GET("/mobile.php?act=orderconfirmation")
+        Observable<OrderConfirm> submitOrder(@Query("user_id") String userId,
+                                            @Query("address_id") int addressId,
+                                            @Query("pay_id") String payId,
+                                            @Query("postscript") String postScript,
+                                            @Query("integral") String integral,
+                                            @Query("display") String display);
 
     }
 

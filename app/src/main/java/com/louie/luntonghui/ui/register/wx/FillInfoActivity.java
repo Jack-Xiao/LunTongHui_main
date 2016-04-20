@@ -195,7 +195,11 @@ public class FillInfoActivity extends BaseToolbarActivity {
 
     @OnClick(R.id.login)
     public void onClickLogin(){
-        IntentUtil.startActivity(FillInfoActivity.this,WxLoginActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(WXEntryActivity.OPEN_ID, openId);
+        bundle.putString(WxUniteActivity.TYPE,type);
+
+        IntentUtil.startActivity(FillInfoActivity.this,WxLoginActivity.class,bundle);
         finish();
     }
 }

@@ -3,6 +3,7 @@ package com.louie.luntonghui.ui.register.wx;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -32,8 +33,6 @@ import com.louie.luntonghui.wxapi.WXEntryActivity;
 
 import org.apache.http.HttpStatus;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,10 +66,16 @@ public class WxLoginActivity extends BaseToolbarActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
 
+        if(getIntent().getExtras() == null){
+            ToastUtil.showLongToast(mContext,"获取微信信息失败，请重试");
+            return;
+        }
+
         if(getIntent().getExtras().getString(WXEntryActivity.OPEN_ID) == null){
             ToastUtil.showLongToast(mContext,"获取微信信息失败，请重试");
             return;
         }
+
         openId = getIntent().getExtras().getString(WXEntryActivity.OPEN_ID);
 
         type = getIntent().getExtras().getString(WxUniteActivity.TYPE);
@@ -93,12 +98,16 @@ public class WxLoginActivity extends BaseToolbarActivity {
         String strUsername = username.getText().toString().trim();
         String strPassword = password.getText().toString().trim();
 
-        try {
+        /*try {
             strUsername = URLEncoder.encode(strUsername, "UTF-8");
             strPassword = URLEncoder.encode(strPassword, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             ToastUtil.showLongToast(this,"用户名、密码输入有误");
+            return;
+        }*/
+        if((TextUtils.isEmpty(strUsername)|| TextUtils.isEmpty(strPassword))){
+            ToastUtil.showLongToast(this,"用户名或密码不能为空");
             return;
         }
 
@@ -111,6 +120,7 @@ public class WxLoginActivity extends BaseToolbarActivity {
         if(type.equals(WxUniteActivity.TYPE_QQ)){
             param.put("type",type);
         }
+
 
         RequestManager.addRequest(new GsonRequest(
                 Request.Method.POST,url, Login.class,param,bindLogin(),errorListener()),this);
