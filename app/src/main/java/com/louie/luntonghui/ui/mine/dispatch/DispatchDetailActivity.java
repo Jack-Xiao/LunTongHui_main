@@ -56,7 +56,7 @@ public class DispatchDetailActivity extends BaseDispatchActivity {
 
     @Override
     protected String getToolBarTitle() {
-        return "";
+        return "详情";
     }
 
     @Override
@@ -71,7 +71,6 @@ public class DispatchDetailActivity extends BaseDispatchActivity {
         Bundle bundle = getIntent().getExtras();
         DispatchToday.ListEntity entity = bundle.getParcelable(ORDER);
 
-        tvCenter.setText("详情");
         warehouse.setText("出仓单号 : " + entity.deliver_sn);
         consigneeName.setText("收货人 : " + entity.consignee.get(0));
         mobileValue.setText(entity.mobile.get(0));

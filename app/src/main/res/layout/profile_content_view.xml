@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:text="拼团"
+                android:text="@string/together_group"
                 android:textColor="@color/home_main_font_color"
                 android:textSize="12sp" />
         </LinearLayout>

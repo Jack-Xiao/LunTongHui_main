@@ -1,5 +1,8 @@
 package com.louie.luntonghui.model.result;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
@@ -13,7 +16,9 @@ public class OrderList {
      */
     public List<MysalelistEntity> mysalelist;
 
-    public class MysalelistEntity {
+    public int total_count;
+
+    public class MysalelistEntity implements Parcelable {
         /**
          * handler : 2
          * money : 0.00
@@ -32,5 +37,48 @@ public class OrderList {
         public String order_id;
         public String add_time;
         public String order_sn;
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.handler);
+            dest.writeString(this.money);
+            dest.writeString(this.order_amount);
+            dest.writeString(this.allow_to_modify);
+            dest.writeString(this.pay_name);
+            dest.writeString(this.order_id);
+            dest.writeString(this.add_time);
+            dest.writeString(this.order_sn);
+        }
+
+        public MysalelistEntity() {
+        }
+
+        protected MysalelistEntity(Parcel in) {
+            this.handler = in.readString();
+            this.money = in.readString();
+            this.order_amount = in.readString();
+            this.allow_to_modify = in.readString();
+            this.pay_name = in.readString();
+            this.order_id = in.readString();
+            this.add_time = in.readString();
+            this.order_sn = in.readString();
+        }
+
+        public final Parcelable.Creator<MysalelistEntity> CREATOR = new Parcelable.Creator<MysalelistEntity>() {
+            @Override
+            public MysalelistEntity createFromParcel(Parcel source) {
+                return new MysalelistEntity(source);
+            }
+
+            @Override
+            public MysalelistEntity[] newArray(int size) {
+                return new MysalelistEntity[size];
+            }
+        };
     }
 }

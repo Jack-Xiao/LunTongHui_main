@@ -310,12 +310,10 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                 .subscribe(new Observer<OrderList>() {
                     @Override
                     public void onCompleted() {
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
                     }
 
                     @Override

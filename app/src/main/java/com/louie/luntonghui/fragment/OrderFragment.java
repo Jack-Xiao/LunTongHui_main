@@ -270,7 +270,7 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
                     if (recyclerView != null) recyclerView.setVisibility(View.GONE);
                 } else {
                     if (recyclerView != null) recyclerView.setVisibility(View.VISIBLE);
-                    mAdapter.setData(orders);
+                    //mAdapter.setData(orders);
                     mAdapter.notifyDataSetChanged();
                 }
             }

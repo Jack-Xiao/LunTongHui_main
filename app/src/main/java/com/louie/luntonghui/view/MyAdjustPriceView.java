@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.louie.luntonghui.R;
@@ -42,36 +41,30 @@ public class MyAdjustPriceView extends LinearLayout{
         notifyPriceChanged();
         mContent.setText("1");
 
-        btnMinus.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    result = Integer.parseInt(mContent.getText().toString());
-                } catch (Exception e) {
-                    result = 1;
-                }
+        btnMinus.setOnClickListener(v -> {
+            try {
+                result = Integer.parseInt(mContent.getText().toString());
+            } catch (Exception e) {
+                result = 1;
+            }
 
 
-                if (result > 1) {
-                    result--;
-                    notifyPriceChanged();
-                } else {
-                    return;
-                }
+            if (result > 1) {
+                result--;
+                notifyPriceChanged();
+            } else {
+                return;
             }
         });
 
-        btnPlus.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try{
-                    result = Integer.parseInt(mContent.getText().toString());
-                }catch (Exception e){
-                    result = 1;
-                }
-                result ++;
-                notifyPriceChanged();
+        btnPlus.setOnClickListener(v -> {
+            try{
+                result = Integer.parseInt(mContent.getText().toString());
+            }catch (Exception e){
+                result = 1;
             }
+            result ++;
+            notifyPriceChanged();
         });
 
         mContent.addTextChangedListener(new TextWatcher() {
@@ -100,11 +93,8 @@ public class MyAdjustPriceView extends LinearLayout{
             public void onClick(View v) {
                 new AlertDialog.Builder(mContext)
                         .setView(R.layout.view_adjust_goods_number)
-                        .setNegativeButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        .setNegativeButton("确定", (dialog, which) -> {
 
-                            }
                         })
                         .setPositiveButton("取消", new DialogInterface.OnClickListener() {
                             @Override

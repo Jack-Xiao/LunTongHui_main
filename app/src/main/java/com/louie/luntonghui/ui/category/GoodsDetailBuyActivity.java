@@ -285,7 +285,7 @@ public class GoodsDetailBuyActivity extends BaseNormalActivity implements
         String inventory = goods.inventory;
         if(inventory.equals(Goods.NO_GOODS)){
             intoCar.setEnabled(false);
-            intoCar.setText("缺货");
+            intoCar.setText(getResources().getString(R.string.no_goods));
             intoCar.setBackgroundResource(R.color.category_grey);
             content.setEnabled(false);
         }else{

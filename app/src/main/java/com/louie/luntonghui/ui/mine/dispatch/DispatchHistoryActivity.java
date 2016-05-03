@@ -119,7 +119,6 @@ public class DispatchHistoryActivity extends BaseDispatchActivity
     }
 
     private void init() {
-        tvCenter.setText(getResources().getString(R.string.history_dispatch));
         mAdapter = new DispatchTodayAdapter(this);
         dispatchType = DISPATCH_NONE;
 
@@ -205,7 +204,7 @@ public class DispatchHistoryActivity extends BaseDispatchActivity
 
     @Override
     protected String getToolBarTitle() {
-        return "";
+        return getResources().getString(R.string.history_dispatch);
     }
 
     @Override

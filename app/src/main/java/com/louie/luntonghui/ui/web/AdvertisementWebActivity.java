@@ -47,6 +47,7 @@ import me.drakeet.materialdialog.MaterialDialog;
  */
 public class AdvertisementWebActivity extends BaseToolbarActivity{
     public static final String URL = "url";
+    public static final String MODEL = " model";
     private String url;
     private WebView browser;
     private ProgressBar progressBar;
@@ -55,6 +56,9 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
     public static final int WEB_CHOOSE_DEFAULT_SURFACE = -1;
     public static final String WEB_CHOOSE_SURFACE = "web_choose_surface";
     public ChooseActivityInterface mListener;
+    public static final int DEFAULT_MODEL = 0;
+    public static final int HAS_BAR_MODEL = 1;
+    private int model;
 
 
     public interface ChooseActivityInterface{
@@ -84,6 +88,11 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
 
         Bundle bundle = getIntent().getExtras();
         url = bundle.getString(URL);
+        model = bundle.getInt(MODEL,DEFAULT_MODEL);
+
+        if(model == HAS_BAR_MODEL){
+            mAppBar.setVisibility(View.GONE);
+        }
 
         WebSettings settings = browser.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -255,6 +264,7 @@ public class AdvertisementWebActivity extends BaseToolbarActivity{
 
             int total = 0;
             for(ShoppingCar cart :list){
+
                 total += Integer.parseInt(cart.goodsNumber);
             }
 

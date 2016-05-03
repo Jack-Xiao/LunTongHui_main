@@ -2,6 +2,7 @@ package com.louie.luntonghui.ui.order;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -13,6 +14,7 @@ import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.adapter.ProduceOrderAdapter;
 import com.louie.luntonghui.data.GsonRequest;
+import com.louie.luntonghui.fragment.EachOrderFragment;
 import com.louie.luntonghui.model.db.Order;
 import com.louie.luntonghui.model.result.OrderDetailResult;
 import com.louie.luntonghui.model.result.ProduceOrder;
@@ -20,6 +22,7 @@ import com.louie.luntonghui.model.result.Result;
 import com.louie.luntonghui.ui.BaseNormalActivity;
 import com.louie.luntonghui.ui.car.ProduceOrderActivity;
 import com.louie.luntonghui.util.ConstantURL;
+import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.MyListView;
 import com.umeng.analytics.MobclickAgent;
@@ -36,7 +39,6 @@ import butterknife.OnClick;
  */
 public class DetailOrderActivity extends BaseNormalActivity implements ProduceOrderAdapter.FixOrderListener{
     public static final int NOT_ORDER_CONFIRM = 0;
-
     @InjectView(R.id.lv_goodslist)
     MyListView lvGoodslist;
     @InjectView(R.id.list_view_order_state)
@@ -83,6 +85,11 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
     private TextView businessMessage;
     public static final String DISPATCH_ORDER = "dispatch_order";
     private int dispatchType = Order.DISPATCH_DEFAULT;
+    private String type;
+    private String handler;
+    private boolean orderCanCancel = false;
+    private List<OrderDetailResult.GoodsListEntity> goodses;
+    public static final String GOODS_LIST = "goods_list";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +104,15 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
             queryType = bundle.getInt(Order.QUERY_TYPE);
             queryUserId = bundle.getString(Order.USER_ID);
             dispatchType = bundle.getInt(Order.DISPATCH_QUERY);
+            type = bundle.getString(Order.TYPE);
+            handler = bundle.getString(Order.HANDLER);
             if(queryUserId != null){
                 userId = queryUserId;
+            }
+
+            if(handler.equals(EachOrderFragment.ORDERTYPE_FINISH)){
+                orderCanCancel = true;
+                cancelOrder.setText(getResources().getString(R.string.cancel_order));
             }
         }
 
@@ -117,6 +131,7 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
         initView();
 
         queryOrderInfo();
+        goodses = new ArrayList<>();
     }
 
 
@@ -326,6 +341,8 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
                         enoughTotalDeliverValue.setText(order.gift);
                         break;
                 }
+
+                goodses = orderDetailResult.goods_list;
             }
         };
     }
@@ -348,18 +365,27 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
 
     @OnClick(R.id.cancel_order)
     public void onCancelOrderClick() {
-        String url = String.format(ConstantURL.CANCEL_ORDER, userId, orderId);
-        mProgressDialog.show();
-        executeRequest(new GsonRequest(url, Result.class, cancelOrderRequest(), errorListener()));
+
+        if(orderCanCancel){
+            Bundle bundle = new Bundle();
+
+            bundle.putParcelableArrayList(GOODS_LIST, (ArrayList<? extends Parcelable>) goodses);
+            //bundle.putSerializable(GOODS_LIST,goodses);
+            bundle.putString(Order.ORDERID,orderId);
+            IntentUtil.startActivity(DetailOrderActivity.this,OrderCancelActivity.class,bundle);
+            finish();
+            return;
+        }else{
+            String url = String.format(ConstantURL.CANCEL_ORDER, userId, orderId);
+            mProgressDialog.show();
+            executeRequest(new GsonRequest(url, Result.class, cancelOrderRequest(), errorListener()));
+        }
     }
 
     private Response.Listener<Result> cancelOrderRequest() {
-        return new Response.Listener<Result>() {
-            @Override
-            public void onResponse(Result result) {
-                mProgressDialog.dismiss();
-                ToastUtil.showShortToast(mContext, result.rsgmsg);
-            }
+        return result -> {
+            mProgressDialog.dismiss();
+            ToastUtil.showShortToast(mContext, result.rsgmsg);
         };
     }
     @Override

@@ -69,6 +69,7 @@ public class DispatchTodayAdapter extends RecyclerView.Adapter<DispatchTodayAdap
         return new ViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         DispatchToday.ListEntity entity = mList.get(position);

@@ -152,7 +152,7 @@ public class MineAttentionAdapter extends RecyclerView.Adapter<MineAttentionAdap
         String inventory = goods.inventory;
         if(inventory.equals(Goods.NO_GOODS)){
             viewHolder.fastBuy.setEnabled(false);
-            viewHolder.fastBuy.setText("缺货");
+            viewHolder.fastBuy.setText(mContext.getResources().getString(R.string.no_goods));
             viewHolder.fastBuy.setBackgroundResource(R.drawable.category_fast_buy_grey);
         }else{
             viewHolder.fastBuy.setEnabled(true);

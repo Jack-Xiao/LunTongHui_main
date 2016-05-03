@@ -110,8 +110,6 @@ public class App extends Application {
         initDebug();
     }
 
-
-
     private void initCache() {
         DataCleanManager.cleanInternalCache(this);
     }
@@ -185,13 +183,17 @@ public class App extends Application {
             } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                 if(location.getCity() == null){
                     cityName = DEFAULT_CITY;
+                }else{
+                    cityName = location.getCity();
                 }
 
                 if(location.getProvince() == null){
                     provinceName = DEFAULT_PROVINCE;
+                }else{
+                    provinceName = location.getProvince();
                 }
-                cityName = location.getCity().replace("市", "");
-                provinceName = location.getProvince().replace("省", "");
+                cityName = cityName.replace("市", "");
+                provinceName = provinceName.replace("省", "");
             }
 
             DefaultShared.putString(CITY, cityName);

@@ -1,5 +1,6 @@
 package com.louie.luntonghui.rest;
 
+import com.louie.luntonghui.model.db.ApplyForProduct;
 import com.louie.luntonghui.model.result.AddtionAttentionResult;
 import com.louie.luntonghui.model.result.CarList;
 import com.louie.luntonghui.model.result.CheckCode;
@@ -18,7 +19,9 @@ import com.louie.luntonghui.model.result.PrinterDay;
 import com.louie.luntonghui.model.result.PrinterMonth;
 import com.louie.luntonghui.model.result.ProduceOrder;
 import com.louie.luntonghui.model.result.Result;
+import com.louie.luntonghui.model.result.ResultObject;
 import com.louie.luntonghui.model.result.RetrivePasswordResult;
+import com.louie.luntonghui.model.result.ReturnProductDetail;
 import com.louie.luntonghui.model.result.SalesmanStaticDay;
 import com.louie.luntonghui.model.result.SalesmanStaticMonth;
 import com.louie.luntonghui.model.result.SalesmanStaticYear;
@@ -26,6 +29,7 @@ import com.louie.luntonghui.model.result.SalesmanStaticYear;
 import java.util.Map;
 
 import retrofit.Callback;
+import retrofit.http.Body;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
@@ -202,6 +206,31 @@ public class ServiceManager {
                                             @Query("postscript") String postScript,
                                             @Query("integral") String integral,
                                             @Query("display") String display);
+
+
+        //获取订单
+        @GET("/mobile.php?act=mysalelist&mode=test")
+        Observable<OrderList> getOrderList(@Query("user_id") String userId,
+                                       @Query("page") int page,
+                                       @Query("page_size") int pageSize,
+                                       @Query("handler") String handler);
+        //申请退货单 提交json数据
+        @POST("/mobile.php?act=application_for_return")
+        Observable<ResultObject> applyForProduct(@Body ApplyForProduct product);
+
+
+
+        //退货单详细
+        @GET("/mobile.php?act=get_return_order_info")
+        Observable<ReturnProductDetail> getReturnProductDetail(@Query("order_id") String orderId,
+                                                               @Query("user_id") String userId);
+
+
+        //取消退货
+        Observable<ResultObject> cancelReturnProduct(@Query("return_id") String returnId,
+                                                     @Query("order_id") String orderId,
+                                                     @Query("user_id") String userId);
+
 
     }
 

@@ -56,7 +56,7 @@ public class DispatchTotalActivity extends BaseDispatchActivity {
 
     @Override
     protected String getToolBarTitle() {
-        return "";
+        return "总览";
     }
 
     @Override
@@ -69,7 +69,6 @@ public class DispatchTotalActivity extends BaseDispatchActivity {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
         mList = bundle.getParcelableArrayList(TOTAL_LIST);
-        tvCenter.setText("总览");
         initListView();
         init();
 

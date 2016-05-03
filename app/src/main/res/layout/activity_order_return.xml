@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_center" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/order_top_font_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:text="@string/base_info" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:paddingLeft="20dp">
+
+                    <include
+                        android:id="@+id/order_state"
+                        layout="@layout/activity_order_detail_item" />
+
+                    <include
+                        android:id="@+id/order_sn"
+                        layout="@layout/activity_order_detail_item" />
+
+                    <include
+                        android:id="@+id/order_money"
+                        layout="@layout/activity_order_detail_item" />
+
+                    <include
+                        android:id="@+id/down_order_time"
+                        layout="@layout/activity_order_detail_item" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/order_top_font_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:text="商家信息" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:paddingLeft="20dp">
+
+                    <include
+                        android:id="@+id/user_name"
+                        layout="@layout/activity_order_detail_item" />
+
+                    <include
+                        android:id="@+id/user_address"
+                        layout="@layout/activity_order_detail_item" />
+
+                    <include
+                        android:id="@+id/user_phone"
+                        layout="@layout/activity_order_detail_item" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:textSize="16sp"
+                style="@style/order_top_font_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:text="退货商品" />
+
+            <com.louie.luntonghui.view.MyListView
+                android:id="@+id/list_view"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:dividerHeight="1dp"
+                android:divider="@color/break_line_useful_normal"/>
+
+            <TextView
+                android:id="@+id/return_product_price"
+                android:textSize="16sp"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingRight="20dp"
+                android:gravity="right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="退货金额：￥200.00"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:visibility="gone"
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/white"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/cancel_return_product"
+        android:text="取消退货"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/next_step"/>
+</LinearLayout>

@@ -90,7 +90,6 @@ public class DispatchTodayActivity extends BaseDispatchActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        tvCenter.setText(getResources().getString(R.string.today_dispatch));
         mAdapter = new DispatchTodayAdapter(this);
 
 
@@ -261,7 +260,7 @@ public class DispatchTodayActivity extends BaseDispatchActivity
 
     @Override
     protected String getToolBarTitle() {
-        return "";
+        return getResources().getString(R.string.today_dispatch);
     }
 
     @Override

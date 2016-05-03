@@ -293,8 +293,8 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
         //String url = String.format(ConstantURL.GET_CAR_LIST, userId);
         //RequestManager.addRequest(new GsonRequest(url, CarList.class, getCarListListener(), errorListener()), this);
         AppObservable.bindFragment(this,mApi.getCarList(userId))
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<CarList>() {
                     @Override
                     public void onCompleted() {
@@ -367,7 +367,7 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
 
                                 if(mCartListener!=null) mCartListener.referenceCart(total);
 
-                                if(mPlaying!=null)mPlaying.setText("去结算(" + carList.total.real_goods_count + ")");
+                                if(mPlaying!=null)mPlaying.setText("去结算(" + total + ")");
                                 if(goodsTotoal!=null)goodsTotoal.setText("￥" + carList.total.goods_price);
                                 if(list.size() !=0){
                                     List<ShoppingCar> goodsList = new ArrayList<ShoppingCar>();

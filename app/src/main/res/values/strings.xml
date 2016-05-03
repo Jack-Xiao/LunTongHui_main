@@ -471,7 +471,7 @@
     <string name="qr_code">二维码扫描</string>
 
     <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
-    <string name="no_goods">缺货</string>
+    <string name="no_goods">补货中</string>
 
     <string name="cur_month_outstanding_statistics">本月业绩统计</string>
     <string name="outstanding_statistics">业绩统计</string>
@@ -482,5 +482,6 @@
 
     <string name="today_dispatch">今日配送</string>
     <string name="history_dispatch">历史配送</string>
-
+    <string name="order_return_info">退货单详情</string>
+    <string name="confirm_cancel_goods">确认退货</string>
 </resources>

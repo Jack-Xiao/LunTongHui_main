@@ -47,6 +47,21 @@
         <item>未付款</item>
         <item>已取消</item>
         <item>添加中</item>
+        <item>退货单</item>
     </string-array>
 
+    <string-array name="mine_order_state_list">
+        <item>全部</item>
+        <item>待确认</item>
+        <item>送货中</item>
+        <item>已完成</item>
+        <item>已取消</item>
+    </string-array>
+
+    <string-array name="cancel_order_state">
+        <item>未申请</item>
+        <item>待确认</item>
+        <item>已审核</item>
+        <item>已完成</item>
+    </string-array>
 </resources>

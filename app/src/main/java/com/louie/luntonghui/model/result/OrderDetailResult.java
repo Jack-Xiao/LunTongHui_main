@@ -1,5 +1,8 @@
 package com.louie.luntonghui.model.result;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
@@ -13,7 +16,7 @@ public class OrderDetailResult {
     public List<GoodsListEntity> goods_list;
     public OrderEntity order;
 
-    public static class GoodsListEntity {
+    public static class GoodsListEntity implements Parcelable {
         /**
          * gift : 0
          * goods_name : 测试
@@ -62,6 +65,79 @@ public class OrderDetailResult {
         public String market_price;
         public String guige;
         public String profit;
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.gift);
+            dest.writeString(this.goods_name);
+            dest.writeString(this.discount_new);
+            dest.writeString(this.danwei);
+            dest.writeString(this.goods_price);
+            dest.writeString(this.is_real);
+            dest.writeString(this.goods_id);
+            dest.writeString(this.goods_sn);
+            dest.writeString(this.discount);
+            dest.writeString(this.premium_id);
+            dest.writeString(this.goods_attr);
+            dest.writeString(this.rec_id);
+            dest.writeString(this.rid);
+            dest.writeString(this.discount_type);
+            dest.writeString(this.extension_code);
+            dest.writeString(this.is_gift);
+            dest.writeString(this.goods_number);
+            dest.writeString(this.parent_id);
+            dest.writeString(this.subtotal);
+            dest.writeString(this.goods_thumb);
+            dest.writeString(this.market_price);
+            dest.writeString(this.guige);
+            dest.writeString(this.profit);
+        }
+
+        public GoodsListEntity() {
+        }
+
+        protected GoodsListEntity(Parcel in) {
+            this.gift = in.readString();
+            this.goods_name = in.readString();
+            this.discount_new = in.readString();
+            this.danwei = in.readString();
+            this.goods_price = in.readString();
+            this.is_real = in.readString();
+            this.goods_id = in.readString();
+            this.goods_sn = in.readString();
+            this.discount = in.readString();
+            this.premium_id = in.readString();
+            this.goods_attr = in.readString();
+            this.rec_id = in.readString();
+            this.rid = in.readString();
+            this.discount_type = in.readString();
+            this.extension_code = in.readString();
+            this.is_gift = in.readString();
+            this.goods_number = in.readString();
+            this.parent_id = in.readString();
+            this.subtotal = in.readString();
+            this.goods_thumb = in.readString();
+            this.market_price = in.readString();
+            this.guige = in.readString();
+            this.profit = in.readString();
+        }
+
+        public static final Parcelable.Creator<GoodsListEntity> CREATOR = new Parcelable.Creator<GoodsListEntity>() {
+            @Override
+            public GoodsListEntity createFromParcel(Parcel source) {
+                return new GoodsListEntity(source);
+            }
+
+            @Override
+            public GoodsListEntity[] newArray(int size) {
+                return new GoodsListEntity[size];
+            }
+        };
     }
 
     public static class OrderEntity {

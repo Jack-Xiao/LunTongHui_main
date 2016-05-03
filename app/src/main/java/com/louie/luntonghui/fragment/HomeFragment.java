@@ -12,7 +12,6 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,6 +38,7 @@ import com.louie.luntonghui.model.result.HomeAdversion;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.ui.Home.MipcaActivityCapture;
 import com.louie.luntonghui.ui.Home.SecondKillActivity;
+import com.louie.luntonghui.ui.Home.WebActivity;
 import com.louie.luntonghui.ui.Home.WebTogetherGroupActivity;
 import com.louie.luntonghui.ui.category.GoodsDetailActivity;
 import com.louie.luntonghui.ui.mine.MineAttentionActivity;
@@ -185,18 +185,10 @@ public class HomeFragment extends BaseFragment implements
 
         mSearchParent2.setVisibility(View.GONE);
         contentView.findViewById(R.id.fragment_ptr_home_ptr_frame).getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        onScroll(scrollView.getScrollY());
-                    }
-                });
+                () -> onScroll(scrollView.getScrollY()));
 
-        mSearchParent1.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                searchLayoutTop = mSearchParent1.getBottom();//获取searchLayout的顶部位置
-            }
+        mSearchParent1.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            searchLayoutTop = mSearchParent1.getBottom();//获取searchLayout的顶部位置
         });
 
         ptrFrameLayout =(PtrFrameLayout)contentView.findViewById(R.id.fragment_ptr_home_ptr_frame);
@@ -289,49 +281,29 @@ public class HomeFragment extends BaseFragment implements
         mLinearSalePrice.setOnClickListener(onClickSpacialPrice);
     }
 
-    private View.OnClickListener onClickEveryDayKill = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            IntentUtil.startActivity(getActivity(), SecondKillActivity.class);
-        }
+    private View.OnClickListener onClickEveryDayKill = v -> IntentUtil.startActivity(getActivity(), SecondKillActivity.class);
+
+    private View.OnClickListener onClickSpacialPrice = v -> {
+       /* String url = String.format(ConstantURL.SPECIAL_PRICE,userId);
+        Bundle bundle = new Bundle();
+        bundle.putString(WebActivity.WEB_URL,url);
+        IntentUtil.startActivity(getActivity(),WebActivity.class,bundle);*/
+
+        String url = String.format(ConstantURL.SPECIAL_PRICE,userId);
+        Bundle bundle = new Bundle();
+        bundle.putString(AdvertisementWebActivity.URL, url);
+        bundle.putInt(AdvertisementWebActivity.MODEL,AdvertisementWebActivity.HAS_BAR_MODEL);
+        IntentUtil.startActivity(getActivity(), AdvertisementWebActivity.class, bundle);
     };
 
-    private View.OnClickListener onClickSpacialPrice = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-           /* String url = String.format(ConstantURL.SPECIAL_PRICE,userId);
-            Bundle bundle = new Bundle();
-            bundle.putString(WebActivity.WEB_URL,url);
-            IntentUtil.startActivity(getActivity(),WebActivity.class,bundle);*/
-
-            String url = String.format(ConstantURL.SPECIAL_PRICE,userId);
-            Bundle bundle = new Bundle();
-            bundle.putString(AdvertisementWebActivity.URL, url);
-            IntentUtil.startActivity(getActivity(), AdvertisementWebActivity.class, bundle);
-        }
+    private View.OnClickListener onClickBrandStreet = v -> {
+        String url = ConstantURL.BRAND_STREET;
+        Bundle bundle = new Bundle();
+        bundle.putString(WebActivity.WEB_URL,url);
+        IntentUtil.startActivity(getActivity(),WebActivity.class,bundle);
     };
 
-    private View.OnClickListener onClickBrandStreet = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            /*String url = ConstantURL.BRAND_STREET;
-            Bundle bundle = new Bundle();
-            bundle.putString(WebActivity.WEB_URL,url);
-            IntentUtil.startActivity(getActivity(),WebActivity.class,bundle);*/
-
-            String url = ConstantURL.BRAND_STREET;
-            Bundle bundle = new Bundle();
-            bundle.putString(AdvertisementWebActivity.URL, url);
-            IntentUtil.startActivity(getActivity(), AdvertisementWebActivity.class, bundle);
-        }
-    };
-
-    private View.OnClickListener onClickMineAttention = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            IntentUtil.startActivity(getActivity(),MineAttentionActivity.class);
-        }
-    };
+    private View.OnClickListener onClickMineAttention = v -> IntentUtil.startActivity(getActivity(),MineAttentionActivity.class);
 
     private View.OnClickListener onClickHotGoods = new View.OnClickListener() {
         @Override
@@ -340,12 +312,7 @@ public class HomeFragment extends BaseFragment implements
         }
     };
 
-    private View.OnClickListener onClickGroupListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-              IntentUtil.startActivity(getActivity(), WebTogetherGroupActivity.class);
-        }
-    };
+    private View.OnClickListener onClickGroupListener = v -> IntentUtil.startActivity(getActivity(), WebTogetherGroupActivity.class);
 
     public static int getResId(String variableName, Class<?> c) {
         try {

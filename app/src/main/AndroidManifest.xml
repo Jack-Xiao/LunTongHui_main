@@ -208,10 +208,6 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.mine.MineOrderActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait"/>
-        <activity
             android:name=".ui.mine.MineSelectRegionActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"/>

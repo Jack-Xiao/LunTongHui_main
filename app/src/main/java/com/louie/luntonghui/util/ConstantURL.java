@@ -7,9 +7,9 @@ public class ConstantURL {
 
     public static final String SUCCESSCODE = "000";
 
-    //public static final String HOST = "http://120.25.224.250/api/"; //测试 Ip
+    public static final String HOST = "http://120.25.224.250/api/"; //测试 Ip
 
-    public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
+    //public static final String HOST = "http://120.24.209.210/api_new/"; //正式机Ip
     //public static final String HOST = "http://120.25.201.114/api_new/"; //另一台正式机
 
     //public static final String HOST = "http://img.zgltong.com/api_new/"; //另一台正式机
@@ -267,6 +267,7 @@ public class ConstantURL {
             "mobile.php?act=mysalelist" + "&" +
             "user_id="+ ARGSCONTENT1 + "&" +
              "mode=test";
+
     //获取订单详情
     //http://120.25.224.250/api/mobile.php?act=mysaledesc&mode=test&user_id=10&order_id=36
     public static final String GET_ORDER_DETAIL = HOST +

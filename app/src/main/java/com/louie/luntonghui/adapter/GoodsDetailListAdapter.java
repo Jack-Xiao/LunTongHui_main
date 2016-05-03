@@ -87,7 +87,7 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder = null;
+        ViewHolder viewHolder;
         if(convertView  == null){
             convertView = inflater.inflate(R.layout.activity_goods_detail_list_item,parent,false);
             viewHolder = new ViewHolder();
@@ -123,11 +123,7 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
             viewHolder.servicePrice.setText("服务费:￥" + list.get(position).gysMoney);
         }
 
-        if(list.get(position).isChecked.equals(Goods.GOODS_IS_BUY)){
-            viewHolder.btnFastBuy.setBackgroundColor(mContext.getResources().getColor(R.color.useful_blue));
-        }else{
-            viewHolder.btnFastBuy.setBackgroundResource(R.drawable.category_fast_buy);
-        }
+
         //viewHolder.btnFastBuy.setEnabled(!list.get(position).isChecked.equals(Goods.GOODS_IS_BUY));
         viewHolder.btnFastBuy.setTag(position);
         viewHolder.btnFastBuy.setOnClickListener(clickListener);
@@ -169,7 +165,13 @@ public class GoodsDetailListAdapter extends BaseAdapter implements AlertDialogUt
         }else{
             viewHolder.btnFastBuy.setEnabled(true);
             viewHolder.btnFastBuy.setText("快订");
-            viewHolder.btnFastBuy.setBackgroundResource(R.drawable.category_fast_buy);
+            //viewHolder.btnFastBuy.setBackgroundResource(R.drawable.category_fast_buy);
+
+            if(list.get(position).isChecked.equals(Goods.GOODS_IS_BUY)){
+                viewHolder.btnFastBuy.setBackgroundColor(mContext.getResources().getColor(R.color.useful_blue));
+            }else{
+                viewHolder.btnFastBuy.setBackgroundResource(R.drawable.category_fast_buy);
+            }
         }
 
         return convertView;

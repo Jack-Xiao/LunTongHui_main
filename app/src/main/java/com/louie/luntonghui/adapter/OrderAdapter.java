@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.model.db.Order;
+import com.louie.luntonghui.model.result.OrderList;
 import com.louie.luntonghui.ui.order.DetailOrderActivity;
+import com.louie.luntonghui.ui.order.OrderReturnActivity;
 import com.louie.luntonghui.util.IntentUtil;
 
 import java.text.ParseException;
@@ -28,11 +30,12 @@ import butterknife.InjectView;
  * Created by Administrator on 2015/7/17.
  */
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
-    private List<Order> data;
+    private List<OrderList.MysalelistEntity> data;
     private Context mContext;
     private SimpleDateFormat serverFormat;
     private SimpleDateFormat clientFormat;
     private Activity mActivity;
+    private String type;
 
     public OrderAdapter(Activity activity) {
         this.mContext = activity;
@@ -41,7 +44,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         clientFormat = new SimpleDateFormat("yyyy/MM/dd");
     }
 
-    public void setData(List<Order> lists){
+    public void setData(List<OrderList.MysalelistEntity> lists){
         if(data == null){
             data = new ArrayList<>();
         }
@@ -58,7 +61,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String serverTime = data.get(position).addTime;
+        String serverTime = data.get(position).add_time;
         String clientDate ;
         try {
             Date serverDate = serverFormat.parse(serverTime);
@@ -69,9 +72,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             clientDate = serverTime;
         }
 
-        holder.orderSnValue.setText(data.get(position).orderSn);
+        holder.orderSnValue.setText(data.get(position).order_sn);
         holder.orderDateValue.setText(clientDate);
-        holder.orderValue.setText("￥" + data.get(position).orderAmount);
+        holder.orderValue.setText("￥" + data.get(position).order_amount);
 
         holder.lookOver.setTag(position);
         holder.lookOver.setOnClickListener(mListener);
@@ -83,9 +86,19 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             int position =(Integer)v.getTag();
             //ToastUtil.showShortToast(mContext,position + "");
             Bundle bundle = new Bundle();
-            String orderId = data.get(position).orderId;
-            bundle.putString(Order.ORDERID,orderId);
-            IntentUtil.startActivity(mActivity,DetailOrderActivity.class,bundle);
+            String orderId = data.get(position).order_id;
+            String handler = data.get(position).handler;
+                bundle.putString(Order.ORDERID,orderId);
+            bundle.putString(Order.TYPE,type);
+            bundle.putString(Order.HANDLER,handler);
+
+
+            if(handler.equals(Order.RETURN_HANDLER)){
+                IntentUtil.startActivity(mActivity, OrderReturnActivity.class, bundle);
+            }else{
+                IntentUtil.startActivity(mActivity, DetailOrderActivity.class, bundle);
+            }
+
         }
     };
 

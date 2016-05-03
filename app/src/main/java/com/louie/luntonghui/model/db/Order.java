@@ -17,6 +17,9 @@ public class Order extends Model{
     public static final String DISPATCH_QUERY = "dispatch_query";
     public static final int DISPATCH_DEFAULT = 0;
     public static final int DISPATCH_NORMAL = 1;
+    public static final String TYPE = "type";
+    public static final String HANDLER = "handler";
+    public static final String RETURN_HANDLER = "11";
 
     @Column(name = "allow_to_modify")
     public String allowToModify;
