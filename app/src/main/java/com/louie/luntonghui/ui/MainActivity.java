@@ -46,14 +46,12 @@ import com.louie.luntonghui.fragment.NewOrderFragment;
 import com.louie.luntonghui.fragment.OrderFragment.ComeBackListener;
 import com.louie.luntonghui.model.db.AttentionGoods;
 import com.louie.luntonghui.model.db.HotSearchTable;
-import com.louie.luntonghui.model.db.Order;
 import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.db.User;
 import com.louie.luntonghui.model.result.CarList;
 import com.louie.luntonghui.model.result.DailySignIn;
 import com.louie.luntonghui.model.result.HotSearch;
 import com.louie.luntonghui.model.result.MineAttentionResult;
-import com.louie.luntonghui.model.result.OrderList;
 import com.louie.luntonghui.model.result.VersionUpdate;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.task.UpdateVersionTask;
@@ -236,7 +234,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
 
         initSearch();
-        //initOrder();
 
         initNavigation();
         initConfig();
@@ -279,51 +276,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                                 HotSearchTable table = new HotSearchTable();
                                 table.hotSearchChar = hotSearch.listallcat.get(i).name;
                                 table.save();
-                            }
-                        }
-                    }
-                });
-    }
-
-
-    private void initOrder() {
-        userId = DefaultShared.getString(RegisterLogin.USERUID, App.DEFAULT_USER_ID);
-        if (userId.equals("") || userId.equals(App.DEFAULT_USER_ID)) return;
-
-        /*String url = String.format(ConstantURL.GET_WHOLE_ORDER, userId);
-        RequestManager.addRequest(new GsonRequest(url, OrderList.class, getWholeOrderList(), errorListener()), this);*/
-        AppObservable.bindActivity(this, mApi.getOrderList(userId))
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(new Observer<OrderList>() {
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                    }
-
-                    @Override
-                    public void onNext(OrderList orderList) {
-                        List<Order> data = new ArrayList<Order>();
-
-                        if (orderList != null && orderList.mysalelist != null) {
-                            new Delete()
-                                    .from(Order.class)
-                                    .execute();
-                            for (int i = 0; i < orderList.mysalelist.size(); i++) {
-                                Order order = new Order();
-                                order.allowToModify = orderList.mysalelist.get(i).allow_to_modify;
-                                order.type = orderList.mysalelist.get(i).handler;
-                                order.money = orderList.mysalelist.get(i).money;
-                                order.payName = orderList.mysalelist.get(i).pay_name;
-                                order.orderId = orderList.mysalelist.get(i).order_id;
-                                order.orderSn = orderList.mysalelist.get(i).order_sn;
-                                order.orderAmount = orderList.mysalelist.get(i).order_amount;
-                                order.addTime = orderList.mysalelist.get(i).add_time;
-                                order.save();
-                                data.add(order);
                             }
                         }
                     }
@@ -644,59 +596,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         }
 
         setViewPagerItem(index);
-
-
-        /*Fragment fragment;
-
-
-        fragment = FragmentFactory.getNavigationFragment(index);
-        //fragment = listFragment.get(index);
-        if (index == 1) {
-            Bundle bundle = new Bundle();
-            //for..test.
-            fragment.setArguments(bundle);
-        }
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.content, fragment)
-                .commitAllowingStateLoss(); //yun commit类似
-
-        //switchContent(lastIndex,index);
-        lastIndex = index;*/
-
-
-        // mViewPager.setCurrentItem(index,false);
-
-       /* if (index == 5) {
-            mTabIndicators.get(2).setTextAndColor(tabName[2], getResources().getColor(R.color.red));
-            mTabIndicators.get(2).setIcon(pressImage[2]);
-        }
-
-        //mViewPager.setCurrentItem(index, false);
-        //Fragment fragment = FragmentFactory.getNavigationFragment(index);
-        Fragment fragment = listFragment.get(index);
-        fragmentManager.beginTransaction()
-                .replace(R.id.content, fragment)
-                .commitAllowingStateLoss(); //yun commit类似
-
-
-
-        /*Fragment fragment = listFragment.get(index);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        fragmentes = getSupportFragmentManager().getFragments();
-        if(fragmentes == null){
-            fragmentes = new ArrayList<>();
-            //fragmentes.add(listFragment.get(0));
-        }
-        if(!fragmentes.contains(fragment)){
-            transaction.add(R.id.content,fragment);
-        }
-
-        transaction.addToBackStack(index +"");
-        transaction.hide(listFragment.get(tabIndex));
-        transaction.show(fragment);
-        transaction.commitAllowingStateLoss();
-        tabIndex = index;*/
     }
 
 
@@ -806,35 +705,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         }
 
         setViewPagerItem(index);
-
-        //mViewPager.setCurrentItem(index, false);
-        //Fragment fragment = FragmentFactory.getNavigationFragment(index);
-        //Fragment fragment = listFragment.get(index);
-       /* Bundle bundle = new Bundle();
-        bundle.putInt(OrderFragment.ISREFERENCE, OrderFragment.NEEDREFERECE);
-
-*/
-        /*
-
-        if (fragment.isAdded()) {
-            return;
-        }
-        Bundle bundle = new Bundle();
-        bundle.putInt(OrderFragment.ISREFERENCE, OrderFragment.NEEDREFERECE);
-        /*Fragment fragment = listFragment.get(index);
-        fragment.setArguments(bundle);
-        mViewPager.setCurrentItem(index, false);*/
-
-        /*fragment.setArguments(bundle);
-
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.content, fragment)
-                .commitAllowingStateLoss(); //yun commit类似
-
-        */
-
-        //lastIndex = index;
 
         String getIntegralUrl = String.format(ConstantURL.DAILY_SIGN_IN, userId, Config.SEND_QUERY_INTEGRAL);
         RequestManager.addRequest(new GsonRequest(getIntegralUrl, DailySignIn.class,
@@ -959,35 +829,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         }
 
         setViewPagerItem(index);
-
-       /* Bundle bundle = new Bundle();
-        switch (index) {
-            case 1:
-                bundle.putString(Config.FASTQUERYARG, argument);
-                break;
-            case 4:
-                //bundle.putInt(OrderFragment.TYPE, Integer.parseInt(argument));
-
-                break;
-        }
-
-        //Fragment fragment = listFragment.get(index);
-
-
-        Fragment fragment = FragmentFactory.getNavigationFragment(index);
-        fragment.setArguments(bundle);
-        //mViewPager.setCurrentItem(index, false);
-        //
-
-        //Fragment fragment = listFragment.get(index);
-        //fragment.setArguments(bundle);
-        //mViewPager.setCurrentItem(index,false);
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.content, fragment)
-                .commitAllowingStateLoss(); //yun commit类似
-        lastIndex = index;
-*/
     }
 
     @Subscribe
