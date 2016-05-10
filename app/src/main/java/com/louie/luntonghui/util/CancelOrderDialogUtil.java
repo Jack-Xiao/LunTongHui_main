@@ -10,7 +10,6 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.annimon.stream.Stream;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.model.result.OrderDetailResult;
 
@@ -35,8 +34,6 @@ public class CancelOrderDialogUtil {
     RadioButton rbDownErrorOrder;
     RadioButton rbOthers;
 
-    private Stream<RadioButton> mRadioButtonStream;
-
     public interface CancelOrderListener{
         public void onConfirm(int position,String returnCount,
                               String reason );
@@ -59,7 +56,7 @@ public class CancelOrderDialogUtil {
 
 
     public void show(int position,OrderDetailResult.GoodsListEntity entity,
-                     Context context, final CancelOrderListener listener){
+                     Context context, final CancelOrderListener listener,String returnCount){
         this.mContext = context;
         View contentView = LayoutInflater.from(mContext).inflate(R.layout.view_cancel_order,null);
         TextView content = (TextView)contentView.findViewById(R.id.content);
@@ -87,7 +84,8 @@ public class CancelOrderDialogUtil {
         //mRadioButtonStream = mRadioButtonList.str
 
         tvName.setText(entity.goods_name);
-        buyGoodsCount.setText(entity.goods_number);
+        buyGoodsCount.setText("已购买数量：" + entity.goods_number);
+        content.setText(returnCount);
 
         rbMass.setOnCheckedChangeListener(changeListener);
         rbNotGoodSell.setOnCheckedChangeListener(changeListener);

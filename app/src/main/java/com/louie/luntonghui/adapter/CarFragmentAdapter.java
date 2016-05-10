@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Update;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
@@ -394,21 +393,18 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
     }
 
     private Response.Listener<Result> deleteGoodsRequest(final int position) {
-        return new Response.Listener<Result>() {
-            @Override
-            public void onResponse(Result result) {
-                if (result.rsgcode.equals(BaseNormalActivity.SUCCESSCODE)) {
+        return result -> {
+            if (result.rsgcode.equals(BaseNormalActivity.SUCCESSCODE)) {
 
-                    ToastUtil.showShortToast(mContext, R.string.delete_success);
-                    String recId = nativeCarList.get(position).carId;
-                    new Delete().
-                            from(ShoppingCar.class)
-                            .where("car_id = ?", recId)
-                            .execute();
-                    refListen.reference(0);
-                } else {
-                    ToastUtil.showShortToast(mContext, result.rsgmsg);
-                }
+                ToastUtil.showShortToast(mContext, R.string.delete_success);
+                String recId = nativeCarList.get(position).carId;
+                new Delete().
+                        from(ShoppingCar.class)
+                        .where("car_id = ?", recId)
+                        .execute();
+                refListen.reference(0);
+            } else {
+                ToastUtil.showShortToast(mContext, result.rsgmsg);
             }
         };
     }
@@ -483,32 +479,26 @@ public class CarFragmentAdapter extends RecyclerView.Adapter<CarFragmentAdapter.
 
 
     public Response.Listener<Result> changeCheckState(final int position, final String state) {
-        return new Response.Listener<Result>() {
-            @Override
-            public void onResponse(Result result) {
-                mProgressDialog.dismiss();
-                if (result.rsgcode.equals("000")) {
-                    new Update(ShoppingCar.class)
-                            .set("isChecked = ?", state)
-                            .where("goods_id = ?", nativeCarList.get(position).goodsId)
-                            .execute();
+        return result -> {
+            mProgressDialog.dismiss();
+            if (result.rsgcode.equals("000")) {
+                new Update(ShoppingCar.class)
+                        .set("isChecked = ?", state)
+                        .where("goods_id = ?", nativeCarList.get(position).goodsId)
+                        .execute();
 
-                    refListen.reference(1);
-                } else {
-                    ToastUtil.showLongToast(mContext, result.rsgmsg);
-                }
+                refListen.reference(1);
+            } else {
+                ToastUtil.showLongToast(mContext, result.rsgmsg);
             }
         };
     }
 
     protected Response.ErrorListener errorListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                mProgressDialog.dismiss();
-                if(error !=null)
-                ToastUtil.showLongToast(mContext, error.getMessage());
-            }
+        return error -> {
+            mProgressDialog.dismiss();
+            if(error !=null)
+            ToastUtil.showLongToast(mContext, error.getMessage());
         };
     }
 

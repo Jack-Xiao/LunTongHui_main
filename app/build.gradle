@@ -1,14 +1,28 @@
-//apply plugin : 'android-sdk-manager'
 apply plugin : 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'kotlin-android'
 
 def versionMajor = 1
-def versionMinor = 0
-def versionPatch = 8
-def versionBuild = 1
+def versionMinor = 1
+def versionPatch = 0
+def versionBuild = 0
 
 android {
+
+    productFlavors{
+        dev {
+            minSdkVersion 15
+        }
+
+        prod {
+            minSdkVersion 15
+        }
+    }
+
+    //非必要部分，大内存机器可加入
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
     signingConfigs {
         /*LunTongHui {
             keyAlias 'keystore'
@@ -50,7 +64,7 @@ android {
 
         debug{
             signingConfig signingConfigs.LunTongHui
-            minifyEnabled false
+           // minifyEnabled false
         }
     }
 
@@ -82,7 +96,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'io.reactivex:rxandroid:0.24.0'
-    /*    compile 'me.tatarka:gradle-retrolambda:3.1.0'*/
+
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.4.0'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
@@ -112,7 +126,7 @@ dependencies {
     compile 'com.bigkoo:convenientbanner:1.0.7'
     compile 'in.srain.cube:ultra-ptr:1.0.11'
     //debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'  内存分析工具
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1'
+    //releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1'
     compile files('libs/jg_filter_sdk_1.1.jar')
     compile files('libs/mid-sdk-2.20.jar')
     compile files('libs/wup-1.0.0-SNAPSHOT.jar')
@@ -137,7 +151,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'cn.bingoogolapple:bga-refreshlayout:1.1.3'
-    //kotlin
-    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.0.1-2'
-    compile 'com.annimon:stream:1.0.9'
+
 }

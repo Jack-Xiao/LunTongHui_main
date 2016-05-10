@@ -3,7 +3,6 @@ package com.louie.luntonghui.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +24,7 @@ import butterknife.InjectView;
 import rx.Observer;
 import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Jack on 16/4/26.
@@ -37,40 +36,36 @@ public class EachOrderFragment extends BaseFragment
 
     @InjectView(R.id.recycler)
     RecyclerView recyclerView;
-    private Context mContext;
-    private OrderAdapter mAdapter;
-    private String orderType;
+    protected Context mContext;
+    protected OrderAdapter mAdapter;
+    protected String orderType;
 
     public static final String ORDER = "order";
-    private boolean hasLoaded = false;
+    protected boolean hasLoaded = false;
     private List<OrderList.MysalelistEntity> mOrderList;
-    private int currentPage;
-    private int totalPage;
+    protected int currentPage;
+    protected int totalPage;
     public static final String TYPE = "type";
 
     public static final String ORDERTYPE_WHOLE = "0";
     public static final String ORDERTYPE_WAIT = "1";
     public static final String ORDERTYPE_SONG = "3";
-    public static final String ORDERTYPE_FINISH = "8";
+    public static final String ORDERTYPE_FINISH = "11";
     public static final String ORDERTYPE_CANCEL = "9";
+    protected boolean isAllLoad = false;
+    private int currentPageSize;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
-
-        mOrderList = new ArrayList<>();
-
         mAdapter = new OrderAdapter(getActivity());
-        /*if(savedInstanceState !=null){
-            List<OrderList.MysalelistEntity> list = savedInstanceState.getParcelableArrayList(ORDER);
-            mAdapter.setData(list);
-        }else{
-            loadData(1);
-        }*/
+        mOrderList = new ArrayList();
+        currentPageSize = Config.PAGE_SIZE;
     }
 
-    public static Fragment newFragment(String type){
+    public static EachOrderFragment newFragment(String type){
         Bundle bundle = new Bundle();
         bundle.putString(TYPE, type);
         EachOrderFragment fragment = new EachOrderFragment();
@@ -78,15 +73,12 @@ public class EachOrderFragment extends BaseFragment
         return fragment;
     }
 
-    private void loadData(int i) {
+    public void loadData(int i) {
         currentPage = i;
-        AppObservable.bindFragment(this,mApi.getOrderList(userId, Config.PAGE_SIZE,i,orderType))
-                .map(new Func1<OrderList, OrderList>() {
-                    @Override
-                    public OrderList call(OrderList orderList) {
-                        return orderList;
-                    }
-                }).observeOn(AndroidSchedulers.mainThread())
+        AppObservable.bindFragment(this,mApi.getOrderList(userId, i,currentPageSize,orderType))
+                //.map(orderList -> orderList).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
 
@@ -103,15 +95,20 @@ public class EachOrderFragment extends BaseFragment
 
         @Override
         public void onNext(OrderList orderList) {
+
             int totalPage = (orderList.total_count / Config.PAGE_SIZE) + 1;
             hasLoaded = true;
-            contentLoader.setPage(currentPage, totalPage);
+            //contentLoader.setPage(currentPage, totalPage);
+            if(orderList.mysalelist.size() < currentPageSize) isAllLoad = true;
+            if(contentLoader == null)return;
+            contentLoader.setLoadState(currentPage,isAllLoad);
             mOrderList.addAll(orderList.mysalelist);
 
             mAdapter.setData(mOrderList);
-            mAdapter.notifyDataSetChanged();
+
         }
     };
+
 
     @Nullable
     @Override
@@ -119,18 +116,23 @@ public class EachOrderFragment extends BaseFragment
         View view = inflater.inflate(R.layout.fragment_order_each, container, false);
         ButterKnife.inject(this,view);
 
+        mAdapter.clear();
+        mOrderList.clear();
+        isAllLoad = false;
+
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-
+        contentLoader.setPageSize(currentPageSize);
         contentLoader.setAdapter(mAdapter);
         contentLoader.setOnRefreshListener(this);
+        contentLoader.setMoreListener(this);
         parserArgument();
         loadData(1);
         return view;
     }
 
-    private void parserArgument() {
+    protected void parserArgument() {
         Bundle bundle = getArguments();
         orderType = bundle.getString(TYPE);
     }
@@ -140,7 +142,7 @@ public class EachOrderFragment extends BaseFragment
         reloadData();
     }
 
-    private void reloadData() {
+    protected void reloadData() {
         mOrderList.clear();
         loadData(1);
     }
@@ -155,4 +157,5 @@ public class EachOrderFragment extends BaseFragment
     public void onMore(int page) {
         loadData(page);
     }
+
 }

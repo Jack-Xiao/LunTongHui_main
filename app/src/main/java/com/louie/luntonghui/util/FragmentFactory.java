@@ -7,14 +7,15 @@ import com.louie.luntonghui.fragment.CarFragment;
 import com.louie.luntonghui.fragment.CategoryFragment;
 import com.louie.luntonghui.fragment.GoodsDetailFragment;
 import com.louie.luntonghui.fragment.HomeFragment;
- import com.louie.luntonghui.fragment.MineFragment1;
-import com.louie.luntonghui.fragment.OrderFragment;
+import com.louie.luntonghui.fragment.MineFragment1;
+import com.louie.luntonghui.fragment.NewOrderFragment;
 
 /**
  * Created by Administrator on 2015/6/5.
  */
 public class FragmentFactory {
     private Activity activity;
+    private static Fragment orderFragment = new NewOrderFragment();
 
     public static Fragment getNavigationFragment(int index){
         Fragment fragment;
@@ -32,7 +33,8 @@ public class FragmentFactory {
                 fragment = new CarFragment();
                 break;
             case 4:
-                fragment = new OrderFragment();
+                //fragment = new OrderFragment();
+                fragment = new NewOrderFragment();
                 break;
             case 5:
                 fragment = new GoodsDetailFragment();
@@ -42,6 +44,4 @@ public class FragmentFactory {
         }
         return fragment;
     }
-
-
 }

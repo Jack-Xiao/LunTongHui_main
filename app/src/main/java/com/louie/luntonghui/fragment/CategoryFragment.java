@@ -20,7 +20,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.adapter.CategoryHomeAdapter;
@@ -134,27 +133,21 @@ public class CategoryFragment extends BaseFragment implements AdapterView.OnItem
     }
 
     private Response.Listener<GoodsList> getGoodsList() {
-        return new Response.Listener<GoodsList>() {
-            @Override
-            public void onResponse(final GoodsList goodsList) {
+        return goodsList1 -> {
 
-            }
         };
     }
 
 
     protected Response.ErrorListener errorListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //ToastUtil.showLongToast(getActivity(), error.getMessage());
-                if(error !=null){
-                    if(getActivity() == null) return;
-                    ToastUtil.showShortToast(getActivity(),R.string.network_error);
-                    return;
-                }
-                ToastUtil.showLongToast(getActivity(), R.string.network_connect_fail);
+        return error -> {
+            //ToastUtil.showLongToast(getActivity(), error.getMessage());
+            if(error !=null){
+                if(getActivity() == null) return;
+                ToastUtil.showShortToast(getActivity(),R.string.network_error);
+                return;
             }
+            ToastUtil.showLongToast(getActivity(), R.string.network_connect_fail);
         };
     }
 

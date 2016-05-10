@@ -295,41 +295,36 @@ public class OrderFragment extends BaseFragment implements SwipeRefreshLayout.On
     }
 
     private Response.Listener<OrderList> getWholeOrderList() {
-        return new Response.Listener<OrderList>() {
+        return orderList -> TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<Order>>() {
             @Override
-            public void onResponse(final OrderList orderList) {
-                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<Order>>() {
-                    @Override
-                    protected List<Order> doInBackground(Object... params) {
-                        List<Order> data = new ArrayList<Order>();
-                            new Delete()
-                                    .from(Order.class)
-                                    .execute();
+            protected List<Order> doInBackground(Object... params) {
+                List<Order> data = new ArrayList<Order>();
+                    new Delete()
+                            .from(Order.class)
+                            .execute();
 
-                            for (int i = 0; i < orderList.mysalelist.size(); i++) {
-                                Order order = new Order();
-                                order.allowToModify = orderList.mysalelist.get(i).allow_to_modify;
-                                order.type = orderList.mysalelist.get(i).handler;
-                                order.money = orderList.mysalelist.get(i).money;
-                                order.payName = orderList.mysalelist.get(i).pay_name;
-                                order.orderId = orderList.mysalelist.get(i).order_id;
-                                order.orderSn = orderList.mysalelist.get(i).order_sn;
-                                order.orderAmount = orderList.mysalelist.get(i).order_amount;
-                                order.addTime = orderList.mysalelist.get(i).add_time;
-                                order.save();
-                                data.add(order);
-                            }
-
-                        return data;
+                    for (int i = 0; i < orderList.mysalelist.size(); i++) {
+                        Order order = new Order();
+                        order.allowToModify = orderList.mysalelist.get(i).allow_to_modify;
+                        order.type = orderList.mysalelist.get(i).handler;
+                        order.money = orderList.mysalelist.get(i).money;
+                        order.payName = orderList.mysalelist.get(i).pay_name;
+                        order.orderId = orderList.mysalelist.get(i).order_id;
+                        order.orderSn = orderList.mysalelist.get(i).order_sn;
+                        order.orderAmount = orderList.mysalelist.get(i).order_amount;
+                        order.addTime = orderList.mysalelist.get(i).add_time;
+                        order.save();
+                        data.add(order);
                     }
 
-                    @Override
-                    protected void onPostExecute(List<Order> orders) {
-                        if (swipeContainer != null) swipeContainer.setRefreshing(false);
-                        OnClickOrderNavigation(initType);
-                    }
-                });
+                return data;
             }
-        };
+
+            @Override
+            protected void onPostExecute(List<Order> orders) {
+                if (swipeContainer != null) swipeContainer.setRefreshing(false);
+                OnClickOrderNavigation(initType);
+            }
+        });
     }
 }

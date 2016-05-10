@@ -177,7 +177,7 @@ public class DispatchTodayActivity extends BaseDispatchActivity
                 ToastUtil.showShortToast(DispatchTodayActivity.this, "今日没有数据");
                 return;
             }
-
+            dispatchInfo.setVisibility(View.VISIBLE);
             data = dispatchToday;
             filterData(data.list);
         }

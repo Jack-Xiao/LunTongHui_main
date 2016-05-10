@@ -63,7 +63,6 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
     @InjectView(R.id.enough_total_deliver_value)
     TextView enoughTotalDeliverValue;
 
-
     ProgressDialog mProgressDialog;
     public String queryUserId;
 
@@ -90,6 +89,8 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
     private boolean orderCanCancel = false;
     private List<OrderDetailResult.GoodsListEntity> goodses;
     public static final String GOODS_LIST = "goods_list";
+    public boolean isCanReturn = false;
+    private String canReturn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,13 +107,22 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
             dispatchType = bundle.getInt(Order.DISPATCH_QUERY);
             type = bundle.getString(Order.TYPE);
             handler = bundle.getString(Order.HANDLER);
+
+            canReturn = bundle.getString(Order.CAN_RETURN_STATE);
             if(queryUserId != null){
                 userId = queryUserId;
             }
 
-            if(handler.equals(EachOrderFragment.ORDERTYPE_FINISH)){
+            if(handler!= null && handler.equals(EachOrderFragment.ORDERTYPE_FINISH)){
                 orderCanCancel = true;
-                cancelOrder.setText(getResources().getString(R.string.cancel_order));
+                cancelOrder.setText(getResources().getString(R.string.apply_order));
+                if(canReturn !=null && canReturn.equals(Order.CAN_RETURN)){
+                    isCanReturn = true;
+                    cancelOrder.setVisibility(View.VISIBLE);
+                }else{
+                    cancelOrder.setVisibility(View.GONE);
+                    isCanReturn = false;
+                }
             }
         }
 
@@ -217,6 +227,9 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
         businessMessage = (TextView)findViewById(R.id.business_message);
 
 
+        if(orderCanCancel && isCanReturn){
+
+        }
 
     }
 
@@ -254,96 +267,93 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
     }
 
     private Response.Listener<OrderDetailResult> orderDetailRequest() {
-        return new Response.Listener<OrderDetailResult>() {
-            @Override
-            public void onResponse(OrderDetailResult orderDetailResult) {
-                mProgressDialog.dismiss();
-                OrderDetailResult.OrderEntity order = orderDetailResult.order;
+        return orderDetailResult -> {
+            mProgressDialog.dismiss();
+            OrderDetailResult.OrderEntity order = orderDetailResult.order;
 
-                int orderState = Integer.parseInt(order.order_status);
-                if(orderState == NOT_ORDER_CONFIRM){
-                    fixOrder.setVisibility(View.VISIBLE);
-                }
-
-                setDispatch();
-
-                orderStateValue.setText(orderStates[orderState]);
-                orderSnValue.setText(order.order_sn);
-                orderMoneyValue.setText("￥" + order.order_amount); //..
-                downOrderTimeValue.setText(order.formated_add_time);
-
-                //payMethodValue.setText(orderDetailResult.payment_list.get(0).pay_name);
-                payMethodValue.setText(order.pay_name);
-                goodsValueValue.setText("￥" + orderDetailResult.order.goods_amount);
-                freightValue.setText("￥" + order.shipping_fee);
-
-                salesVolumeValue.setText("￥" + order.integral_money + ", 注:[花费轮通币" + order.integral + "]");
-                needPayValueValue.setText("￥" + order.goods_amount);
-                hasPayValueValue.setText("￥" + order.pay_fee);
-                payStateValue.setText(order.pay_status + "[" + order.shipping_status + "]");
-
-                try{
-                    String province = regions.get(order.province) + "省";
-                    String city = regions.get(order.city) + "市";
-                    String district = regions.get(order.district);
-                    String addressDetail = order.address;
-                    deliveryAddressValue.setText(province + city + district + addressDetail);
-                }catch (Exception e){
-
-                }
-                consigneeValue.setText(order.consignee);
-                phoneNumberValue.setText(order.mobile);
-
-                businessMessage.setText(order.postscript+"");
-
-                List<OrderDetailResult.GoodsListEntity> lists = orderDetailResult.goods_list;
-                List<ProduceOrder.CartGoodsEntity> cart_goods = new ArrayList<>();
-                ProduceOrder produceOrder = new ProduceOrder();
-                for (int i = 0; i < lists.size(); i++) {
-                    ProduceOrder.CartGoodsEntity car = new ProduceOrder.CartGoodsEntity();
-                    car.goods_thumb = lists.get(i).goods_thumb;
-                    car.goods_name = lists.get(i).goods_name;
-                    car.goods_price = lists.get(i).goods_price;
-                    car.goods_number = lists.get(i).goods_number;
-                    car.discount_type = lists.get(i).discount_type;
-                    //car.rec_id = orderDetailResult.order.order_id;
-
-                    car.orderid = orderDetailResult.order.order_id;
-                    car.rec_id = lists.get(i).rec_id;
-
-                    car.rid = lists.get(i).rid;
-                    car.guige = lists.get(i).guige;
-                    car.danwei = lists.get(i).danwei;
-                    car.goods_id = lists.get(i).goods_id;
-                    car.discount = lists.get(i).discount;
-                    cart_goods.add(car);
-                }
-                mGoodsAdapter.setData(cart_goods, isFixOrder);
-
-                enoughTotalDeliver.setVisibility(View.GONE);
-                enoughTotalReduce.setVisibility(View.GONE);
-
-                switch (orderDetailResult.order.act_type) {
-                    //减
-                    case ProduceOrderActivity.ENOUGH_TOTAL_REDUCE:
-                        enoughTotalReduce.setVisibility(View.VISIBLE);
-                        enoughTotalReduceValue.setText(order.details);
-                        break;
-                    //赠
-                    case ProduceOrderActivity.ENOUGH_TOTAL_DELIVER:
-                        enoughTotalDeliver.setVisibility(View.VISIBLE);
-                        enoughTotalDeliverValue.setText(order.gift);
-                        break;
-                    case ProduceOrderActivity.ENOUGH_TOTAL_ALL:
-                        enoughTotalDeliver.setVisibility(View.VISIBLE);
-                        enoughTotalReduce.setVisibility(View.VISIBLE);
-                        enoughTotalReduceValue.setText(order.details);
-                        enoughTotalDeliverValue.setText(order.gift);
-                        break;
-                }
-
-                goodses = orderDetailResult.goods_list;
+            int orderState = Integer.parseInt(order.order_status);
+            if(orderState == NOT_ORDER_CONFIRM){
+                fixOrder.setVisibility(View.VISIBLE);
             }
+
+            setDispatch();
+
+            orderStateValue.setText(orderStates[orderState]);
+            orderSnValue.setText(order.order_sn);
+            orderMoneyValue.setText("￥" + order.order_amount); //..
+            downOrderTimeValue.setText(order.formated_add_time);
+
+            //payMethodValue.setText(orderDetailResult.payment_list.get(0).pay_name);
+            payMethodValue.setText(order.pay_name);
+            goodsValueValue.setText("￥" + orderDetailResult.order.goods_amount);
+            freightValue.setText("￥" + order.shipping_fee);
+
+            salesVolumeValue.setText("￥" + order.integral_money + ", 注:[花费轮通币" + order.integral + "]");
+            needPayValueValue.setText("￥" + order.goods_amount);
+            hasPayValueValue.setText("￥" + order.pay_fee);
+            payStateValue.setText(order.pay_status + "[" + order.shipping_status + "]");
+
+            try{
+                String province = regions.get(order.province) + "省";
+                String city = regions.get(order.city) + "市";
+                String district = regions.get(order.district);
+                String addressDetail = order.address;
+                deliveryAddressValue.setText(province + city + district + addressDetail);
+            }catch (Exception e){
+
+            }
+            consigneeValue.setText(order.consignee);
+            phoneNumberValue.setText(order.mobile);
+
+            businessMessage.setText(order.postscript+"");
+
+            List<OrderDetailResult.GoodsListEntity> lists = orderDetailResult.goods_list;
+            List<ProduceOrder.CartGoodsEntity> cart_goods = new ArrayList<>();
+            ProduceOrder produceOrder = new ProduceOrder();
+            for (int i = 0; i < lists.size(); i++) {
+                ProduceOrder.CartGoodsEntity car = new ProduceOrder.CartGoodsEntity();
+                car.goods_thumb = lists.get(i).goods_thumb;
+                car.goods_name = lists.get(i).goods_name;
+                car.goods_price = lists.get(i).goods_price;
+                car.goods_number = lists.get(i).goods_number;
+                car.discount_type = lists.get(i).discount_type;
+                //car.rec_id = orderDetailResult.order.order_id;
+
+                car.orderid = orderDetailResult.order.order_id;
+                car.rec_id = lists.get(i).rec_id;
+
+                car.rid = lists.get(i).rid;
+                car.guige = lists.get(i).guige;
+                car.danwei = lists.get(i).danwei;
+                car.goods_id = lists.get(i).goods_id;
+                car.discount = lists.get(i).discount;
+                cart_goods.add(car);
+            }
+            mGoodsAdapter.setData(cart_goods, isFixOrder);
+
+            enoughTotalDeliver.setVisibility(View.GONE);
+            enoughTotalReduce.setVisibility(View.GONE);
+
+            switch (orderDetailResult.order.act_type) {
+                //减
+                case ProduceOrderActivity.ENOUGH_TOTAL_REDUCE:
+                    enoughTotalReduce.setVisibility(View.VISIBLE);
+                    enoughTotalReduceValue.setText(order.details);
+                    break;
+                //赠
+                case ProduceOrderActivity.ENOUGH_TOTAL_DELIVER:
+                    enoughTotalDeliver.setVisibility(View.VISIBLE);
+                    enoughTotalDeliverValue.setText(order.gift);
+                    break;
+                case ProduceOrderActivity.ENOUGH_TOTAL_ALL:
+                    enoughTotalDeliver.setVisibility(View.VISIBLE);
+                    enoughTotalReduce.setVisibility(View.VISIBLE);
+                    enoughTotalReduceValue.setText(order.details);
+                    enoughTotalDeliverValue.setText(order.gift);
+                    break;
+            }
+
+            goodses = orderDetailResult.goods_list;
         };
     }
 

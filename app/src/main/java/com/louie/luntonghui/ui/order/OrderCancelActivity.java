@@ -3,6 +3,8 @@ package com.louie.luntonghui.ui.order;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 
@@ -15,6 +17,7 @@ import com.louie.luntonghui.model.result.ResultObject;
 import com.louie.luntonghui.ui.BaseCenterToolbarActivity;
 import com.louie.luntonghui.util.BaseAlertDialogUtil;
 import com.louie.luntonghui.util.ToastUtil;
+import com.louie.luntonghui.view.ItemDivider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,12 +65,26 @@ public class OrderCancelActivity extends BaseCenterToolbarActivity implements Ba
         mAdapter = new CancelOrderAdapter(mContext,list);
         orderId = getIntent().getStringExtra(Order.ORDERID);
 
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        //设置默认动画
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        // 设置固定大小
+        recyclerView.setHasFixedSize(true);
+        //mRecyclerView.addItemDecoration(new RecyclerViewLinearLayoutViewItemDecoration(mContext, HORIZONTAL_LIST));
+        recyclerView.addItemDecoration(new ItemDivider(mContext, R.drawable.recyclerview_break_line));
+        recyclerView.setAdapter(mAdapter);
     }
 
     @OnClick(R.id.confirm)
     public void onClick(){
+        if(mAdapter.getMapValue().size() == 0){
+            ToastUtil.showShortToast(mContext,"请选择退货商品");
+            return;
+        }
         BaseAlertDialogUtil.getInstance()
                 .setMessage("确认申请退货吗?")
+                .setPositiveContent("确定")
+                .setNegativeContent("取消")
                 .show(mContext,this);
     }
 
@@ -87,13 +104,14 @@ public class OrderCancelActivity extends BaseCenterToolbarActivity implements Ba
             p.return_reason = values.get(key).reason;
             list.add(p);
         }
-        product.return_info = list;
 
-        AppObservable.bindFragment(this, mApi.applyForProduct(product))
+        product.return_info = new ArrayList<>();
+        product.return_info.addAll(list);
+
+        AppObservable.bindActivity(this, mApi.applyForProduct(product))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observable);
-
     }
 
     private Observer<ResultObject> observable = new Observer<ResultObject>() {
@@ -104,6 +122,7 @@ public class OrderCancelActivity extends BaseCenterToolbarActivity implements Ba
 
         @Override
         public void onError(Throwable e) {
+            ToastUtil.showShortToast(mContext,"获取数据失败");
 
         }
 
@@ -114,4 +133,5 @@ public class OrderCancelActivity extends BaseCenterToolbarActivity implements Ba
             if(resultObject.rsgcode.equals(ResultObject.SUCCESS)) finish();
         }
     };
+
 }

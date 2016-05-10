@@ -36,6 +36,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     private SimpleDateFormat clientFormat;
     private Activity mActivity;
     private String type;
+    public static final String CAN_RETURN = "1";
+    public static final String CAN_NOT_RETURN = "0";
 
     public OrderAdapter(Activity activity) {
         this.mContext = activity;
@@ -50,6 +52,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         }
         data.clear();
         data.addAll(lists);
+        notifyDataSetChanged();
+
+    }
+
+    public void clear(){
+        if(data == null) data = new ArrayList<>();
+        data.clear();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -72,13 +82,39 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             clientDate = serverTime;
         }
 
+
         holder.orderSnValue.setText(data.get(position).order_sn);
         holder.orderDateValue.setText(clientDate);
         holder.orderValue.setText("￥" + data.get(position).order_amount);
 
         holder.lookOver.setTag(position);
         holder.lookOver.setOnClickListener(mListener);
+
+        if(data.get(position).has_return_id.equals(Order.NO_RETURN_ID)){
+            holder.returnOrder.setVisibility(View.GONE);
+        }else{
+            holder.returnOrder.setVisibility(View.VISIBLE);
+        }
+        holder.returnOrder.setTag(position);
+        holder.returnOrder.setOnClickListener(orderReturnClick);
     }
+
+
+    private View.OnClickListener orderReturnClick = v ->{
+        int position =(Integer)v.getTag();
+        //ToastUtil.showShortToast(mContext,position + "");
+        Bundle bundle = new Bundle();
+        String orderId = data.get(position).order_id;
+        String handler = data.get(position).handler;
+        String returnId = data.get(position).has_return_id;
+
+        bundle.putString(Order.ORDERID,orderId);
+        bundle.putString(Order.TYPE,type);
+        bundle.putString(Order.HANDLER,handler);
+        bundle.putString(Order.RETURN_ORDER_ID,returnId);
+        IntentUtil.startActivity(mActivity, OrderReturnActivity.class, bundle);
+        //IntentUtil.startActivity(mActivity, DetailOrderActivity.class, bundle);
+    };
 
     private View.OnClickListener mListener = new View.OnClickListener() {
         @Override
@@ -88,17 +124,24 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             Bundle bundle = new Bundle();
             String orderId = data.get(position).order_id;
             String handler = data.get(position).handler;
-                bundle.putString(Order.ORDERID,orderId);
+            String returnId = data.get(position).has_return_id;
+            String canReturn = data.get(position).can_return;
+
+            bundle.putString(Order.ORDERID,orderId);
             bundle.putString(Order.TYPE,type);
             bundle.putString(Order.HANDLER,handler);
+            bundle.putString(Order.CAN_RETURN_STATE,canReturn);
 
+            IntentUtil.startActivity(mActivity, DetailOrderActivity.class, bundle);
 
-            if(handler.equals(Order.RETURN_HANDLER)){
+            /*if(handler.equals(Order.RETURN_ORDER_HANDLER)){
+                IntentUtil.startActivity(mActivity, OrderReturnActivity.class, bundle);
+            }else if(handler.equals(Order.RETURN_HANDLER) && data.get(position).can_return !=null &&
+                    data.get(position).can_return.equals(Order.CAN_RETURN)){
                 IntentUtil.startActivity(mActivity, OrderReturnActivity.class, bundle);
             }else{
                 IntentUtil.startActivity(mActivity, DetailOrderActivity.class, bundle);
-            }
-
+            }*/
         }
     };
 
@@ -117,6 +160,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         TextView orderValue;
         @InjectView(R.id.look_over)
         Button lookOver;
+        @InjectView(R.id.return_order)
+        Button returnOrder;
 
         public ViewHolder(View itemView) {
             super(itemView);

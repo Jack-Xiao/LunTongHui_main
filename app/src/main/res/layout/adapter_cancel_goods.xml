@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/goods_img"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_toRightOf="@id/goods_img"
                 android:ellipsize="end"
                 android:maxLines="1"
@@ -43,13 +43,15 @@
 
             <TextView
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:id="@+id/goods_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="价格:12303.00" />
 
             <RelativeLayout
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
@@ -61,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/red_primary_dark"
                     tools:text = "已购买： 100"
                     />
 
@@ -75,8 +77,6 @@
             </RelativeLayout>
 
         </LinearLayout>
-
-
     </LinearLayout>
 
     <View
@@ -90,7 +90,7 @@
         android:paddingBottom="10dp"
         android:paddingLeft="30dp"
         android:paddingTop="10dp"
-        android:textSize="20sp"
+        android:textSize="15sp"
         tools:text="退货原因：产品质量问题" />
 
 </LinearLayout>

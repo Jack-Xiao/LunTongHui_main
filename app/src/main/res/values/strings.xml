@@ -484,4 +484,6 @@
     <string name="history_dispatch">历史配送</string>
     <string name="order_return_info">退货单详情</string>
     <string name="confirm_cancel_goods">确认退货</string>
+    <string name="apply_order">申请退货</string>
+    <string name="return_order">退货单</string>
 </resources>

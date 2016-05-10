@@ -37,6 +37,8 @@ public class OrderList {
         public String order_id;
         public String add_time;
         public String order_sn;
+        public String can_return; // handler  = 1 , can_return = 1 表示可以退货
+        public String has_return_id; //退货单 ID 0 则没有退货单，
 
         @Override
         public int describeContents() {

@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.net.RequestManager;
 import com.louie.luntonghui.rest.RetrofitUtils;
@@ -47,20 +46,17 @@ public class BaseNormalActivity extends AppCompatActivity implements View.OnClic
 
 
     protected Response.ErrorListener errorListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                isRunning = false;
-                if(error.networkResponse == null){
-                    ToastUtil.showShortToast(mContext,R.string.error_network);
-                    return;
-                }
-
-                switch (error.networkResponse.statusCode){
-                    case HttpStatus.SC_NO_CONTENT:
-                }
-                ToastUtil.showLongToast(BaseNormalActivity.this, error.getMessage());
+        return error -> {
+            isRunning = false;
+            if(error.networkResponse == null){
+                ToastUtil.showShortToast(mContext,R.string.error_network);
+                return;
             }
+
+            switch (error.networkResponse.statusCode){
+                case HttpStatus.SC_NO_CONTENT:
+            }
+            ToastUtil.showLongToast(BaseNormalActivity.this, error.getMessage());
         };
     }
 
@@ -73,7 +69,7 @@ public class BaseNormalActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.toolbar_navigation:
-                finish();
+                this.finish();
                 break;
         }
     }

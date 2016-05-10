@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
@@ -40,7 +41,7 @@ public class ContentLoaderView extends FrameLayout implements SwipeRefreshLayout
     private OnMoreListener moreListener;
 
     private boolean loadMore = false;
-    private int totalPage = 1;
+    //private int totalPage = 1;
     private int currentPage = 1;
 
 
@@ -57,6 +58,10 @@ public class ContentLoaderView extends FrameLayout implements SwipeRefreshLayout
     public static final int STATE_EMPTY = 0x3;
     public static final int STATE_ERROR = 0x4;
     private int displayState = STATE_LOADING;
+    private boolean isCompleted = false;
+    private int lastVisibleItem;
+    private static final int INIT_PAGE_SIZE = 20;
+    private int PAGE_SIZE = INIT_PAGE_SIZE;
 
     public ContentLoaderView(Context context) {
         super(context);
@@ -73,6 +78,9 @@ public class ContentLoaderView extends FrameLayout implements SwipeRefreshLayout
         super(context, attrs, defStyleAttr);
         initAttrs(context, attrs);
         initViews();
+    }
+    public void setPageSize(int pageSize){
+        this.PAGE_SIZE = pageSize;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -132,27 +140,38 @@ public class ContentLoaderView extends FrameLayout implements SwipeRefreshLayout
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
+            if(newState == RecyclerView.SCROLL_STATE_IDLE && !isCompleted &&
+                    lastVisibleItem + 1 == PAGE_SIZE * currentPage){
+
+                if(moreListener !=null){
+                    moreListener.onMore(++currentPage);
+                    refreshLayout.setEnabled(false);
+                }
+            }
         }
 
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            RecyclerView.LayoutManager layoutManager;
-            layoutManager = recyclerView.getLayoutManager();
+            lastVisibleItem = ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition();
+
+            //RecyclerView.LayoutManager layoutManager;
+
+           /* layoutManager = recyclerView.getLayoutManager();
             totalItemCount      = layoutManager.getItemCount();
             visibleItemCount    = layoutManager.getChildCount();
             View firstVisibleChild = recyclerView.getChildAt(0);
             firstVisibleItemPosition =  recyclerView.getChildPosition(firstVisibleChild);
-            if(totalPage > currentPage &&
+            if(!isCompleted &&
                 !loadMore&&
-                    (firstVisibleItemPosition+visibleItemCount+LOAD_MORE_ITEM_SLOP) >= totalItemCount ){
+                    (firstVisibleItemPosition+visibleItemCount+LOAD_MORE_ITEM_SLOP) >= totalItemCount){
 
                 loadMore = true;
                 if(moreListener !=null){
                     moreListener.onMore(++currentPage);
                     refreshLayout.setEnabled(false);
                  }
-            }
+            }*/
         }
     };
     public void setAdapter(RecyclerView.Adapter adapter){
@@ -221,11 +240,11 @@ public class ContentLoaderView extends FrameLayout implements SwipeRefreshLayout
         }
         loadMore = false;
         if(currentPage==1 && recyclerView.getLayoutManager().getChildCount() == 0){
-            errorMessageTV.setText(error.getMessage());
+            //errorMessageTV.setText(error.getMessage());
             setDisplayState(STATE_ERROR);
         }else{
             setDisplayState(STATE_CONTENT);
-            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "获取数据失败", Toast.LENGTH_SHORT).show();
         }
     }
     private void loadMoreCompleted(){
@@ -238,9 +257,15 @@ public class ContentLoaderView extends FrameLayout implements SwipeRefreshLayout
         this.moreListener = moreListener;
     }
 
-    public void setPage(int currentPage, int totalPage) {
+    /*public void setPage(int currentPage, int totalPage) {
         this.currentPage = currentPage;
         this.totalPage = totalPage;
+    }*/
+
+
+    public void setLoadState(int currentPage, boolean isAllLoad) {
+        this.isCompleted = isAllLoad;
+        this.currentPage = currentPage;
     }
 
     private void setDisplayState(int state){

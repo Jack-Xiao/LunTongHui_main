@@ -13,6 +13,7 @@ import com.louie.luntonghui.R;
 import com.louie.luntonghui.model.result.OrderDetailResult;
 import com.louie.luntonghui.util.CancelOrderDialogUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +33,11 @@ public class CancelOrderAdapter extends RecyclerView.Adapter<CancelOrderAdapter.
     private int curPosition;
 
 
-    public CancelOrderAdapter(Context context, List<OrderDetailResult.GoodsListEntity> list) {
+    public CancelOrderAdapter(Context context,List<OrderDetailResult.GoodsListEntity> list) {
+        goodses = new ArrayList<>();
         mContext = context;
-        goodses = list;
         keyMap = new HashMap<>();
+        goodses.addAll(list);
     }
 
     @Override
@@ -62,12 +64,13 @@ public class CancelOrderAdapter extends RecyclerView.Adapter<CancelOrderAdapter.
             holder.returnGoodsCount.setText("0");
         }
 
-        holder.returnGoodsCount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OrderDetailResult.GoodsListEntity entity = goodses.get(position);
-                CancelOrderDialogUtil.getInstance().show(position,entity,mContext,CancelOrderAdapter.this);
+        holder.returnGoodsCount.setOnClickListener(v -> {
+            OrderDetailResult.GoodsListEntity entity = goodses.get(position);
+            String returnGoodsCount = "0";
+            if(keyMap.containsKey(goodses.get(position).goods_id)){
+                returnGoodsCount = keyMap.get(goodses.get(position).goods_id).returnCount;
             }
+            CancelOrderDialogUtil.getInstance().show(position,entity,mContext,CancelOrderAdapter.this,returnGoodsCount);
         });
     }
 
@@ -77,7 +80,7 @@ public class CancelOrderAdapter extends RecyclerView.Adapter<CancelOrderAdapter.
 
     @Override
     public int getItemCount() {
-        return (goodses == null) ? 0 : goodses.size();
+        return goodses == null ? 0 : goodses.size();
     }
 
     @Override

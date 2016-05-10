@@ -47,6 +47,7 @@
         <item>未付款</item>
         <item>已取消</item>
         <item>添加中</item>
+        <item>已完成</item>
         <item>退货单</item>
     </string-array>
 

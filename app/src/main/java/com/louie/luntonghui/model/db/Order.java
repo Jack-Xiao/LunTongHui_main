@@ -20,7 +20,15 @@ public class Order extends Model{
     public static final String TYPE = "type";
     public static final String HANDLER = "handler";
     public static final String RETURN_HANDLER = "11";
+    public static final String RETURN_ORDER_HANDLER = "12";
+    public static final String RETURN_ORDER_ID ="return_order_id";
 
+    public static final String CAN_RETURN_STATE = "can_return";
+    public static final String CAN_RETURN = "1";
+    public static final String NOT_CAN_RETURN = "0";
+
+    //为0则 没有退货单
+    public static final String NO_RETURN_ID = "0";
     @Column(name = "allow_to_modify")
     public String allowToModify;
     @Column(name = "type")
@@ -40,6 +48,5 @@ public class Order extends Model{
 
     @Column(name = "add_time")
     public String addTime;
-
 
 }

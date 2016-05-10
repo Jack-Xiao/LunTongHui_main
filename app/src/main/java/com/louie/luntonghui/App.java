@@ -1,12 +1,10 @@
 package com.louie.luntonghui;
 
 import android.app.Application;
-import android.app.Service;
 import android.os.AsyncTask;
 import android.os.Vibrator;
 
 import com.activeandroid.ActiveAndroid;
-import com.android.volley.VolleyError;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -103,10 +101,6 @@ public class App extends Application {
         mLocationClient.setLocOption(option);
 
         mMyLocationListener = new MyLocationListener();
-        //mLocationClient.registerLocationListener(mMyLocationListener);
-        //mGeofenceClient = new GeofenceClient(getApplicationContext());
-        mVibrator = (Vibrator) getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
-
         initDebug();
     }
 
@@ -118,12 +112,6 @@ public class App extends Application {
         Glide.get(this).register(GlideUrl.class,InputStream.class,
                 new OkHttpUrlLoader.Factory(OkHttpUtils.getInstance(this)));
     }
-/*
-    private static RefWatcher refWatcher;
-
-    public static RefWatcher getRefWatcher(Context context){
-        return refWatcher;
-    }*/
 
     private void initDebug() {
         if(BuildConfig.DEBUG) {
@@ -136,12 +124,7 @@ public class App extends Application {
     }
 
     protected com.android.volley.Response.ErrorListener errorListener() {
-        return new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                ToastUtil.showLongToast(application, "网络连接失败");
-            }
-        };
+        return error -> ToastUtil.showLongToast(application, "网络连接失败");
     }
 
 

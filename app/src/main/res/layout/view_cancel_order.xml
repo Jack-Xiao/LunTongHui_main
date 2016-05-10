@@ -83,6 +83,7 @@
 
 
     <TextView
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="退货数量：" />
@@ -90,15 +91,15 @@
     <LinearLayout
         android:id="@+id/adjust_count"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp">
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp">
 
         <Button
             android:id="@+id/minus"
-            android:layout_width="35dp"
+            android:layout_width="45dp"
             android:layout_height="match_parent"
             android:background="@drawable/shopping_car_minus" />
 
@@ -113,12 +114,12 @@
             android:inputType="number"
             android:singleLine="true"
             android:textColor="@color/useful_grey"
-            android:textSize="14sp"
+            android:textSize="18sp"
             tools:text="23" />
 
         <Button
             android:id="@+id/plus"
-            android:layout_width="35dp"
+            android:layout_width="45dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="5dp"
             android:background="@drawable/shopping_car_plus" />
@@ -128,8 +129,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
         android:layout_marginTop="20dp">
 
         <Button

@@ -6,6 +6,7 @@
     <include layout="@layout/toolbar_center"/>
 
     <Button
+        android:layout_marginTop="5dp"
         android:id="@+id/confirm"
         android:textColor="@color/white"
         android:textSize="@dimen/button_size"
@@ -18,9 +19,9 @@
         android:layout_marginBottom="15dp"
         android:text="@string/confirm_cancel_goods"/>
 
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
+        android:layout_below="@id/app_bar_layout"
         android:layout_above="@id/confirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

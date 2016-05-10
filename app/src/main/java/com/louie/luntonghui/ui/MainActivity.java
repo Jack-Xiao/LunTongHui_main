@@ -7,8 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +21,6 @@ import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.activeandroid.query.Update;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.bumptech.glide.Glide;
@@ -29,6 +28,7 @@ import com.igexin.sdk.PushManager;
 import com.igexin.sdk.Tag;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
+import com.louie.luntonghui.adapter.MyFragmentPagerAdapter;
 import com.louie.luntonghui.data.GsonRequest;
 import com.louie.luntonghui.event.CategoryGoAroundEvent;
 import com.louie.luntonghui.event.ExitAppEvent;
@@ -42,7 +42,7 @@ import com.louie.luntonghui.fragment.CategoryFragment;
 import com.louie.luntonghui.fragment.GoodsDetailFragment;
 import com.louie.luntonghui.fragment.HomeFragment;
 import com.louie.luntonghui.fragment.MineFragment1;
-import com.louie.luntonghui.fragment.OrderFragment;
+import com.louie.luntonghui.fragment.NewOrderFragment;
 import com.louie.luntonghui.fragment.OrderFragment.ComeBackListener;
 import com.louie.luntonghui.model.db.AttentionGoods;
 import com.louie.luntonghui.model.db.HotSearchTable;
@@ -64,7 +64,6 @@ import com.louie.luntonghui.ui.web.AdvertisementWebActivity;
 import com.louie.luntonghui.util.Config;
 import com.louie.luntonghui.util.ConstantURL;
 import com.louie.luntonghui.util.DefaultShared;
-import com.louie.luntonghui.util.FragmentFactory;
 import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
@@ -84,7 +83,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import butterknife.Optional;
 import rx.Observer;
 import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -129,11 +127,9 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
     private List<NavigationItem> mTabIndicators;
     public static final String INITCHECKED = "-1";
-    private Fragment homeFragment;
 
-
-/*    @InjectView(R.id.viewpager)
-    MyViewPager mViewPager;*/
+    @InjectView(R.id.viewpager)
+    ViewPager mViewPager;
 
     private FragmentManager fragmentManager;
     private LocationClient mLocationClient;
@@ -166,9 +162,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     public static final int CARINDEX = 3;
     private BadgeView mBadgeView;
 
-
-    private List<Fragment> list;
-    @Optional
+    //private List<Fragment> list;
+    //@Optional
     /*@InjectView(R.id.content)
     View mContent;*/
     private LocalBroadcastManager mLocalBroadcastManager;
@@ -177,7 +172,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     private SimpleDateFormat dateFormat;
     private String provinceId;
     public String strTags;
-
+    private MyFragmentPagerAdapter mPageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,20 +229,14 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
             initTab = bundle.getInt(RegisterStep3Activity.INIT_TYPE);
         }
 
-        mTabIndicators = new ArrayList<NavigationItem>();
+        mTabIndicators = new ArrayList<>();
 
         fragmentManager = getSupportFragmentManager();
         initView();
 
-        listFragment = new ArrayList<>();
-        listFragment.add(new HomeFragment());
-        listFragment.add(new CategoryFragment());
-        listFragment.add(new MineFragment1());
-        listFragment.add(new CarFragment());
-        listFragment.add(new OrderFragment());
 
         initSearch();
-        initOrder();
+        //initOrder();
 
         initNavigation();
         initConfig();
@@ -261,7 +250,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
         initShopCar();
         initDateFormat();
-        homeFragment = new Fragment();
     }
 
 
@@ -354,40 +342,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
     private Fragment mFragmentContent;
 
-    public void switchContent(int fromIndex, int toIndex) {
-        Fragment from;
-        Fragment to;
-
-        FragmentTransaction transaction = fragmentManager.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-
-        to = list.get(toIndex);
-        if (fromIndex == -1) {
-            transaction.add(R.id.content, to)
-                    .commitAllowingStateLoss();
-        } else {
-            from = list.get(fromIndex);
-            if (mFragmentContent != to) {
-                mFragmentContent = to;
-                if (!to.isAdded()) {
-                    transaction.add(R.id.content, to).commitAllowingStateLoss();
-
-                    //transaction.replace(R.id.content, to).commitAllowingStateLoss();
-                } else {
-                    //隐藏当前的fragment，显示下一个
-                    transaction.hide(from).show(to).commitAllowingStateLoss();
-                }
-            }
-        }
-    }
-
     private void initMineAttention() {
         if (userId.equals(App.DEFAULT_USER_ID)) return;
-        //String url = String.format(ConstantURL.MINEATTENTION, userId, userType);
-        /*RequestManager.addRequest(
-                new GsonRequest(url, MineAttentionResult.class,
-                        mineAttentionRequest(), errorListener()), this);*/
-
         AppObservable.bindActivity(this, mApi.getMineAttentionGoodsList(userId, userType))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -447,48 +403,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     }
 
 
-    private Response.Listener<MineAttentionResult> mineAttentionRequest() {
-        return new Response.Listener<MineAttentionResult>() {
-            @Override
-            public void onResponse(final MineAttentionResult list) {
-                new Delete()
-                        .from(AttentionGoods.class)
-                        .execute();
-                for (int i = 0; i < list.listallcat.size(); i++) {
-                    MineAttentionResult.ListallcatEntity entity = list.listallcat.get(i);
-                    AttentionGoods goods1 = new AttentionGoods();
-                    goods1.goodsId = entity.goods_id;
-                    goods1.goodsName = entity.goods_name;
-                    goods1.goodsImg = entity.goods_img;
-                    goods1.goodsSN = entity.goods_sn;
-                    goods1.goodsNumber = entity.goods_number;
-                    goods1.marketPrice = entity.market_price;
-                    goods1.shopPrice = entity.shop_price;
-                    goods1.gysMoney = entity.gys_money;
-                    goods1.promotePrice = entity.promote_price;
-                    goods1.goodsBrief = entity.goods_brief;
-                    goods1.goodsDesc = entity.goods_desc;
-                    goods1.sortOrder = entity.sort_order;
-                    goods1.isBest = entity.is_best;
-                    goods1.isNew = entity.is_new;
-                    goods1.isHot = entity.is_hot;
-                    goods1.display = entity.display;
-                    goods1.giveIntegral = entity.give_integral;
-                    goods1.integral = entity.integral;
-                    goods1.isPromote = entity.is_promote;
-                    goods1.discounta = entity.discounta;
-                    goods1.discount = entity.discount;
-                    goods1.discountTime = entity.discount_time;
-                    goods1.discountName = entity.discount_name;
-                    goods1.guige = entity.guige;
-                    goods1.unit = entity.danwei;
-                    goods1.recId = entity.rec_id;
-                    goods1.save();
-                }
-            }
-        };
-    }
-
     public void initConfig() {
         //init category tab selecte item.
         //DefaultShared.putInt(Config.LAST_SELECT_CATEGORY_ITEM, Config.INIT_LAST_SELECT_CATEGORY_ITEM);
@@ -508,10 +422,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
     private void initShopCar() {
         if (userId.equals(App.DEFAULT_USER_ID)) return;
-
-        /*String getCarList = String.format(ConstantURL.GET_CAR_LIST, userId);
-        RequestManager.addRequest(new GsonRequest(
-                getCarList, CarList.class, getCarList(), errorListener()), this);*/
 
         AppObservable.bindActivity(this, mApi.getCarList(userId))
                 .subscribeOn(Schedulers.io())
@@ -577,42 +487,32 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     }
 
     protected com.android.volley.Response.ErrorListener errorListener() {
-        return new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                ToastUtil.showLongToast(MainActivity.this, "网络连接失败");
-            }
-        };
+        return error -> ToastUtil.showLongToast(MainActivity.this, "网络连接失败");
     }
 
     private Response.Listener<VersionUpdate> updateApp() {
-        return new Response.Listener<VersionUpdate>() {
+        return versionUpdate -> TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
             @Override
-            public void onResponse(final VersionUpdate versionUpdate) {
-                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
-                    @Override
-                    protected Object doInBackground(Object... params) {
+            protected Object doInBackground(Object... params) {
 
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Object o) {
-                        if (!versionUpdate.listallcat.rsgcode.equals(SUCCESSCODE1)) {
-                            curUpdateUrl = versionUpdate.listallcat.url;
-
-                            MyAlertDialogUtil.getInstance()
-                                    .setMessage(versionUpdate.listallcat.remark)
-                                    .setCanceledOnTouchOutside(false)
-                                    .setNegativeContent(R.string.update_not)
-                                    .setPositiveContent(R.string.update_now);
-
-                            MyAlertDialogUtil.getInstance().show(MainActivity.this, MainActivity.this);
-                        }
-                    }
-                });
+                return null;
             }
-        };
+
+            @Override
+            protected void onPostExecute(Object o) {
+                if (!versionUpdate.listallcat.rsgcode.equals(SUCCESSCODE1)) {
+                    curUpdateUrl = versionUpdate.listallcat.url;
+
+                    MyAlertDialogUtil.getInstance()
+                            .setMessage(versionUpdate.listallcat.remark)
+                            .setCanceledOnTouchOutside(false)
+                            .setNegativeContent(R.string.update_not)
+                            .setPositiveContent(R.string.update_now);
+
+                    MyAlertDialogUtil.getInstance().show(MainActivity.this, MainActivity.this);
+                }
+            }
+        });
     }
 
     @Override
@@ -690,18 +590,24 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     }
 
     private void initView() {
+        Fragment homeFragment = new HomeFragment();
+        Fragment categoryFragment = new CategoryFragment();
+        Fragment mineFragment1 = new MineFragment1();
+        Fragment carFragment = new CarFragment();
+        Fragment orderFragment = new NewOrderFragment();
 
-        list = new ArrayList<Fragment>();
-        Fragment fragment = new HomeFragment();
-        list.add(fragment);
-        fragment = new CategoryFragment();
-        list.add(fragment);
-        fragment = new MineFragment1();
-        list.add(fragment);
-        fragment = new CarFragment();
-        list.add(fragment);
-        fragment = new OrderFragment();
-        list.add(fragment);
+        Fragment[] fragments = new Fragment[]{
+                homeFragment,categoryFragment,mineFragment1,carFragment,orderFragment};
+
+        boolean [] fragmentsUpdateFlag =new boolean []{false, false, false, false,false};
+
+        mPageAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager())
+                .setFragment(fragments)
+                .setFragmentUpdateFlag(fragmentsUpdateFlag);
+
+        mViewPager.setAdapter(mPageAdapter);
+
+
     }
 
     private void initNavigation() {
@@ -718,6 +624,11 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         mTabIndicators.add(mForm);
     }
 
+    public void setViewPagerItem(int index){
+        mViewPager.setCurrentItem(index,false);
+        lastIndex = index;
+    }
+
     public void onTabChange(int index) {
         if (index == lastIndex) return;
         for (int i = 0; i < mTabIndicators.size(); i++) {
@@ -731,20 +642,12 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                 mTabIndicators.get(i).setIcon(normalImage[i]);
             }
         }
-        Fragment fragment;
-        /*if(index == 0 || index ==1){
-            fragment = listFragment.get(index);
-        }else{
-            fragment = FragmentFactory.getNavigationFragment(index);
-        }*/
+
+        setViewPagerItem(index);
 
 
-       /* if(index == 0){
-            if(homeFragment == null) homeFragment = new HomeFragment();
-            fragment = homeFragment;
-        }else{
-            fragment = FragmentFactory.getNavigationFragment(index);
-        }*/
+        /*Fragment fragment;
+
 
         fragment = FragmentFactory.getNavigationFragment(index);
         //fragment = listFragment.get(index);
@@ -759,7 +662,9 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                 .commitAllowingStateLoss(); //yun commit类似
 
         //switchContent(lastIndex,index);
-        lastIndex = index;
+        lastIndex = index;*/
+
+
         // mViewPager.setCurrentItem(index,false);
 
        /* if (index == 5) {
@@ -882,6 +787,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         exitApp();
     }
 
+
     @Subscribe
     public void onOrderConfirmSuccess(OrderConfirmEvent event) {
         //我的
@@ -898,12 +804,18 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                 mTabIndicators.get(i).setIcon(normalImage[i]);
             }
         }
+
+        setViewPagerItem(index);
+
         //mViewPager.setCurrentItem(index, false);
-        Fragment fragment = FragmentFactory.getNavigationFragment(index);
+        //Fragment fragment = FragmentFactory.getNavigationFragment(index);
         //Fragment fragment = listFragment.get(index);
        /* Bundle bundle = new Bundle();
         bundle.putInt(OrderFragment.ISREFERENCE, OrderFragment.NEEDREFERECE);
+
 */
+        /*
+
         if (fragment.isAdded()) {
             return;
         }
@@ -913,12 +825,16 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
         fragment.setArguments(bundle);
         mViewPager.setCurrentItem(index, false);*/
 
-        fragment.setArguments(bundle);
+        /*fragment.setArguments(bundle);
+
 
         fragmentManager.beginTransaction()
                 .replace(R.id.content, fragment)
                 .commitAllowingStateLoss(); //yun commit类似
-        lastIndex = index;
+
+        */
+
+        //lastIndex = index;
 
         String getIntegralUrl = String.format(ConstantURL.DAILY_SIGN_IN, userId, Config.SEND_QUERY_INTEGRAL);
         RequestManager.addRequest(new GsonRequest(getIntegralUrl, DailySignIn.class,
@@ -926,20 +842,15 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     }
 
     private Response.Listener<DailySignIn> getIntegralRequest() {
-        return new Response.Listener<DailySignIn>() {
+        return dailySignIn -> TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
             @Override
-            public void onResponse(final DailySignIn dailySignIn) {
-                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
-                    @Override
-                    protected Object doInBackground(Object... params) {
-                        new Update(User.class)
-                                .set("integral = ?", dailySignIn.total)
-                                .execute();
-                        return null;
-                    }
-                });
+            protected Object doInBackground(Object... params) {
+                new Update(User.class)
+                        .set("integral = ?", dailySignIn.total)
+                        .execute();
+                return null;
             }
-        };
+        });
     }
 
     @Subscribe
@@ -1046,13 +957,17 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                 mTabIndicators.get(i).setIcon(normalImage[i]);
             }
         }
-        Bundle bundle = new Bundle();
+
+        setViewPagerItem(index);
+
+       /* Bundle bundle = new Bundle();
         switch (index) {
             case 1:
                 bundle.putString(Config.FASTQUERYARG, argument);
                 break;
             case 4:
-                bundle.putInt(OrderFragment.TYPE, Integer.parseInt(argument));
+                //bundle.putInt(OrderFragment.TYPE, Integer.parseInt(argument));
+
                 break;
         }
 
@@ -1072,7 +987,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
                 .replace(R.id.content, fragment)
                 .commitAllowingStateLoss(); //yun commit类似
         lastIndex = index;
-
+*/
     }
 
     @Subscribe

@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Update;
 import com.android.volley.Response;
-import com.bigkoo.convenientbanner.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bumptech.glide.Glide;
 import com.louie.luntonghui.App;
@@ -113,13 +112,13 @@ public class HomeFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
 
         mContext = getActivity();
-        imageIdList = new ArrayList<AdvertisementInfo>();
+        imageIdList = new ArrayList<>();
         imageIdList.add(new AdvertisementInfo("1", R.drawable.cu));
         imageIdList.add(new AdvertisementInfo("2", R.drawable.han));
         imageIdList.add(new AdvertisementInfo("3", R.drawable.hui));
         imageIdList.add(new AdvertisementInfo("4", R.drawable.bao));
 
-        recommendPicList = new ArrayList<Integer>();
+        recommendPicList = new ArrayList<>();
         recommendPicList.add(R.drawable.cu);
         recommendPicList.add(R.drawable.han);
         recommendPicList.add(R.drawable.hui);
@@ -165,12 +164,7 @@ public class HomeFragment extends BaseFragment implements
     private MyListView mListView;
     private HomeAdvertisementArrayAdapter arrayAdapter;
 
-    private View.OnClickListener mOnClickSearchListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            IntentUtil.startActivity(getActivity(),SearchActivity.class);
-        }
-    };
+    private View.OnClickListener mOnClickSearchListener = v -> IntentUtil.startActivity(getActivity(),SearchActivity.class);
 
     @Nullable
     @Override
@@ -226,17 +220,14 @@ public class HomeFragment extends BaseFragment implements
         return contentView;
     }
 
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //String catId = v.getTag().toString();
-            String catId = v.getTag(R.string.position).toString();
-            String url = ConstantURL.CATEGORYGOODS + catId;
-            Bundle bundle = new Bundle();
-            bundle.putString(GoodsDetailActivity.GOODSDETAILURL, url);
-            bundle.putString(GoodsDetailActivity.GOODSDETAILID,catId);
-            IntentUtil.startActivity(getActivity(),GoodsDetailActivity.class,bundle);
-        }
+    private View.OnClickListener mOnClickListener = v -> {
+        //String catId = v.getTag().toString();
+        String catId = v.getTag(R.string.position).toString();
+        String url = ConstantURL.CATEGORYGOODS + catId;
+        Bundle bundle = new Bundle();
+        bundle.putString(GoodsDetailActivity.GOODSDETAILURL, url);
+        bundle.putString(GoodsDetailActivity.GOODSDETAILID,catId);
+        IntentUtil.startActivity(getActivity(),GoodsDetailActivity.class,bundle);
     };
 
     private void initContentView(View contentView1) {
@@ -405,12 +396,7 @@ public class HomeFragment extends BaseFragment implements
             }
         }
 
-        convenientBanner.setPages(new CBViewHolderCreator<NetworkImageHolderView>() {
-            @Override
-            public NetworkImageHolderView createHolder() {
-                return new NetworkImageHolderView(getActivity(),HomeFragment.this);
-            }
-        },urls);
+        convenientBanner.setPages(() -> new NetworkImageHolderView(getActivity(),HomeFragment.this),urls);
         convenientBanner.startTurning(TURNNING_TIME);
         focusable();
     }
@@ -538,34 +524,30 @@ public class HomeFragment extends BaseFragment implements
     }
 
     private Response.Listener<DailySignIn> singInRespose() {
-        return new Response.Listener<DailySignIn>() {
+        return dailySignIn -> {
+            mProgressDialog.dismiss();
+            long currSignIn = System.currentTimeMillis();
+            if (dailySignIn.code.equals(SUCCESSCODE)) {
+                DefaultShared.putLong(Config.LAST_SING_IN_TIME, currSignIn);
+                ToastUtil.showShortToast(mContext, dailySignIn.msg);
+                //qiandao.setBackgroundColor(getResources().getColor(R.color.useful_grey));
+                //qiandao.set;
+                TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
+                    @Override
+                    protected Object doInBackground(Object... params) {
+                        new Update(User.class)
+                                .set("integral = ?", dailySignIn.total)
+                                .where("uid = ?", userId)
+                                .execute();
+                        return null;
+                    }
+                });
 
-            @Override
-            public void onResponse(final DailySignIn dailySignIn) {
-                mProgressDialog.dismiss();
-                long currSignIn = System.currentTimeMillis();
-                if (dailySignIn.code.equals(SUCCESSCODE)) {
-                    DefaultShared.putLong(Config.LAST_SING_IN_TIME, currSignIn);
-                    ToastUtil.showShortToast(mContext, dailySignIn.msg);
-                    //qiandao.setBackgroundColor(getResources().getColor(R.color.useful_grey));
-                    //qiandao.set;
-                    TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
-                        @Override
-                        protected Object doInBackground(Object... params) {
-                            new Update(User.class)
-                                    .set("integral = ?", dailySignIn.total)
-                                    .where("uid = ?", userId)
-                                    .execute();
-                            return null;
-                        }
-                    });
-
-                    signIn();
-                } else {
-                    DefaultShared.putLong(Config.LAST_SING_IN_TIME, currSignIn);
-                    signIn();
-                    ToastUtil.showShortToast(mContext, dailySignIn.msg);
-                }
+                signIn();
+            } else {
+                DefaultShared.putLong(Config.LAST_SING_IN_TIME, currSignIn);
+                signIn();
+                ToastUtil.showShortToast(mContext, dailySignIn.msg);
             }
         };
     }

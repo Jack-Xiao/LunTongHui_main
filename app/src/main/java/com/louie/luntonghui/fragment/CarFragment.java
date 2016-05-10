@@ -30,7 +30,6 @@ import android.widget.TextView;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.louie.luntonghui.App;
 import com.louie.luntonghui.R;
 import com.louie.luntonghui.adapter.CarFragmentAdapter;
@@ -662,29 +661,21 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
     }
 
     private com.android.volley.Response.Listener<Result> emptyCarListener() {
-        return new com.android.volley.Response.Listener<Result>() {
-            @Override
-            public void onResponse(Result result) {
-                if (result.rsgcode.equals(ConstantURL.SUCCESSCODE)) {
-                    new Delete()
-                            .from(ShoppingCar.class)
-                            .execute();
-                    mProgressDialog.dismiss();
-                    reference();
-                } else {
-                    ToastUtil.showShortToast(mContext, result.rsgmsg);
-                }
+        return result -> {
+            if (result.rsgcode.equals(ConstantURL.SUCCESSCODE)) {
+                new Delete()
+                        .from(ShoppingCar.class)
+                        .execute();
+                mProgressDialog.dismiss();
+                reference();
+            } else {
+                ToastUtil.showShortToast(mContext, result.rsgmsg);
             }
         };
     }
 
     protected com.android.volley.Response.ErrorListener errorListener() {
-        return new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                ToastUtil.showLongToast(mContext, "请检查网络,错误代码 - " + error.getMessage());
-            }
-        };
+        return error -> ToastUtil.showLongToast(mContext, "请检查网络,错误代码 - " + error.getMessage());
     }
 
     private View.OnClickListener playClickListener = new View.OnClickListener() {

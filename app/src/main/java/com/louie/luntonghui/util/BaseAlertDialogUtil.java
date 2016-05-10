@@ -92,20 +92,12 @@ public class BaseAlertDialogUtil {
 
         mMaterialDialog.show();
 
-        positive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMaterialDialog.dismiss();
-                listener.confirm();
-            }
+        positive.setOnClickListener(v -> {
+            mMaterialDialog.dismiss();
+            listener.confirm();
         });
 
-        negative.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMaterialDialog.dismiss();
-            }
-        });
+        negative.setOnClickListener(v -> mMaterialDialog.dismiss());
     }
 
 }

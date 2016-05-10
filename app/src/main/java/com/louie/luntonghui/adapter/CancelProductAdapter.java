@@ -25,19 +25,19 @@ public class CancelProductAdapter extends BaseAdapter {
 
     public CancelProductAdapter(Context context){
         mContext = context;
+        mList = new ArrayList<>();
         inflater = LayoutInflater.from(context);
     }
 
     public void setData(List<ReturnProductDetail.DataEntity.GoodsListEntity> list){
         if(list == null) return;
-        if(mList == null) mList = new ArrayList<>();
         mList.addAll(list);
         notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return mList == null ? 0 : mList.size();
+        return mList.size();
     }
 
     @Override
@@ -52,9 +52,9 @@ public class CancelProductAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
+        ViewHolder holder;
         if(convertView == null){
-             holder = new ViewHolder();
+            holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.adapter_cancel_goods,parent,false);
             holder.ivGoodsImg =(ImageView)convertView.findViewById(R.id.goods_img);
             holder.tvGoodsName = (TextView) convertView.findViewById(R.id.goods_name);

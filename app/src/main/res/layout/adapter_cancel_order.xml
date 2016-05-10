@@ -76,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:background="@drawable/base_frame"
-                        android:enabled="false"
+                        android:enabled="true"
                         android:gravity="center"
                         tools:text="1000" />
                 </LinearLayout>
