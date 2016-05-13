@@ -10,6 +10,17 @@
 
     <TextView
         android:visibility="gone"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
+        android:gravity="center"
+        android:id="@+id/prime_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/yellow_background"
+        tools:text="购物金额满200元即可享受次送达服务" />
+
+    <TextView
+        android:visibility="gone"
         android:id="@+id/goods_list_name"
         android:text="@string/goods_list"
         android:paddingTop="10dp"

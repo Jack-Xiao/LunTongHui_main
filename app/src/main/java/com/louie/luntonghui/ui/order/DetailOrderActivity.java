@@ -149,6 +149,13 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
         if (dispatchType == Order.DISPATCH_NORMAL){
             fixOrder.setVisibility(View.GONE);
         }
+
+        if(handler.equals(Order.RETURN_HANDLER) || handler.equals(Order.RETURN_ORDER_HANDLER) || handler.equals(Order.HANDLER_CANCEL)){
+            fixOrder.setVisibility(View.GONE);
+        }
+        if(handler.equals(Order.HANDLER_CANCEL)){
+            cancelOrder.setVisibility(View.GONE);
+        }
     }
 
     private void initView() {

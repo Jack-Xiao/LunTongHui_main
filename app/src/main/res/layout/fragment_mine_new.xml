@@ -263,7 +263,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:drawableTop="@drawable/login_wait_set"
-                            android:text="@string/mine_wait_deliver" />
+                            android:text="送货中" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -278,7 +278,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:drawableTop="@drawable/login_bus"
-                            android:text="@string/mine_has_deliver" />
+                            android:text="已完成" />
                     </LinearLayout>
 
                     <LinearLayout

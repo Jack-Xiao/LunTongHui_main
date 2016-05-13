@@ -25,7 +25,7 @@ public class BaseMainAlertDialogUtil {
     private boolean canceledOnTouchOutside = true;
 
     public interface BaseMainAlertDialogListener{
-        public void submitConfirm();
+        public void submitConfirm1();
     }
 
     public static BaseMainAlertDialogUtil getInstance(){
@@ -96,7 +96,7 @@ public class BaseMainAlertDialogUtil {
             @Override
             public void onClick(View v) {
                 mMaterialDialog.dismiss();
-                listener.submitConfirm();
+                listener.submitConfirm1();
             }
         });
 

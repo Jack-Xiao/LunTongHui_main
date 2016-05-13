@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,6 +65,7 @@ import com.louie.luntonghui.util.IntentUtil;
 import com.louie.luntonghui.util.TaskUtils;
 import com.louie.luntonghui.util.ToastUtil;
 import com.louie.luntonghui.view.BadgeView;
+import com.louie.luntonghui.view.CustomViewPager;
 import com.louie.luntonghui.view.MyAlertDialogUtil;
 import com.louie.luntonghui.view.NavigationItem;
 import com.squareup.otto.Subscribe;
@@ -127,7 +127,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     public static final String INITCHECKED = "-1";
 
     @InjectView(R.id.viewpager)
-    ViewPager mViewPager;
+    CustomViewPager mViewPager;
 
     private FragmentManager fragmentManager;
     private LocationClient mLocationClient;
@@ -559,7 +559,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
 
         mViewPager.setAdapter(mPageAdapter);
 
-
     }
 
     private void initNavigation() {
@@ -812,6 +811,18 @@ public class MainActivity extends BaseActivity implements OnClickListener, HomeF
     public void selectType(int type) {
         int index = 4;
         argFragment(index, type + "");
+        sendMessageToOrderFrame(type);
+    }
+    public void sendMessageToOrderFrame(int index){
+        NewOrderFragment fragment = null;
+        List<Fragment> list = MainActivity.this.getSupportFragmentManager().getFragments();
+        for(Fragment f1 : list){
+            if(f1 instanceof NewOrderFragment){
+                fragment = (NewOrderFragment)f1;
+                fragment.setCurrentItem(index);
+            }
+        }
+        //fragment.getChildFragmentManager().getFragments();
     }
 
     public void argFragment(int index, String argument) {

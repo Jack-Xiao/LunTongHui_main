@@ -15,6 +15,8 @@ public class CarList {
     public TotalEntity total;
     public List<Goods_listEntity> goods_list;
 
+    public String msg;
+
     public class TotalEntity {
         /**
          * saving : 1240.00

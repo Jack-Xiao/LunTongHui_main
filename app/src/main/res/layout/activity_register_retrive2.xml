@@ -46,7 +46,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:hint="@string/input_phone"
+            android:hint="@string/hint_input_verification_code"
             tools:hint="请输入短信验证码"
             android:background="@null" />
 

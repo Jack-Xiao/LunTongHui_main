@@ -88,22 +88,22 @@ public class OrderReturnActivity extends BaseCenterToolbarActivity implements Ba
 
         orderId = getIntent().getStringExtra(Order.RETURN_ORDER_ID);
         listView.setAdapter(mAdapter);
-        if(isReturnHandler())btnCnacelReturnProduct.setVisibility(View.GONE);
+        if (isReturnHandler()) btnCnacelReturnProduct.setVisibility(View.GONE);
         init();
 
         getCancelOrderInfo();
     }
 
-    public boolean isReturnHandler(){
-        if(handler.equals(Order.RETURN_ORDER_HANDLER)){
+    public boolean isReturnHandler() {
+        if (handler.equals(Order.RETURN_ORDER_HANDLER)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     private void getCancelOrderInfo() {
-        AppObservable.bindActivity(this, mApi.getReturnProductDetail(orderId,userId))
+        AppObservable.bindActivity(this, mApi.getReturnProductDetail(orderId, userId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
@@ -130,18 +130,18 @@ public class OrderReturnActivity extends BaseCenterToolbarActivity implements Ba
 
                 mAdapter.setData(detail.data.goods_list);
                 returnOrderId = detail.data.order.return_id;
-
+                orderId = detail.data.order.order_id;
                 orderStateValue.setText(cancelOrderState[Integer.parseInt(detail.data.order.return_status)]);
-                if(detail.data.order.return_status.equals("1")){
+                if (detail.data.order.return_status.equals("1")) {
                     btnCnacelReturnProduct.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     btnCnacelReturnProduct.setVisibility(View.GONE);
 
                 }
 
 
                 orderSnValue.setText(detail.data.order.order_sn);
-                orderMoneyValue.setText( "￥" +detail.data.order.order_amount);
+                orderMoneyValue.setText("￥" + detail.data.order.order_amount);
                 downOrderTimeValue.setText(detail.data.order.add_time);
 
                 usernameValue.setText(detail.data.order.consignee);
@@ -201,7 +201,8 @@ public class OrderReturnActivity extends BaseCenterToolbarActivity implements Ba
         tvUserAddress.setText("地址: ");
         tvUserPhone.setText("手机: ");
 
-        if(!isReturnHandler())orderStateValue.setTextColor(getResources().getColor(R.color.color_dark_red));
+        if (!isReturnHandler())
+            orderStateValue.setTextColor(getResources().getColor(R.color.color_dark_red));
     }
 
     @OnClick(R.id.cancel_return_product)

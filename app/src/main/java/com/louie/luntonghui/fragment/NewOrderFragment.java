@@ -69,6 +69,10 @@ public class NewOrderFragment extends BaseFragment {
         tabs.setupWithViewPager(viewpager);
     }
 
+    public void setCurrentItem(int index){
+        viewpager.setCurrentItem(index,false);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

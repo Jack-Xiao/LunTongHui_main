@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.louie.luntonghui.R;
+import com.louie.luntonghui.model.db.ShoppingCar;
 import com.louie.luntonghui.model.result.OrderDetailResult;
 import com.louie.luntonghui.util.CancelOrderDialogUtil;
 
@@ -37,7 +38,11 @@ public class CancelOrderAdapter extends RecyclerView.Adapter<CancelOrderAdapter.
         goodses = new ArrayList<>();
         mContext = context;
         keyMap = new HashMap<>();
-        goodses.addAll(list);
+        for(OrderDetailResult.GoodsListEntity entity : list){
+            if(entity.rid.equals(ShoppingCar.NOTGIVEAWAY)){
+                goodses.add(entity);
+            }
+        }
     }
 
     @Override
@@ -49,7 +54,7 @@ public class CancelOrderAdapter extends RecyclerView.Adapter<CancelOrderAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        //holder.imageView.setImageResource(goodses.get(position).goods_thumb);
+
         Glide.with(mContext)
                 .load(goodses.get(position).goods_thumb)
                 .crossFade()

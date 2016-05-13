@@ -13,6 +13,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -129,6 +131,9 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
     @Optional
     @InjectView(R.id.logo_anim)
     ImageView logoAnim;
+
+    @InjectView(R.id.prime_message)
+    TextView primeMessage;
 
     private CarFragmentAdapter mAdapter;
     private Context mContext;
@@ -307,6 +312,10 @@ public class CarFragment extends BaseFragment implements CarFragmentAdapter.Refe
 
                     @Override
                     public void onNext(final CarList carList) {
+                        if(!TextUtils.isEmpty(carList.msg)){
+                            primeMessage.setVisibility(View.VISIBLE);
+                            primeMessage.setText(Html.fromHtml(carList.msg));
+                        }
                         TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, List<ShoppingCar>>() {
                             @Override
                             protected void onPreExecute() {

@@ -64,6 +64,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/login_message"
             android:text="关联后,您的微信账号和轮通惠账号都可以登录"
             android:layout_marginTop="30dp"
             android:layout_width="wrap_content"

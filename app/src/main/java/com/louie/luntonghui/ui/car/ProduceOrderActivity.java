@@ -69,8 +69,8 @@ import rx.schedulers.Schedulers;
  * Created by Administrator on 2015/7/1.
  */
 public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwitch.SlideListener
-                            ,BaseAlertDialogUtil.BaseAlertDialogListener,BaseMainAlertDialogUtil.BaseMainAlertDialogListener,
-                                ProduceOrderAdapter.FixOrderListener,FixGoodsDialogFragment.OnClickFinishListener{
+        , BaseAlertDialogUtil.BaseAlertDialogListener, BaseMainAlertDialogUtil.BaseMainAlertDialogListener,
+        ProduceOrderAdapter.FixOrderListener, FixGoodsDialogFragment.OnClickFinishListener {
 
     @InjectView(R.id.toolbar_navigation)
     ImageView toolbarNavigation;
@@ -105,8 +105,8 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
     TextView goodsTotal;
     @InjectView(R.id.radio)
     TextView radio;
-   /* @InjectView(R.id.toggle)
-    SlideSwitch mToggle;*/
+    /* @InjectView(R.id.toggle)
+     SlideSwitch mToggle;*/
     @InjectView(R.id.luntong_exchange_state)
     LinearLayout exchangeState;
     @InjectView(R.id.scrollView)
@@ -180,7 +180,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
 
         ProduceOrder order = getIntent().getParcelableExtra(CarFragment.ORDER);
         //ProduceOrder3 order =(ProduceOrder3) getIntent().getSerializableExtra(CarFragment.ORDER);
-        mAdapter = new ProduceOrderAdapter(this,this);
+        mAdapter = new ProduceOrderAdapter(this, this);
         listView.setAdapter(mAdapter);
 
 
@@ -222,7 +222,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         scrollView.setVisibility(View.VISIBLE);
         totalPrice.setVisibility(View.VISIBLE);
 
-        if(produceOrder.consignee.size() > 0) {
+        if (produceOrder.consignee.size() > 0) {
             initAddress();
             addressPresent.setVisibility(View.GONE);
             addressId = Integer.parseInt(produceOrder.consignee.get(0).address_id);
@@ -234,7 +234,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
             username.setText(produceOrder.consignee.get(0).consignee);
             phoneNumber.setText(produceOrder.consignee.get(0).mobile);
             regionDetail.setText(province + city + district + addressDetail);
-        }else{
+        } else {
             addressPresent.setVisibility(View.VISIBLE);
             username.setVisibility(View.GONE);
             phoneNumber.setVisibility(View.GONE);
@@ -242,9 +242,9 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
             addressSelectMore.setVisibility(View.GONE);
         }
 
-        if(produceOrder.total.integral_control.equals(ProduceOrder.CAN_NOT_INTEGRAL)){
+        if (produceOrder.total.integral_control.equals(ProduceOrder.CAN_NOT_INTEGRAL)) {
             integralControl.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             integralControl.setVisibility(View.GONE);
         }
 
@@ -253,7 +253,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         goodsValueValue.setText("￥" + produceOrder.total.goods_price + "");
         freightValue.setText("￥" + produceOrder.total.shipping_fee);
         goodsTotal.setText("￥" + produceOrder.total.goods_price);
-        couponValue.setText("-￥"+ produceOrder.total.discounts);
+        couponValue.setText("-￥" + produceOrder.total.discounts);
         totalOrgValue = produceOrder.total.goods_price;
 
         String strRadio = produceOrder.total.ratio;
@@ -293,17 +293,17 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                 break;
         }
 
-        if(!TextUtils.isEmpty(produceOrder.total.prompt)){
+        if (!TextUtils.isEmpty(produceOrder.total.prompt)) {
             giftPrompt.setVisibility(View.VISIBLE);
             giftPrompt.setText(produceOrder.total.prompt);
-        }else{
+        } else {
             giftPrompt.setVisibility(View.GONE);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUESTCODE && resultCode == RESULT_OK){
+        if (requestCode == REQUESTCODE && resultCode == RESULT_OK) {
 
             initAddress();
 
@@ -320,12 +320,12 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
             String province = regions.get(provinceId) + "省";
             String city = regions.get(cityId) + "市";
             String district = regions.get(districtId);
-            String addressDetail = detailAddress ;
+            String addressDetail = detailAddress;
 
             username.setText(consigner);
             phoneNumber.setText(strPhoneNumber);
             regionDetail.setText(province + city + district + addressDetail);
-        }else if(requestCode == REQUEST_ADD && resultCode == RESULT_OK){
+        } else if (requestCode == REQUEST_ADD && resultCode == RESULT_OK) {
             fillAddress = false;
             initAddress();
             String provinceId = data.getStringExtra(MineAdditionAddressActivity.PROVINCE_ID);
@@ -343,7 +343,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
             String province = regions.get(provinceId) + "省";
             String city = regions.get(cityId) + "市";
             String district = regions.get(districtId);
-            String addressDetail = detailAddress ;
+            String addressDetail = detailAddress;
 
             username.setText(consigner);
             phoneNumber.setText(strPhoneNumber);
@@ -411,7 +411,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                 //double curUseLunTongValue = (double) (Math.round(value / LUNTOEXCHANGE)/lunToMoney);
                 double curUseLunTongValue = tempValue / lunToMoney;
 
-                exchangeLuntongbiValue.setText("抵￥"+curUseLunTongValue + "元");
+                exchangeLuntongbiValue.setText("抵￥" + curUseLunTongValue + "元");
                 luntongMoneyValue.setText("-￥" + curUseLunTongValue);
 
                 double totals = totalOrgValue - curUseLunTongValue;
@@ -422,7 +422,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         });
     }
 
-    public void initAddress(){
+    public void initAddress() {
         addressPresent.setVisibility(View.GONE);
         username.setVisibility(View.VISIBLE);
         phoneNumber.setVisibility(View.VISIBLE);
@@ -440,10 +440,11 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
     }
 
     private boolean fillAddress = false;
+
     @OnClick(R.id.submit_order)
     public void onClickSubmitOrder() {
 
-        if(TextUtils.isEmpty(useLuntongMoneyCount.getText() + ""))
+        if (TextUtils.isEmpty(useLuntongMoneyCount.getText() + ""))
             useLuntongMoneyCount.setText("0");
 
         double tempValue = Double.parseDouble(useLuntongMoneyCount.getText() + "");
@@ -451,13 +452,13 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         //double curUseLunTongValue = (double) (Math.round(value / LUNTOEXCHANGE)/lunToMoney);
         double curUseLunTongValue = tempValue / lunToMoney;
 
-        if(totalOrgValue < curUseLunTongValue ){
-            ToastUtil.showShortToast(mContext,R.string.luntongbi_more_warnning);
+        if (totalOrgValue < curUseLunTongValue) {
+            ToastUtil.showShortToast(mContext, R.string.luntongbi_more_warnning);
             return;
         }
 
         fillAddress = false;
-        if(addressId == DEFAULT_ADDRESS_ID ){
+        if (addressId == DEFAULT_ADDRESS_ID) {
             fillAddress = true;
             BaseAlertDialogUtil.getInstance()
                     .setMessage(R.string.warnning_fill_address)
@@ -480,13 +481,15 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
 
         submitConfirm();
     }
+
     public ListView mListView;
-    private Response.Listener<OrderConfirm> confirmOrderListener(){
-        return new Response.Listener<OrderConfirm>(){
+
+    private Response.Listener<OrderConfirm> confirmOrderListener() {
+        return new Response.Listener<OrderConfirm>() {
             @Override
             public void onResponse(final OrderConfirm orderConfirm) {
                 isRunning = false;
-                if(orderConfirm.rsgcode.equals(SUCCESSCODE)){
+                if (orderConfirm.rsgcode.equals(SUCCESSCODE)) {
                     TaskUtils.executeAsyncTask(new AsyncTask<Object, Object, Object>() {
                         @Override
                         protected Object doInBackground(Object... params) {
@@ -502,21 +505,21 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                         @Override
                         protected void onPostExecute(Object o) {
                             //ToastUtil.showLongToast(ProduceOrderActivity.this, R.string.order_confirm_success);
-                            if(orderConfirm.msg !=null && orderConfirm.msg.size() > 0){
+                            if (orderConfirm.msg != null && orderConfirm.msg.size() > 0) {
                                 ArrayList<OrderConfirm.FixGoods> goodses = (ArrayList<OrderConfirm.FixGoods>) orderConfirm.msg;
 
                                 FixGoodsDialogFragment fragment = FixGoodsDialogFragment.newInstance(goodses);
-                                fragment.show(getSupportFragmentManager(),"load");
+                                fragment.show(getSupportFragmentManager(), "load");
 
-                            }else{
+                            } else {
                                 toast.show();
                                 App.getBusInstance().post(new OrderConfirmEvent());
                                 finish();
                             }
                         }
                     });
-                }else{
-                    ToastUtil.showShortToast(ProduceOrderActivity.this,orderConfirm.rsgmsg);
+                } else {
+                    ToastUtil.showShortToast(ProduceOrderActivity.this, orderConfirm.rsgmsg);
                 }
             }
         };
@@ -542,7 +545,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
     }
 
     @OnClick(R.id.toolbar_navigation)
-    public void onExit(){
+    public void onExit() {
         exit();
     }
 
@@ -550,7 +553,8 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
     public void onBackPressed() {
         exit();
     }
-    public void exit(){
+
+    public void exit() {
         BaseAlertDialogUtil.getInstance()
                 .setMessage(R.string.cheap_not_alway_wait)
                 .setCanceledOnTouchOutside(true)
@@ -562,7 +566,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
 
     @Override
     public void confirm() {
-        if(fillAddress){
+        if (fillAddress) {
 
             addressPresent();
             return;
@@ -570,7 +574,6 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         finish();
     }
 
-    @Override
     public void submitConfirm() {
         String strUserFeedback = userFeedback.getText().toString();
         String uid = DefaultShared.getString(RegisterLogin.USERUID, RegisterLogin.DEFAULT_USER_ID);
@@ -584,16 +587,16 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        if(isRunning){
-            ToastUtil.showShortToast(this,"请稍等...");
+        if (isRunning) {
+            ToastUtil.showShortToast(this, "请稍等...");
             return;
         }
         isRunning = true;
-        String url = String.format(ConstantURL.CONFIRM_ORDER,uid,addressId,payId,strUserFeedback,integral,display);
+        String url = String.format(ConstantURL.CONFIRM_ORDER, uid, addressId, payId, strUserFeedback, integral, display);
         //executeRequest(new GsonRequest(url, OrderConfirm.class, confirmOrderListener(), errorListener()));
 
 
-        AppObservable.bindActivity(this,mApi.submitOrder(uid,addressId,payId,strUserFeedback,integral,display))
+        AppObservable.bindActivity(this, mApi.submitOrder(uid, addressId, payId, strUserFeedback, integral, display))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<OrderConfirm>() {
@@ -627,11 +630,14 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
                                 fragment.show(getSupportFragmentManager(), "load");
 
                             } else {
-                                toast.show();
-                                App.getBusInstance().post(new OrderConfirmEvent());
-                                finish();
+                                BaseMainAlertDialogUtil.getInstance()
+                                        .setCanceledOnTouchOutside(false)
+                                        .setNegativeContent(R.string.cancel)
+                                        .setPositiveContent(R.string.sure);
+
+                                BaseMainAlertDialogUtil.getInstance().show(mContext, ProduceOrderActivity.this);
                             }
-                        }else {
+                        } else {
                             ToastUtil.showShortToast(ProduceOrderActivity.this, orderConfirm.rsgmsg);
                         }
                         isRunning = false;
@@ -644,6 +650,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         super.onResume();
         MobclickAgent.onResume(this);
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -656,25 +663,34 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
     }
 
     @OnClick(R.id.address_select_more)
-    public void addressSelect(){
+    public void addressSelect() {
         Intent intent = new Intent();
-        intent.putExtra(ADDRESS_SELECT,isAddressSelect);
+        intent.putExtra(ADDRESS_SELECT, isAddressSelect);
         intent.setClass(ProduceOrderActivity.this, MineReceiverAddressActivity.class);
         startActivityForResult(intent, REQUESTCODE);
     }
 
     @OnClick(R.id.input_address_present)
-    public void addressPresent(){
+    public void addressPresent() {
         Intent intent = new Intent();
-        intent.putExtra(ADDRESS_ADD,isAddressAdd);
+        intent.putExtra(ADDRESS_ADD, isAddressAdd);
         intent.setClass(ProduceOrderActivity.this, MineAdditionAddressActivity.class);
-        startActivityForResult(intent,REQUEST_ADD);
+        startActivityForResult(intent, REQUEST_ADD);
     }
 
     @Override
     public void onClickFinish() {
+        finishOrder();
+    }
+
+    public void finishOrder(){
         toast.show();
         App.getBusInstance().post(new OrderConfirmEvent());
         finish();
+    }
+
+    @Override
+    public void submitConfirm1() {
+        finishOrder();
     }
 }

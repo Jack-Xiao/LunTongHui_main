@@ -58,6 +58,9 @@ public class WxLoginActivity extends BaseToolbarActivity {
     @InjectView(R.id.retrive_password)
     TextView retrivePassword;
 
+    @InjectView(R.id.login_message)
+    TextView loginMessage;
+
     private String openId;
     private String mac;
     private String type;
@@ -80,6 +83,10 @@ public class WxLoginActivity extends BaseToolbarActivity {
 
         type = getIntent().getExtras().getString(WxUniteActivity.TYPE);
         mac = Config.getMacAddress(this);
+
+        if(type.equals(WxUniteActivity.TYPE_QQ)){
+            loginMessage.setText("关联后,您的QQ账号和轮通惠账号都可以登录");
+        }
 
     }
 

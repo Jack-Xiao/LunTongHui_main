@@ -20,8 +20,11 @@ public class BaseAlertDialogUtil {
 
     private static BaseAlertDialogUtil mInstance;
     private String message;
-    private String positiveContent;
-    private String negativeContent;
+    public static final String DEFAULT_POSITIVE_CONTENT = "确认";
+    public static final String DEFAULT_NEGATIVECONTENT = "取消";
+
+    private String positiveContent = DEFAULT_POSITIVE_CONTENT;
+    private String negativeContent = DEFAULT_NEGATIVECONTENT;
     private boolean canceledOnTouchOutside = true;
 
     public interface BaseAlertDialogListener{
@@ -62,7 +65,7 @@ public class BaseAlertDialogUtil {
     }
 
     public BaseAlertDialogUtil setNegativeContent(int negativeContent){
-        this.negativeContent = App.getContext().getResources().getString(negativeContent);;
+        this.negativeContent = App.getContext().getResources().getString(negativeContent);
         return mInstance;
     }
 

@@ -129,7 +129,6 @@ public class OrderCancelActivity extends BaseCenterToolbarActivity implements Ba
         @Override
         public void onNext(ResultObject resultObject) {
             ToastUtil.showShortToast(mContext,resultObject.rsgmsg);
-
             if(resultObject.rsgcode.equals(ResultObject.SUCCESS)) finish();
         }
     };

@@ -27,6 +27,7 @@ public class Order extends Model{
     public static final String CAN_RETURN = "1";
     public static final String NOT_CAN_RETURN = "0";
 
+    public static final String HANDLER_CANCEL = "9";
     //为0则 没有退货单
     public static final String NO_RETURN_ID = "0";
     @Column(name = "allow_to_modify")

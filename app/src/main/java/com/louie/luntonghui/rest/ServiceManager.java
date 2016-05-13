@@ -227,6 +227,8 @@ public class ServiceManager {
 
 
         //取消退货
+        //http://120.25.224.250/api/mobile.php?act=cancel_return&user_id=265&order_id=2030&return_id=482
+        @GET("/mobile.php?act=cancel_return")
         Observable<ResultObject> cancelReturnProduct(@Query("return_id") String returnId,
                                                      @Query("order_id") String orderId,
                                                      @Query("user_id") String userId);
