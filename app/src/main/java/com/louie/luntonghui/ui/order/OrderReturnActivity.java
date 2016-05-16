@@ -149,7 +149,7 @@ public class OrderReturnActivity extends BaseCenterToolbarActivity implements Ba
                 userAddressValue.setText(detail.data.order.address);
 
                 for (ReturnProductDetail.DataEntity.GoodsListEntity entity : detail.data.goods_list) {
-                    goodsPrice += Double.parseDouble(entity.goods_price);
+                    goodsPrice += (Double.parseDouble(entity.goods_price) * Double.parseDouble(entity.return_number));
                 }
 
                 BigDecimal b = new BigDecimal(goodsPrice);

@@ -150,10 +150,12 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
             fixOrder.setVisibility(View.GONE);
         }
 
-        if(handler.equals(Order.RETURN_HANDLER) || handler.equals(Order.RETURN_ORDER_HANDLER) || handler.equals(Order.HANDLER_CANCEL)){
+        if(handler.equals(Order.RETURN_HANDLER) || handler.equals(Order.RETURN_ORDER_HANDLER) ||
+                handler.equals(Order.HANDLER_CANCEL) || handler.equals(Order.SONG_ING)){
             fixOrder.setVisibility(View.GONE);
         }
-        if(handler.equals(Order.HANDLER_CANCEL)){
+
+        if(handler.equals(Order.HANDLER_CANCEL) || handler.equals(Order.SONG_ING)){
             cancelOrder.setVisibility(View.GONE);
         }
     }
@@ -283,7 +285,7 @@ public class DetailOrderActivity extends BaseNormalActivity implements ProduceOr
                 fixOrder.setVisibility(View.VISIBLE);
             }
 
-            setDispatch();
+            //setDispatch();
 
             orderStateValue.setText(orderStates[orderState]);
             orderSnValue.setText(order.order_sn);

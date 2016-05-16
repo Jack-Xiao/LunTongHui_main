@@ -113,7 +113,7 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
     private boolean isColligate = false;
     private boolean isPrice = false;
     Drawable sorting_up, sorting_down;
-    private String goodsParentId;
+    private String goodsParentId = "-1";
     public List<String> carIdList;
     private boolean isSearch = false;
     private String searchContent;
@@ -217,8 +217,10 @@ public class GoodsDetailActivity extends BaseNormalActivity implements
             display = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
 
             String cityId = DefaultShared.getString(App.CITYID, App.DEFAULT_CITYID);
+            if(getIntent().getExtras()!=null && getIntent().getExtras().getString(GOODSDETAILID) !=null){
+                goodsParentId = getIntent().getExtras().getString(GOODSDETAILID, "-1");
+            }
 
-            goodsParentId = getIntent().getExtras().getString(GOODSDETAILID, "-1");
             url = getIntent().getExtras().getString(GOODSDETAILURL).toString();
             url = url + "&" + ConstantURL.MODE + "&" + regionArg + "=" + display;
             url = url + "&ctype=" + cType;

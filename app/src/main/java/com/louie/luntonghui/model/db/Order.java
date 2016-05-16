@@ -22,6 +22,7 @@ public class Order extends Model{
     public static final String RETURN_HANDLER = "11";
     public static final String RETURN_ORDER_HANDLER = "12";
     public static final String RETURN_ORDER_ID ="return_order_id";
+    public static final String SONG_ING = "3";
 
     public static final String CAN_RETURN_STATE = "can_return";
     public static final String CAN_RETURN = "1";

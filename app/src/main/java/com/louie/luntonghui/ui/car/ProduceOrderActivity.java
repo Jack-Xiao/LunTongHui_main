@@ -253,7 +253,7 @@ public class ProduceOrderActivity extends BaseNormalActivity implements SlideSwi
         goodsValueValue.setText("￥" + produceOrder.total.goods_price + "");
         freightValue.setText("￥" + produceOrder.total.shipping_fee);
         goodsTotal.setText("￥" + produceOrder.total.goods_price);
-        couponValue.setText("-￥" + produceOrder.total.discounts);
+        couponValue.setText("-￥" + (TextUtils.isEmpty(produceOrder.total.discounts)? "0.00" : produceOrder.total.discounts));
         totalOrgValue = produceOrder.total.goods_price;
 
         String strRadio = produceOrder.total.ratio;

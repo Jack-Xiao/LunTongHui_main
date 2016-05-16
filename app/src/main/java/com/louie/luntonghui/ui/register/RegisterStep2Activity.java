@@ -46,6 +46,7 @@ public class RegisterStep2Activity extends BaseNormalActivity {
     TextView tvGetVerifitationCode;
 
     public String phoneNumber;
+    CountDownTimer mCountDownTime;
 
 
     @Override
@@ -62,6 +63,23 @@ public class RegisterStep2Activity extends BaseNormalActivity {
         }
 
         init();
+
+        mCountDownTime = new CountDownTimer(COUNTDOWNTIMERTOTAL, COUNTDOWNIMERINTERVAL) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long sencond = millisUntilFinished / COUNTDOWNIMERINTERVAL;
+                getVerifitationCode.setEnabled(false);
+                getVerifitationCode.setText("重新获取" + " " + String.valueOf(sencond));
+            }
+
+            @Override
+            public void onFinish() {
+                getVerifitationCode.setEnabled(true);
+                getVerifitationCode.setText(R.string.get_check_code);
+                tvGetVerifitationCode.setText("验证码验证");
+            }
+        };
         mCountDownTime.start();
     }
 
@@ -75,22 +93,7 @@ public class RegisterStep2Activity extends BaseNormalActivity {
         tvGetVerifitationCode.setText("已发送验证码到:" + phoneNumber);
     }
 
-    private CountDownTimer mCountDownTime = new CountDownTimer(COUNTDOWNTIMERTOTAL, COUNTDOWNIMERINTERVAL) {
 
-        @Override
-        public void onTick(long millisUntilFinished) {
-            long sencond = millisUntilFinished / COUNTDOWNIMERINTERVAL;
-            getVerifitationCode.setEnabled(false);
-            getVerifitationCode.setText("重新获取" + " " + String.valueOf(sencond));
-        }
-
-        @Override
-        public void onFinish() {
-            getVerifitationCode.setEnabled(true);
-            getVerifitationCode.setText(R.string.get_check_code);
-            tvGetVerifitationCode.setText("验证码验证");
-        }
-    };
 
 
     @OnClick(R.id.get_verifitation_code)
